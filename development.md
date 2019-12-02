@@ -7,7 +7,7 @@ Please download the following for you operating system
 - Test by running `java -version` in your command line
 
 <br><br>
-Result should be:
+Output should be something like:
 ```
 java version "11.0.2" 2019-01-15 LTS
 Java(TM) SE Runtime Environment 18.9 (build 11.0.2+9-LTS)
