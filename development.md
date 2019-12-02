@@ -1,8 +1,9 @@
 # Development Environment
 
+Please download the following for you operating system
+
 ## Java
 - [Java](https://www.java.com/en/)
-- Ensure you download the correct one for you operating system
 - Test by running `java -version` in your command line
 
 <br><br>
