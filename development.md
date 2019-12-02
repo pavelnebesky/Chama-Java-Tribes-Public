@@ -3,7 +3,7 @@
 Please download the following for you operating system
 
 ## Java
-- [Java](https://www.java.com/en/)
+- [amazon corretto 11](https://docs.aws.amazon.com/corretto/latest/corretto-11-ug/downloads-list.html)
 - Test by running `java -version` in your command line
 
 <br><br>
