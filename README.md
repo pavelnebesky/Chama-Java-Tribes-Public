@@ -22,16 +22,15 @@ The main goals are to:
 
 ## Technology
 
-- Java backend
-	- Spring
-	- Relational databases
-	- HTTP request handling with REST APIs
-	- Endpoint testing
-  	- Flyway
-  	- CircleCI
-  	- Multiple environments
-  	- Deployment with CircleCI
-  	- Unit testing
+- Spring
+- Relational databases
+- HTTP request handling with REST APIs
+- Endpoint testing
+- Flyway
+- CircleCI
+- Multiple environments
+- Deployment with CircleCI
+- Unit testing
   
 
 ## Further specification
