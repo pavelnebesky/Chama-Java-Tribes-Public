@@ -9,9 +9,9 @@ A strategy game based on the logic of Travian
 
 The main goals are to:
 - Create a working application where several developers collaborate in Scrum methodology
+- Write proper, clean, maintainable code (completion is not the objective) 
 - Clearly separate frontend & backend
 - Implement proper APIs
-- Write proper game logic
 
 
 ## Main features
