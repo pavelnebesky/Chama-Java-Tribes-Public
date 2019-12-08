@@ -27,11 +27,11 @@ The main goals are to:
 	- Relational databases
 	- HTTP request handling with REST APIs
 	- Endpoint testing
-  - Flyway
-  - CircleCI
-	- Multi-environments
-	- Deployment with CircleCI
-	- Unit testing
+  	- Flyway
+  	- CircleCI
+  	- Multiple environments
+  	- Deployment with CircleCI
+  	- Unit testing
   
 
 ## Further specification
