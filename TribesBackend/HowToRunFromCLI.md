@@ -1,15 +1,12 @@
-## How to run Project and Tests from command line
+## Basic gradle commands from command line
 
-To run project
+
 - navigate to your project folder ( example: /Users/pavelnebesky/Documents/greenfox/Chama-Java-Tribes/TribesBackend )
-- run command: ./gradlew bootRun
 
+- to run project: `./gradlew bootRun`
+- to stop server: `./gradlew --stop`
+- to build project: `./gradlew build`
+- to run tests: `./gradlew test`
 
-To build project
-- navigate to your project folder ( example: /Users/pavelnebesky/Documents/greenfox/Chama-Java-Tribes/TribesBackend )
-- run command: ./gradlew build
+On windows machines may be command little different, example: `gradlew bootRun`
 
-
-To run tests
-- navigate to your project folder ( example: /Users/pavelnebesky/Documents/greenfox/Chama-Java-Tribes/TribesBackend )
-- run command: ./gradlew test
