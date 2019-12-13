@@ -31,7 +31,7 @@ jobs:
             - .
   test:
     # Remove if parallelism is not desired
-    parallelism: 2
+    parallelism: 1
     environment:
       # Configure the JVM and Gradle to avoid OOM errors
       _JAVA_OPTIONS: "-Xmx3g"
