@@ -16,20 +16,20 @@ import org.springframework.test.context.junit4.SpringRunner;
 class TribesBackendApplicationTests {
 
 
-	@Autowired
-	private HomeController controller;
-	@Autowired
-	private UserService userService;
+    @Autowired
+    private HomeController homecontroller;
+    @Autowired
+    private UserService userService;
 
 
-	@Test
-	public void contexLoads() throws Exception {
-		assertThat(controller).isNotNull();
-	}
+    @Test
+    public void contexLoads() throws Exception {
+        assertThat(homecontroller).isNotNull();
+    }
 
-	@Test
-	public void serviceLoads() throws Exception {
-		assertThat(userService).isNotNull();
-	}
+    @Test
+    public void serviceLoads() throws Exception {
+        assertThat(userService).isNotNull();
+    }
 
 }

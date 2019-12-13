@@ -12,7 +12,7 @@ public class UserService {
     public UserRepository userRepository;
 
     public boolean isUserValid(User user){
-        if (userRepository.findById(user.getId()) ==null){
+        if (userRepository.findById(user.getId()) == null){
             return false;
         }
         return true;

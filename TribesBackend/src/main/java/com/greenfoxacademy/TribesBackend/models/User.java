@@ -7,14 +7,15 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+@Getter
+@Setter
 @Entity
 public class User {
     @Id
     @GeneratedValue
-    @Getter
-    @Setter
     private Long id;
-    private String userName;
+    private String username;
     private String password;
+    //List of kingdoms with OneToMany annotation, token, email to be added later on
 
 }
