@@ -30,15 +30,5 @@ class TribesBackendApplicationTests {
     public void serviceLoads() throws InstanceNotFoundException {
         assertThat(userService).isNotNull();
     }
-
-    @Test
-    void sumWorking(){
-        // given
-        int a = 7;
-        int b = 8;
-
-        // then
-        assertThat(a)
-                .isEqualTo(b);
-    }
+    
 }
