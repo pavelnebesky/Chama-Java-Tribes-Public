@@ -1,21 +1,16 @@
 package com.greenfoxacademy.TribesBackend.services;
 
-import com.greenfoxacademy.TribesBackend.models.Kingdom;
-import com.greenfoxacademy.TribesBackend.models.User;
-import com.greenfoxacademy.TribesBackend.repositories.KingdomRepository;
-import com.greenfoxacademy.TribesBackend.repositories.UserRepository;
+import com.greenfoxacademy.TribesBackend.repositories.kingdomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class KingdomService {
 
     @Autowired
-    private KingdomRepository kingdomRepository;
+    private kingdomRepository kingdomRepo;
 
-    public boolean isKingdomNameOkToSave(String name, Kingdom kingdom) {
-        if (!name.matches(kingdomRepository.findByName(kingdom.getName())) && name.length() > 6 && name.matches("[a-zA-Z]+"));
-        {
-            return true;
-        }
+    public boolean isKingdomNameValid(String name) {
+        return kingdomRepo.findByName(name) == null
+                && name.length() > 6
+                && name.matches("[a-zA-Z]+");
     }
-
 }
