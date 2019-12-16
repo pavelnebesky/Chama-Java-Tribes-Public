@@ -18,10 +18,10 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/login/{id}")
-    public User getUsersById(@PathVariable(value = "id") Long userId) {
+    public User getUserById(@PathVariable(value = "id") Long userId) {
 
-        Optional<User> user = userService.findById(userId);
-            return user.get();
+        User user = userService.findById(userId);
+            return user;
         }
 
      @PostMapping("/register")

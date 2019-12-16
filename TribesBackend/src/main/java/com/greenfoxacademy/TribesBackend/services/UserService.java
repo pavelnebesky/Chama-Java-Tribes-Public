@@ -17,8 +17,8 @@ public class UserService {
         return userRepository.findById(user.getId()).isPresent();
     }
 
-    public Optional<User> findById(Long userId) {
-        Optional user = userRepository.findById(userId);
+    public User findById(Long userId) {
+        User user = userRepository.findById(userId).get();
         return user;
     }
 
