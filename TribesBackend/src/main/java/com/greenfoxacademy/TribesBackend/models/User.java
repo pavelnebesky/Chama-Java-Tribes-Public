@@ -16,6 +16,8 @@ public class User {
     private Long id;
     private String username;
     private String password;
+
+
     //List of kingdoms with OneToMany annotation, token, email to be added later on
 
 }
