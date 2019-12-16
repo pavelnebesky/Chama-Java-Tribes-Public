@@ -25,9 +25,7 @@ public class UserController {
         }
 
      @PostMapping("/register")
-     public User registerUser (@RequestBody User user,@RequestBody String name,@RequestBody String password){
-     var username = user.getUsername();
-     var newpassword = user.getPassword();
+     public User registerUser (@RequestBody User user){
      return userService.save(user);
     }
 
