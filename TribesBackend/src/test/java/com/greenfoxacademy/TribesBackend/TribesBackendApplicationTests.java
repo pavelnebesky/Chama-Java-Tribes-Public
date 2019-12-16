@@ -2,6 +2,7 @@ package com.greenfoxacademy.TribesBackend;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import com.greenfoxacademy.TribesBackend.controllers.HomeController;
+import com.greenfoxacademy.TribesBackend.controllers.UserController;
 import com.greenfoxacademy.TribesBackend.controllers.KingdomController;
 import com.greenfoxacademy.TribesBackend.models.User;
 import com.greenfoxacademy.TribesBackend.services.UserService;
@@ -23,6 +24,8 @@ class TribesBackendApplicationTests {
     private KingdomController kingdomController;
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserController userController;
 
     @Test
     public void contexLoads() throws InstanceNotFoundException {
@@ -38,9 +41,14 @@ class TribesBackendApplicationTests {
     public void serviceLoads() throws InstanceNotFoundException {
         assertThat(userService).isNotNull();
     }
-    
+
+    @Test
+    public void controllerLoads() throws InstanceNotFoundException {
+        assertThat(userController).isNotNull();
+    }
+
     @Test
     public void getKingdomMethodExists() throws InstanceNotFoundException {
         assertThat(kingdomController.getKingdom()).isNotNull();
-    }
+  }
 }
