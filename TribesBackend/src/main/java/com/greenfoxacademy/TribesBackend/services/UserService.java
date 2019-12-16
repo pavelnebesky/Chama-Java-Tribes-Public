@@ -1,7 +1,6 @@
 package com.greenfoxacademy.TribesBackend.services;
-
 import com.greenfoxacademy.TribesBackend.models.User;
-import com.greenfoxacademy.TribesBackend.repositories.UserRepository;
+import com.greenfoxacademy.TribesBackend.repositories.userRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,9 +8,9 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     @Autowired
-    public UserRepository userRepository;
+    private userRepository userRepo;
 
-    public boolean isUserValid(User user) {
-        return userRepository.findById(user.getId()).isPresent();
+    public boolean doesUserExist(User user) {
+        return userRepo.findById(user.getId()).isPresent();
     }
 }
