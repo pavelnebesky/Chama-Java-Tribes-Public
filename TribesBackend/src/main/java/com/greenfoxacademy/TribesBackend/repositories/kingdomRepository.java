@@ -1,9 +1,9 @@
 package com.greenfoxacademy.TribesBackend.repositories;
-import com.greenfoxacademy.TribesBackend.models.User;
+import com.greenfoxacademy.TribesBackend.models.Kingdom;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserRepository extends CrudRepository<User, Long> {
-    User findByUsername(String username);
+public interface kingdomRepository extends CrudRepository<Kingdom, Long> {
+    Kingdom findByName(String name);
 }
