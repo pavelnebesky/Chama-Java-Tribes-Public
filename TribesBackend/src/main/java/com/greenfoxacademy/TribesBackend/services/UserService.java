@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     @Autowired
-    public UserRepository userRepository;
+    private UserRepository userRepository;
 
-    public boolean isUserValid(User user) {
+    public boolean doesUserExist(User user) {
         return userRepository.findById(user.getId()).isPresent();
     }
 }
