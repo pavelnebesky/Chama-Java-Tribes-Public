@@ -18,10 +18,10 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/login/{id}")
-    public Optional<User> getUsersById(@PathVariable(value = "id") Long userId) {
+    public User getUsersById(@PathVariable(value = "id") Long userId) {
 
         Optional<User> user = userService.findById(userId);
-            return user;
+            return user.get();
         }
 
      @PostMapping("/register")
@@ -32,7 +32,5 @@ public class UserController {
     @GetMapping("/logout")
     public void  Logout(HttpServletResponse response){
        response.setStatus(200);
-
     }
-
 }
