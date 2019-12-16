@@ -28,14 +28,17 @@ class TribesBackendApplicationTests {
     public void contexLoads() throws InstanceNotFoundException {
         assertThat(homeController).isNotNull();
     }
+    
     @Test
     public void kingdomControllerExists() throws InstanceNotFoundException {
         assertThat(kingdomController).isNotNull();
     }
+    
     @Test
     public void serviceLoads() throws InstanceNotFoundException {
         assertThat(userService).isNotNull();
     }
+    
     @Test
     public void getKingdomMethodExists() throws InstanceNotFoundException {
         assertThat(kingdomController.getKingdom()).isNotNull();
