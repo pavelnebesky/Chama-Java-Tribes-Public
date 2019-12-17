@@ -1,6 +1,8 @@
 package com.greenfoxacademy.TribesBackend;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+
 import com.greenfoxacademy.TribesBackend.controllers.HomeController;
 import com.greenfoxacademy.TribesBackend.controllers.UserController;
 import com.greenfoxacademy.TribesBackend.controllers.KingdomController;
@@ -37,12 +39,12 @@ class TribesBackendApplicationTests {
     public void contexLoads() throws InstanceNotFoundException {
         assertThat(homeController).isNotNull();
     }
-    
+
     @Test
     public void kingdomControllerExists() throws InstanceNotFoundException {
         assertThat(kingdomController).isNotNull();
     }
-    
+
     @Test
     public void serviceLoads() throws InstanceNotFoundException {
         assertThat(userService).isNotNull();
@@ -56,5 +58,13 @@ class TribesBackendApplicationTests {
     /*@Test
     public void getKingdomMethodExists() throws InstanceNotFoundException {
         assertThat(kingdomController.getKingdom()).isNotNull();
+<<<<<<< HEAD
   }*/
+    
+    @Test
+    public void doesEmailValidatorWork(){
+        assertEquals(userService.isEmailValid("jajenc@seznam.cz"), true);
+        assertEquals(userService.isEmailValid("blablafuk@smrdim,prd"), false);
+    }
+
 }

@@ -4,9 +4,10 @@ import com.greenfoxacademy.TribesBackend.models.User;
 import com.greenfoxacademy.TribesBackend.repositories.UserRepository;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
@@ -19,6 +20,8 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private AuthenticationService authenticationService;
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public boolean doesUserExistById(Long id) {
         return userRepository.findById(id).isPresent();
@@ -29,7 +32,7 @@ public class UserService {
     }
 
     public boolean doesPasswordMatchAccount(User user) {
-        return userRepository.findByEmail(user.getEmail()).getPassword().equals(user.getPassword());
+        return userRepository.findByEmail(user.getEmail()).getPassword().equals(bCryptPasswordEncoder.encode(user.getPassword()));
     }
 
     public User findById(Long userId) {
@@ -55,11 +58,18 @@ public class UserService {
                 return "Missing parameter(s): password!";
             }
         } else if (!doesUserExistByEmail(user.getEmail())) {
+            response.setStatus(401);
             return "No such user: " + user.getEmail() + "!";
         } else if (!doesPasswordMatchAccount(user)) {
+            response.setStatus(401);
             return "Wrong password!";
         } else {
+            response.setStatus(200);
             return null;
         }
+    }
+
+    public boolean isEmailValid(String email) {
+        return EmailValidator.getInstance().isValid(email);
     }
 }

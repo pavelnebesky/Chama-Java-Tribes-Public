@@ -36,5 +36,4 @@ public class KingdomController {
             return new Kingdom(); // TODO: Message class?
         }
     }
-
 }
