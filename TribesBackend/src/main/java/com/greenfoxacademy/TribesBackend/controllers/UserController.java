@@ -31,8 +31,8 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public User registerUser(@RequestBody User user) {
-        return userService.save(user);
+    public void registerUser(@RequestBody User user) {
+        userService.save(user);
     }
 
     @GetMapping("/logout")
