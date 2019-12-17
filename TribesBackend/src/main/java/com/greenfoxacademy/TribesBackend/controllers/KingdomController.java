@@ -10,5 +10,4 @@ public class KingdomController {
     public String getKingdom(){
         return "test";
     }
-
 }
