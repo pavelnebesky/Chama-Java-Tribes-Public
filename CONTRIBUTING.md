@@ -43,5 +43,5 @@ With the expectations listed below, we follow the rules contained in
 
 ## Pull Request guidelines
 
-- From `feature_branch` to `development`: add all developers and PM as reviewers, 2 approves needed for merging
-- From `development` to `master`: this is managed by the PM
+- From `feature_branch` to `development`: 2 approvals needed for merging from the team.
+- From `development` to `master`: create a pull request, which will be reviewed by a minimum of 1 code owner. 1 approval needed. 
