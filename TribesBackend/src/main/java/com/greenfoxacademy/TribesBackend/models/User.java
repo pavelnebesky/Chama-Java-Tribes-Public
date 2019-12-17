@@ -3,10 +3,7 @@ package com.greenfoxacademy.TribesBackend.models;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.List;
 
 @Getter
@@ -19,7 +16,7 @@ public class User {
     private String email;
     private String password;
     private String fullName;
-    @OneToMany
-    private List<Kingdom> kingdoms;
+    @OneToOne
+    private Kingdom kingdom;
     //Token, email and so on to be added later on
 }
