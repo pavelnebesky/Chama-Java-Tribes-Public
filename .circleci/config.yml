@@ -2,7 +2,6 @@ version: 2
 jobs:
   build:
     environment:
-      working_directory: /TribesBackend
       # Configure the JVM and Gradle to avoid OOM errors
       _JAVA_OPTIONS: "-Xmx3g"
       GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
@@ -10,65 +9,47 @@ jobs:
       - image: circleci/openjdk:11.0.3-jdk-stretch
     steps:
       - checkout
-      - restore_cache:
-          key: v1-gradle-wrapper-{{ checksum "TribesBackend/gradle/wrapper/gradle-wrapper.properties" }}
-      - restore_cache:
-          key: v1-gradle-cache-{{ checksum "TribesBackend/build.gradle" }}
       - run:
-          name: Install dependencies
-          command: ./TribesBackend/gradlew build
-      - save_cache:
-          paths:
-            - ~/TribesBackend/.gradle/wrapper
-          key: v1-gradle-wrapper-{{ checksum "TribesBackend/gradle/wrapper/gradle-wrapper.properties" }}
-      - save_cache:
-          paths:
-            - ~/TribesBackend/.gradle/caches
-          key: v1-gradle-cache-{{ checksum "TribesBackend/build.gradle" }}
-      - persist_to_workspace:
-          root: .
-          paths:
-            - .
-  test:
-    # Remove if parallelism is not desired
-    parallelism: 1
+          name: Build
+          command: |
+              cd TribesBackend
+              ./gradlew build -x test
+  tests:
     environment:
       # Configure the JVM and Gradle to avoid OOM errors
       _JAVA_OPTIONS: "-Xmx3g"
       GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
     docker:
       - image: circleci/openjdk:11.0.3-jdk-stretch
-      - image: circleci/postgres:12-alpine
-        environment:
-          POSTGRES_USER: postgres
-          POSTGRES_DB: circle_test
     steps:
       - checkout
-      - attach_workspace:
-          at: .
       - run:
           name: Run tests
-          # Use "./gradlew test" instead if tests are not run in parallel
           command: |
               cd TribesBackend
               ./gradlew test
+  deploy:
+    docker:
+      - image: buildpack-deps:trusty
+    steps:
+      - checkout
       - run:
-          name: Assemble JAR
+          name: Deploy master to Heroku
           command: |
-            # Skip this for other nodes
-            if [ "$CIRCLE_NODE_INDEX" == 0 ]; then
-              cd TribesBackend
-              ./gradlew assemble
-            fi
-      # This will be empty for all nodes except the first one
-      - store_artifacts:
-          path: TribesBackend/build/libs
-
+            git subtree push --prefix TribesBackend https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
 workflows:
   version: 2
   workflow:
     jobs:
     - build
-    - test:
+    - tests:
         requires:
           - build
+    - deploy:
+        requires:
+          - build
+          - tests
+        filters:
+          branches:
+            only:
+              - master
