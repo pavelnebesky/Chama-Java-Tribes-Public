@@ -27,9 +27,8 @@ public class UserService {
         return userRepository.findByEmail(email) != null;
     }
 
-    public boolean authenticateUserByCreds(User user) {
-        User expectedUser = userRepository.findByEmail(user.getEmail());
-        return expectedUser!=null && expectedUser.getPassword().equals(user.getPassword());
+    public boolean doesPasswordMatchAccount(User user){
+        return userRepository.findByEmail(user.getEmail()).getPassword().equals(user.getPassword());
     }
 
     public User findById(Long userId) {
