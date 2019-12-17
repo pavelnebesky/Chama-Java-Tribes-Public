@@ -36,7 +36,7 @@ public class UserController {
     }
 
     @GetMapping("/logout")
-    public void  Logout(HttpServletResponse response){
-       response.setStatus(200);
+    public void Logout(HttpServletResponse response) {
+        response.setStatus(200);
     }
 }
