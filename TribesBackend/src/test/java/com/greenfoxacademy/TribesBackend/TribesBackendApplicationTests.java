@@ -53,6 +53,10 @@ class TribesBackendApplicationTests {
     public void getKingdomMethodExists() throws InstanceNotFoundException {
         assertThat(kingdomController.getKingdom()).isNotNull();
     }
-
-
+    
+    @Test
+    public void doesEmailValidatorWork(){
+        assertEquals(userService.isEmailValid("jajenc@seznam.cz"), true);
+        assertEquals(userService.isEmailValid("blablafuk@smrdim,prd"), false);
+    }
 }
