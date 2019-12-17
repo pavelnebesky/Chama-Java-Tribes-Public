@@ -17,7 +17,7 @@ public class KingdomService {
                 && name.matches("[a-zA-Z]+");
     }
 
-    public Kingdom getKingdomByUserId(String userId) {
-        return kingdomRepo.findByUserId(Long.parseLong(userId));
+    public Kingdom getKingdomByUserId(Long userId) {
+        return kingdomRepo.findByUserId(userId);
     }
 }
