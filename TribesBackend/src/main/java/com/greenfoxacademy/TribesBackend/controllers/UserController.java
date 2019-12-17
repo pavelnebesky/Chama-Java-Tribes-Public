@@ -21,16 +21,16 @@ public class UserController {
     public User getUserById(@PathVariable(value = "id") Long userId) {
 
         User user = userService.findById(userId);
-            return user;
-        }
+        return user;
+    }
 
-     @PostMapping("/register")
-     public User registerUser (@RequestBody User user){
-     return userService.save(user);
+    @PostMapping("/register")
+    public User registerUser(@RequestBody User user) {
+        return userService.save(user);
     }
 
     @GetMapping("/logout")
-    public void  Logout(HttpServletResponse response){
-       response.setStatus(200);
+    public void Logout(HttpServletResponse response) {
+        response.setStatus(200);
     }
 }
