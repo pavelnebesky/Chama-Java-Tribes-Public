@@ -12,6 +12,6 @@ public class Kingdom {
     @GeneratedValue
     private Long id;
     private String name;
-    @ManyToOne
+    @OneToOne
     private User user;
 }
