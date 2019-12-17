@@ -21,22 +21,22 @@ public class UserController {
 
     @PostMapping("/login")
     public String getUserById(@RequestBody User user, HttpServletRequest request, HttpServletResponse response) {
-        if(user==null || user.getEmail()==null || user.getPassword()==null){
+        if (user == null || user.getEmail() == null || user.getPassword() == null) {
             response.setStatus(400);
-            if(user==null || (user.getEmail()==null && user.getPassword()==null)){
+            if (user == null || (user.getEmail() == null && user.getPassword() == null)) {
                 return "Missing parameter(s): email, password!";
-            }else if(user.getEmail()==null){
+            } else if (user.getEmail() == null) {
                 return "Missing parameter(s): email!";
-            }else{
+            } else {
                 return "Missing parameter(s): password!";
             }
-        }else if(!userService.doesUserExistByEmail(user.getEmail())){
-            return "No such user: "+user.getEmail()+"!";
-        }else if(!userService.doesPasswordMatchAccount(user)){
+        } else if (!userService.doesUserExistByEmail(user.getEmail())) {
+            return "No such user: " + user.getEmail() + "!";
+        } else if (!userService.doesPasswordMatchAccount(user)) {
             return "Wrong password!";
-        }else{
-            user=userService.findByEmail(user.getEmail());
-            return userService.getAuthenticationService().generateJWT(request.getRemoteAddr(),user.getId());
+        } else {
+            user = userService.findByEmail(user.getEmail());
+            return userService.getAuthenticationService().generateJWT(request.getRemoteAddr(), user.getId());
         }
     }
 
