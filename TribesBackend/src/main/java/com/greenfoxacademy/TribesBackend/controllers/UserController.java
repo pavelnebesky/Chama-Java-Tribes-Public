@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.crypto.dsig.spec.XSLTTransformParameterSpec;
 import java.net.http.HttpClient;
@@ -19,11 +20,16 @@ public class UserController {
 
     @PostMapping("/login/{id}")
     public User getUserById(@PathVariable(value = "id") Long userId) {
-
         User user = userService.findById(userId);
             return user;
-        }
+    }
 
+    @PostMapping("/login")
+    public User getUserById(@RequestBody User user, HttpServletRequest request) {
+        if(user!=null && user.getUsername()!=null && user.getPassword()!=null){
+        }
+        return user;
+    }
      @PostMapping("/register")
      public User registerUser (@RequestBody User user){
      return userService.save(user);

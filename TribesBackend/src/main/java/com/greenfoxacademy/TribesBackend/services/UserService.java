@@ -1,19 +1,25 @@
 package com.greenfoxacademy.TribesBackend.services;
 import com.greenfoxacademy.TribesBackend.models.User;
 import com.greenfoxacademy.TribesBackend.repositories.UserRepository;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Getter
+@Setter
 @Service
 public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private AuthenticationService authenticationService;
 
-    public boolean doesUserExist(User user) {
-        return userRepository.findById(user.getId()).isPresent();
+    public boolean doesUserExistById(Long id) {
+        return userRepository.findById(id).isPresent();
     }
 
     public User findById(Long userId) {
