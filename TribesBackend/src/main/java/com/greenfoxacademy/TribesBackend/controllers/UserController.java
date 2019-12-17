@@ -21,18 +21,27 @@ public class UserController {
     @PostMapping("/login/{id}")
     public User getUserById(@PathVariable(value = "id") Long userId) {
         User user = userService.findById(userId);
-            return user;
+        return user;
     }
 
     @PostMapping("/login")
-    public User getUserById(@RequestBody User user, HttpServletRequest request) {
-        if(user!=null && user.getUsername()!=null && user.getPassword()!=null){
+    public String getUserById(@RequestBody User user, HttpServletRequest request, HttpServletResponse response) {
+        if (user != null
+                && user.getEmail() != null
+                && user.getPassword() != null
+                && userService.authenticateUserByCreds(user)) {
+            user = userService.findByEmail(user.getEmail());
+            return userService.getAuthenticationService().generateJWT(request.getRemoteAddr(), user.getId());
+            
+        } else {
+            response.setStatus(401);
+            return null;
         }
-        return user;
     }
-     @PostMapping("/register")
-     public User registerUser (@RequestBody User user){
-     return userService.save(user);
+
+    @PostMapping("/register")
+    public User registerUser(@RequestBody User user) {
+        return userService.save(user);
     }
 
     @GetMapping("/logout")

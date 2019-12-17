@@ -29,9 +29,9 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
                 DecodedJWT decodedjwt = JWT.require(Algorithm.HMAC512(SECRET.getBytes()))
                         .build()
                         .verify(token.replace(TOKEN_PREFIX, ""));
-                String tokenIp = decodedjwt.getHeaderClaim(IP_CLAIM).asString();
+                String expectedIp = decodedjwt.getHeaderClaim(IP_CLAIM).asString();
                 String actualIp = request.getRemoteAddr();
-                return actualIp.equals(tokenIp);
+                return actualIp.equals(expectedIp);
             } catch (SecurityException e) {
                 response.setStatus(401);
             }

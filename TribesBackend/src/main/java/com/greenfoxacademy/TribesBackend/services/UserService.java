@@ -1,4 +1,5 @@
 package com.greenfoxacademy.TribesBackend.services;
+
 import com.greenfoxacademy.TribesBackend.models.User;
 import com.greenfoxacademy.TribesBackend.repositories.UserRepository;
 import lombok.Getter;
@@ -22,9 +23,22 @@ public class UserService {
         return userRepository.findById(id).isPresent();
     }
 
+    public boolean doesUserExistByEmail(String email) {
+        return userRepository.findByEmail(email) != null;
+    }
+
+    public boolean authenticateUserByCreds(User user) {
+        User expectedUser = userRepository.findByEmail(user.getEmail());
+        return expectedUser!=null && expectedUser.getPassword().equals(user.getPassword());
+    }
+
     public User findById(Long userId) {
         User user = userRepository.findById(userId).get();
         return user;
+    }
+
+    public User findByEmail(String email){
+        return userRepository.findByEmail(email);
     }
 
     public User save(User user) {
