@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class KingdomController {
 
     @GetMapping("/kingdom")
-    public String getKingdom(){
+    public String getKingdom() {
         return "test";
     }
 }

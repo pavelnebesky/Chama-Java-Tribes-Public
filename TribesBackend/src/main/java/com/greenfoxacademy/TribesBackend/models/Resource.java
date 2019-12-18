@@ -1,20 +1,19 @@
 package com.greenfoxacademy.TribesBackend.models;
+
+import com.greenfoxacademy.TribesBackend.enums.resourceType;
 import lombok.Getter;
 import lombok.Setter;
-
 import javax.persistence.*;
-import java.util.List;
 
 @Getter
 @Setter
 @Entity
-public class Kingdom {
+public class Resource {
     @Id
     @GeneratedValue
     private Long id;
-    private String name;
-    @OneToOne
-    private User user;
-    @OneToMany
-    private List<Resource> resources;
+    private resourceType type;
+    private int amount;
+    @ManyToOne
+    private Kingdom kingdom;
 }
