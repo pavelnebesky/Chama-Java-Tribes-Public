@@ -21,7 +21,7 @@ public class UserController {
 
     @PostMapping("/login")
     public String getUserById(@RequestBody User user, HttpServletRequest request, HttpServletResponse response) {
-        String checkResult = userService.checkUserParams(user, response);
+        String checkResult = userService.checkUserLoginParams(user, response);
         if (checkResult == null) {
             user = userService.findByEmail(user.getEmail());
             return userService.getAuthenticationService().generateJWT(request.getRemoteAddr(), user.getId());
@@ -31,8 +31,14 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public void registerUser(@RequestBody User user) {
-        userService.save(user);
+    public String registerUser(@RequestBody User user, HttpServletResponse response) {
+        String checkResult=userService.checkUserRegisterParams(user, response);
+        if (checkResult == null) {
+            userService.addNewUser(user);
+            return "";
+        } else {
+            return checkResult;
+        }
     }
 
     @GetMapping("/logout")

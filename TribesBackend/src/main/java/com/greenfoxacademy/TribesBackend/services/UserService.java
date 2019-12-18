@@ -1,5 +1,6 @@
 package com.greenfoxacademy.TribesBackend.services;
 
+import com.greenfoxacademy.TribesBackend.models.Kingdom;
 import com.greenfoxacademy.TribesBackend.models.User;
 import com.greenfoxacademy.TribesBackend.repositories.UserRepository;
 import lombok.Getter;
@@ -20,6 +21,8 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private AuthenticationService authenticationService;
+    @Autowired
+    private KingdomService kingdomService;
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -47,16 +50,43 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public String checkUserParams(User user, HttpServletResponse response) {
-        if (user == null || user.getEmail() == null || user.getPassword() == null) {
+    public void addNewUser(User user){
+        Kingdom kingdom=new Kingdom();
+        kingdomService.addNewKingdom(kingdom);
+        user.setKingdom(kingdom);
+        userRepository.save(user);
+    }
+
+    public String getMissingParameters(User user) {
+        if (user == null || (user.getEmail() == null && user.getPassword() == null)) {
+            return "Missing parameter(s): email, password!";
+        } else if (user.getEmail() == null) {
+            return "Missing parameter(s): email!";
+        } else if (user.getPassword() == null) {
+            return "Missing parameter(s): password!";
+        } else{
+            return null;
+        }
+    }
+
+    public String checkUserRegisterParams(User user, HttpServletResponse response) {
+        String missingParams = getMissingParameters(user);
+        if (missingParams != null) {
             response.setStatus(400);
-            if (user == null || (user.getEmail() == null && user.getPassword() == null)) {
-                return "Missing parameter(s): email, password!";
-            } else if (user.getEmail() == null) {
-                return "Missing parameter(s): email!";
-            } else {
-                return "Missing parameter(s): password!";
-            }
+            return missingParams;
+        } else if (doesUserExistByEmail(user.getEmail())) {
+            response.setStatus(409);
+            return "Username already taken, please choose an other one.";
+        } else{
+            return null;
+        }
+    }
+
+    public String checkUserLoginParams(User user, HttpServletResponse response) {
+        String missingParams=getMissingParameters(user);
+        if (missingParams!=null) {
+            response.setStatus(400);
+            return missingParams;
         } else if (!doesUserExistByEmail(user.getEmail())) {
             response.setStatus(401);
             return "No such user: " + user.getEmail() + "!";

@@ -1,4 +1,5 @@
 package com.greenfoxacademy.TribesBackend.models;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +13,15 @@ public class Kingdom {
     @GeneratedValue
     private Long id;
     private String name;
+    @JsonIgnore
     @OneToOne
     private User user;
+
+    public Kingdom(String name){
+        this.name=name;
+    }
+
+    public Kingdom(){
+
+    }
 }
