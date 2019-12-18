@@ -8,13 +8,18 @@ import com.greenfoxacademy.TribesBackend.controllers.UserController;
 import com.greenfoxacademy.TribesBackend.controllers.KingdomController;
 import com.greenfoxacademy.TribesBackend.models.User;
 import com.greenfoxacademy.TribesBackend.repositories.KingdomRepository;
+import com.greenfoxacademy.TribesBackend.services.KingdomService;
 import com.greenfoxacademy.TribesBackend.services.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
 
 import javax.management.InstanceNotFoundException;
 
@@ -54,17 +59,10 @@ class TribesBackendApplicationTests {
     public void controllerLoads() throws InstanceNotFoundException {
         assertThat(userController).isNotNull();
     }
-
-    /*@Test
-    public void getKingdomMethodExists() throws InstanceNotFoundException {
-        assertThat(kingdomController.getKingdom()).isNotNull();
-<<<<<<< HEAD
-  }*/
     
     @Test
-    public void doesEmailValidatorWork(){
+    public void doesEmailValidatorWork() throws Exception{
         assertEquals(userService.isEmailValid("jajenc@seznam.cz"), true);
         assertEquals(userService.isEmailValid("blablafuk@smrdim,prd"), false);
     }
-
 }
