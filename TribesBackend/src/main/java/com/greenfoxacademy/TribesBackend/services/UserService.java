@@ -5,10 +5,10 @@ import com.greenfoxacademy.TribesBackend.models.User;
 import com.greenfoxacademy.TribesBackend.repositories.UserRepository;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
@@ -97,5 +97,9 @@ public class UserService {
             response.setStatus(200);
             return null;
         }
+    }
+
+    public boolean isEmailValid(String email) {
+        return EmailValidator.getInstance().isValid(email);
     }
 }
