@@ -42,17 +42,19 @@ workflows:
   workflow:
     jobs:
     - build:
-        branches:
-          only:
-            - development
-            - master
+        filters:
+          branches:
+            only:
+              - development
+              - master
     - tests:
         requires:
           - build
-        branches:
-          only:
-            - development
-            - master
+        filters:
+          branches:
+            only:
+              - development
+              - master
     - deploy:
         requires:
           - build
