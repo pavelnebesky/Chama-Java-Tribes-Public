@@ -18,7 +18,7 @@ public class Building {
         mine,
         barracks
     }
-    private int level;
+    private int level = 1;
     private int hp;
     private Timestamp started_at;
     private Timestamp finished_at;
