@@ -2,11 +2,10 @@ package com.greenfoxacademy.TribesBackend.controllers;
 
 import com.auth0.jwt.JWT;
 import com.greenfoxacademy.TribesBackend.models.Kingdom;
-import com.greenfoxacademy.TribesBackend.models.ResponseMessage;
 import com.greenfoxacademy.TribesBackend.services.KingdomService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,8 +35,8 @@ public class KingdomController {
         if (kingdom != null) {
             return ResponseEntity.ok(kingdom);
         } else {
-            ResponseMessage responseMessage = new ResponseMessage("error", "UserId not found");
-            return new ResponseEntity(responseMessage, HttpStatus.NOT_FOUND);
+            ModelMap modelMap = new ModelMap().addAttribute("status", "some message");
+            return ResponseEntity.status(404).body(modelMap);
         }
     }
 }
