@@ -18,6 +18,8 @@ public class Building {
         mine,
         barracks
     }
+    private int level;
+    private int hp;
     private Timestamp started_at;
     private Timestamp finished_at;
     @ManyToOne
