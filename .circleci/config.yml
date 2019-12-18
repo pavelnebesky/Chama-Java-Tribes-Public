@@ -41,10 +41,18 @@ workflows:
   version: 2
   workflow:
     jobs:
-    - build
+    - build:
+        branches:
+          only:
+            - development
+            - master
     - tests:
         requires:
           - build
+        branches:
+          only:
+            - development
+            - master
     - deploy:
         requires:
           - build
