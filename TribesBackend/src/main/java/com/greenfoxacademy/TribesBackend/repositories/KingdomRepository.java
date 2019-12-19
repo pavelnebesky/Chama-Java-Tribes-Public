@@ -9,5 +9,4 @@ import java.util.List;
 @Repository
 public interface KingdomRepository extends CrudRepository<Kingdom, Long> {
     Kingdom findByName(String name);
-    List<Resource> getKingdomsResources(Kingdom kingdom);
 }

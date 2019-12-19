@@ -15,7 +15,7 @@ public class Kingdom {
     private String name;
     @OneToOne
     private User user;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Resource> resources;
     @OneToOne(cascade = CascadeType.ALL)
     private Location location;
