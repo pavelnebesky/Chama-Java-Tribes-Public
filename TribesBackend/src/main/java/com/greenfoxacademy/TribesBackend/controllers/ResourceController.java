@@ -16,12 +16,15 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 public class ResourceController {
+
     @Autowired
     private ResourceService resourceService;
+    @Autowired
+    private KingdomService kingdomService;
 
     @GetMapping("/kingdom/resources")
     public ResponseEntity getResource(HttpServletRequest request) {
-        Kingdom kingdom=new Kingdom();
+        Kingdom kingdom = kingdomService.getCurrentUsersKingdom();
         ModelMap modelMap = new ModelMap();
         modelMap.addAttribute("resources", resourceService.getResources(kingdom));
         return ResponseEntity.ok(modelMap);
