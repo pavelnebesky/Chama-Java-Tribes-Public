@@ -3,6 +3,7 @@ package com.greenfoxacademy.TribesBackend.controllers;
 import com.auth0.jwt.JWT;
 import com.greenfoxacademy.TribesBackend.models.Kingdom;
 import com.greenfoxacademy.TribesBackend.services.KingdomService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
@@ -22,11 +23,12 @@ public class KingdomController {
     KingdomService kingdomService;
 
     @GetMapping("/kingdom")
-    public Kingdom getKingdom(HttpServletRequest request) {
+    public ResponseEntity getKingdom(HttpServletRequest request) {
         //TODO: TEST
+        //TODO: Replace with getIdFromToken when available
         String token = request.getHeader("Authorization").replace(TOKEN_PREFIX, "");
         String userId = JWT.decode(token).getClaim(ID_CLAIM).asString();
-        return kingdomService.getKingdomByUserId(Long.parseLong(userId));
+        return ResponseEntity.ok(kingdomService.getKingdomByUserId(Long.parseLong(userId)));
     }
 
     @GetMapping("kingdom/{userId}")

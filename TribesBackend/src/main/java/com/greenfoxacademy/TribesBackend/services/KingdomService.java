@@ -12,7 +12,6 @@ public class KingdomService {
     @Autowired
     private KingdomRepository kingdomRepository;
 
-
     public boolean isKingdomNameValid(String name) {
         return kingdomRepository.findByName(name) == null
                 && name.length() > 6
