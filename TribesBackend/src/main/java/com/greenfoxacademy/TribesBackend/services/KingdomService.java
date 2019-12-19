@@ -5,6 +5,7 @@ import com.greenfoxacademy.TribesBackend.models.Kingdom;
 import com.greenfoxacademy.TribesBackend.repositories.KingdomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.ModelMap;
 
 @Service
 public class KingdomService {
@@ -21,4 +22,18 @@ public class KingdomService {
     public Kingdom getKingdomByUserId(Long userId) {
         return kingdomRepository.findByUserId(userId);
     }
+
+    public void updateKingdom(Kingdom kingdomToUpdate, ModelMap updatedVars) {
+        if (updatedVars.containsAttribute("name")){
+            kingdomToUpdate.setName((String)updatedVars.getAttribute("name"));
+        }
+        if (updatedVars.containsAttribute("locationX")) {
+            kingdomToUpdate.getLocation().setX((int) updatedVars.getAttribute("locationX"));
+        }
+        if (updatedVars.containsAttribute("locationY")) {
+            kingdomToUpdate.getLocation().setY((int) updatedVars.getAttribute("locationY"));
+        }
+        kingdomRepository.save(kingdomToUpdate);
+    }
+
 }

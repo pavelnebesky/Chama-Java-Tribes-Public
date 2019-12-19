@@ -7,9 +7,7 @@ import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -43,5 +41,15 @@ public class KingdomController {
                                               .addAttribute("message","UserId not found");
             return ResponseEntity.status(404).body(modelMap);
         }
+    }
+    @PutMapping("/kingdom")
+    public ResponseEntity updateKingdom(@RequestBody ModelMap kingdomVars, HttpServletRequest request){
+        //TODO: TEST
+        //TODO: Replace with getIdFromToken when available
+        String token = request.getHeader("Authorization").replace(TOKEN_PREFIX, "");
+        String userId = JWT.decode(token).getClaim(ID_CLAIM).asString();
+        Kingdom kingdom = kingdomService.getKingdomByUserId(Long.parseLong(userId));
+        kingdomService.updateKingdom(kingdom, kingdomVars);
+        return ResponseEntity.ok(kingdom);
     }
 }
