@@ -3,15 +3,19 @@ package com.greenfoxacademy.TribesBackend.services;
 import com.greenfoxacademy.TribesBackend.models.Kingdom;
 
 import com.greenfoxacademy.TribesBackend.repositories.KingdomRepository;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 
+@Getter
 @Service
 public class KingdomService {
 
     @Autowired
     private KingdomRepository kingdomRepository;
+    @Autowired
+    private AuthenticationService authenticationService;
 
     public boolean isKingdomNameValid(String name) {
         return kingdomRepository.findByName(name) == null

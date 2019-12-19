@@ -18,15 +18,13 @@ import static com.greenfoxacademy.TribesBackend.constants.SecurityConstants.TOKE
 public class KingdomController {
 
     @Autowired
-    KingdomService kingdomService;
+    private KingdomService kingdomService;
 
     @GetMapping("/kingdom")
     public ResponseEntity getKingdom(HttpServletRequest request) {
         //TODO: TEST
-        //TODO: Replace with getIdFromToken when available
-        String token = request.getHeader("Authorization").replace(TOKEN_PREFIX, "");
-        String userId = JWT.decode(token).getClaim(ID_CLAIM).asString();
-        return ResponseEntity.ok(kingdomService.getKingdomByUserId(Long.parseLong(userId)));
+        Long userId = kingdomService.getAuthenticationService().getIdFromToken(request);
+        return ResponseEntity.ok(kingdomService.getKingdomByUserId(userId));
     }
 
     @GetMapping("kingdom/{userId}")
@@ -45,10 +43,8 @@ public class KingdomController {
     @PutMapping("/kingdom")
     public ResponseEntity updateKingdom(@RequestBody ModelMap kingdomVars, HttpServletRequest request){
         //TODO: TEST
-        //TODO: Replace with getIdFromToken when available
-        String token = request.getHeader("Authorization").replace(TOKEN_PREFIX, "");
-        String userId = JWT.decode(token).getClaim(ID_CLAIM).asString();
-        Kingdom kingdom = kingdomService.getKingdomByUserId(Long.parseLong(userId));
+        Long userId = kingdomService.getAuthenticationService().getIdFromToken(request);
+        Kingdom kingdom = kingdomService.getKingdomByUserId(userId);
         kingdomService.updateKingdom(kingdom, kingdomVars);
         return ResponseEntity.ok(kingdom);
     }
