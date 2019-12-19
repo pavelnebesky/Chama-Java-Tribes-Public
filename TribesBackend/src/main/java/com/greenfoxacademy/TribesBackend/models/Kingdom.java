@@ -3,6 +3,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -14,4 +15,6 @@ public class Kingdom {
     private String name;
     @OneToOne
     private User user;
+    @OneToMany(cascade=CascadeType.ALL)
+    private List<Building> buildings;
 }
