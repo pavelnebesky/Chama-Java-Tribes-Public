@@ -8,6 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TroopRepository extends CrudRepository<Troop, Long> {
-
     Troop findAllByKingdom(Kingdom kingdom);
 }
