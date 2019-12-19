@@ -17,4 +17,6 @@ public class Kingdom {
     private User user;
     @OneToMany
     private List<Resource> resources;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Location location;
 }
