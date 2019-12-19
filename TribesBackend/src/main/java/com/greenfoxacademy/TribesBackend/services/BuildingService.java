@@ -13,9 +13,9 @@ public class BuildingService {
     @Autowired
     private BuildingRepository buildingRepository;
     private KingdomRepository kingdomRepository;
-    private static final int secondsToBuildMine  = 10;
-    private static final int secondsToBuildFarm  = 10;
-    private static final int secondsToBuildBarracks  = 10;
+    private static final int milisecondsToBuildMine  = 10000;
+    private static final int milisecondsToBuildFarm  = 10000;
+    private static final int milisecondsToBuildBarracks  = 10000;
 
     public Building saveBuilding (Building building) {
         buildingRepository.save(building);
@@ -44,15 +44,15 @@ public class BuildingService {
         newBuilding.setHp(1);
         newBuilding.setKingdom(kingdomRepository.findByUserId(userId));
         newBuilding.setLevel(1);
-        newBuilding.setStarted_at(System.currentTimeMillis() / 1000l);
+        newBuilding.setStarted_at(System.currentTimeMillis());
         if (type=="mine") {
-            newBuilding.setFinished_at(newBuilding.getStarted_at() + secondsToBuildMine);
+            newBuilding.setFinished_at(newBuilding.getStarted_at() + milisecondsToBuildMine);
         }
         else if (type=="farm") {
-            newBuilding.setFinished_at(newBuilding.getStarted_at() + secondsToBuildFarm);
+            newBuilding.setFinished_at(newBuilding.getStarted_at() + milisecondsToBuildFarm);
         }
         else if (type=="barracks") {
-            newBuilding.setFinished_at(newBuilding.getStarted_at() + secondsToBuildBarracks);
+            newBuilding.setFinished_at(newBuilding.getStarted_at() + milisecondsToBuildBarracks);
         }
         saveBuilding(newBuilding);
         return newBuilding;
