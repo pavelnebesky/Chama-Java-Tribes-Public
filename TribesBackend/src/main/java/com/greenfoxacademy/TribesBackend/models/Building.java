@@ -1,4 +1,6 @@
 package com.greenfoxacademy.TribesBackend.models;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.greenfoxacademy.TribesBackend.enums.BuildingType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,16 +14,12 @@ public class Building {
     @Id
     @GeneratedValue
     private Long id;
-    private enum Type {
-        townhall,
-        farm,
-        mine,
-        barracks
-    }
+    private BuildingType type;
     private int level = 1;
     private int hp;
-    private Timestamp started_at;
-    private Timestamp finished_at;
+    private long started_at;
+    private long finished_at;
     @ManyToOne
+    @JsonIgnore
     private Kingdom kingdom;
 }
