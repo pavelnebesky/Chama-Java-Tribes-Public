@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ExceptionService {
 
-    public ResponseEntity handleResponseWithException(FrontendException e){
+    public ResponseEntity handleResponseWithException(FrontendException e) {
         return ResponseEntity.status(e.getSc()).body(e.getMessage());
     }
 }
