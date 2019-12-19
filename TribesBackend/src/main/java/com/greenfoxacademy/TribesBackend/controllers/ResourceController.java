@@ -24,7 +24,7 @@ public class ResourceController {
 
     @GetMapping("/kingdom/resources")
     public ResponseEntity getResource(HttpServletRequest request) {
-        Kingdom kingdom = kingdomService.getCurrentUsersKingdom();
+        Kingdom kingdom = new Kingdom(); // Later on something like kingdomService.getCurrentUsersKingdom();
         ModelMap modelMap = new ModelMap();
         modelMap.addAttribute("resources", resourceService.getResources(kingdom));
         return ResponseEntity.ok(modelMap);
