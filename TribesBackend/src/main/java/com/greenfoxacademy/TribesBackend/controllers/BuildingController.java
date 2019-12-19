@@ -26,7 +26,7 @@ public class BuildingController {
         //TODO: TEST
         String token = request.getHeader("Authorization").replace(TOKEN_PREFIX, "");
         String userId = JWT.decode(token).getClaim(ID_CLAIM).asString();
-        ModelMap modelMap = new ModelMap().addAttribute("buildings", buildingService.getAllBuildingsByUserId(Long.parseLong(userId)))
+        ModelMap modelMap = new ModelMap().addAttribute("buildings", buildingService.getAllBuildingsByUserId(Long.parseLong(userId)));
         return ResponseEntity.ok (modelMap);
     }
 
@@ -35,10 +35,8 @@ public class BuildingController {
         //TODO: TEST
         String token = request.getHeader("Authorization").replace(TOKEN_PREFIX, "");
         long userId = Long.parseLong(JWT.decode(token).getClaim(ID_CLAIM).asString());
-
-        buildingService.createBuilding(userId, type);
-        ModelMap modelMap = new ModelMap().addAttribute("buildings", buildingService.getAllBuildingsByUserId(Long.parseLong(userId)))
-        return ResponseEntity.ok (modelMap);
+        Building newBuilding = buildingService.createAndReturnBuilding(userId, type);
+        return ResponseEntity.ok (newBuilding);
     }
 
     @GetMapping("/kingdom/buildings/{buildingId}")
@@ -48,7 +46,7 @@ public class BuildingController {
         String userId = JWT.decode(token).getClaim(ID_CLAIM).asString();
         if (Long.parseLong(userId)==buildingService.getBuildingById(buildingId).getKingdom().getUser().getId())
         {
-            ModelMap modelMap = new ModelMap().addAttribute("buildings", buildingService.getBuildingById(buildingId))
+            ModelMap modelMap = new ModelMap().addAttribute("buildings", buildingService.getBuildingById(buildingId));
             return ResponseEntity.ok (modelMap);
         }
         else
@@ -67,16 +65,16 @@ public class BuildingController {
 //        return kingdomService.getKingdomByUserId(Long.parseLong(userId));
 //    }
 
-        @GetMapping("kingdom/{userId}")
-        public ResponseEntity getKingdomByUserId(@PathVariable long userId) {
-            //TODO: TEST
-            Kingdom kingdom = kingdomService.getKingdomByUserId(userId);
-            if (kingdom != null) {
-                return ResponseEntity.ok(kingdom);
-            }
-            else {
-                ModelMap modelMap = new ModelMap().addAttribute("status", "error")
-                        .addAttribute("message","UserId not found");
-                return ResponseEntity.status(404).body(modelMap);
-            }
+//        @GetMapping("kingdom/{userId}")
+//        public ResponseEntity getKingdomByUserId(@PathVariable long userId) {
+//            //TODO: TEST
+//            Kingdom kingdom = kingdomService.getKingdomByUserId(userId);
+//            if (kingdom != null) {
+//                return ResponseEntity.ok(kingdom);
+//            }
+//            else {
+//                ModelMap modelMap = new ModelMap().addAttribute("status", "error")
+//                        .addAttribute("message","UserId not found");
+//                return ResponseEntity.status(404).body(modelMap);
+//            }
 }

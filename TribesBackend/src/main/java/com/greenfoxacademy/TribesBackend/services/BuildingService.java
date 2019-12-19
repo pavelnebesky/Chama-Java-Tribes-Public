@@ -17,8 +17,9 @@ public class BuildingService {
     private static final int secondsToBuildFarm  = 10;
     private static final int secondsToBuildBarracks  = 10;
 
-    public void saveBuilding (Building building) {
+    public Building saveBuilding (Building building) {
         buildingRepository.save(building);
+        return building;
     }
 
     public Iterable<Building> getAllBuildingsByUserId(long userId) {
@@ -29,7 +30,7 @@ public class BuildingService {
         return buildingRepository.findBuildingById(buildingId);
     }
 
-    public void createBuilding(long userId, String type) {
+    public Building createAndReturnBuilding(long userId, String type) {
         Building newBuilding = new Building();
         if (type=="mine") {
             newBuilding.setType(BuildingType.mine);
@@ -48,12 +49,13 @@ public class BuildingService {
             newBuilding.setFinished_at(newBuilding.getStarted_at() + secondsToBuildMine);
         }
         else if (type=="farm") {
-            newBuilding.setFinished_at(newBuilding.getStarted_at() + secondsToBuildMine);
+            newBuilding.setFinished_at(newBuilding.getStarted_at() + secondsToBuildFarm);
         }
         else if (type=="barracks") {
             newBuilding.setFinished_at(newBuilding.getStarted_at() + secondsToBuildBarracks);
         }
         saveBuilding(newBuilding);
+        return newBuilding;
     }
 
 }
