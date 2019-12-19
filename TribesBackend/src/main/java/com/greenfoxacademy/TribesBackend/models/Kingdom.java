@@ -13,7 +13,7 @@ public class Kingdom {
     @GeneratedValue
     private Long id;
     private String name;
-    @OneToOne
+    @OneToOne(cascade=CascadeType.PERSIST)
     private User user;
     @OneToMany(cascade=CascadeType.ALL)
     private List<Building> buildings;

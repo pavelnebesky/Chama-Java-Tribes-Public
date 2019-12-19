@@ -19,7 +19,6 @@ public class Building {
     private int hp;
     private long started_at;
     private long finished_at;
-    @ManyToOne
-    @JsonIgnore
+    @ManyToOne(cascade=CascadeType.ALL)
     private Kingdom kingdom;
 }
