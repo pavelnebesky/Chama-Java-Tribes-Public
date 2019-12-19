@@ -24,27 +24,21 @@ public class BuildingController {
     @GetMapping("/kingdom/buildings")
     public ResponseEntity getBuildings(HttpServletRequest request) {
         //TODO: TEST
-        String token = request.getHeader("Authorization").replace(TOKEN_PREFIX, "");
-        String userId = JWT.decode(token).getClaim(ID_CLAIM).asString();
-        ModelMap modelMap = new ModelMap().addAttribute("buildings", buildingService.getAllBuildingsByUserId(Long.parseLong(userId)));
+        ModelMap modelMap = new ModelMap().addAttribute("buildings", buildingService.getAllBuildingsByUserId(buildingService.getAuthenticationService().getIdFromToken(request)));
         return ResponseEntity.ok(modelMap);
     }
 
     @PostMapping("/kingdom/buildings")
     public ResponseEntity getBuildings(HttpServletRequest request, @RequestBody String type) {
         //TODO: TEST
-        String token = request.getHeader("Authorization").replace(TOKEN_PREFIX, "");
-        long userId = Long.parseLong(JWT.decode(token).getClaim(ID_CLAIM).asString());
-        Building newBuilding = buildingService.createAndReturnBuilding(userId, type);
+        Building newBuilding = buildingService.createAndReturnBuilding(buildingService.getAuthenticationService().getIdFromToken(request), type);
         return ResponseEntity.ok(newBuilding);
     }
 
     @GetMapping("/kingdom/buildings/{buildingId}")
     public ResponseEntity getBuilding(HttpServletRequest request, @PathVariable long buildingId) {
         //TODO: TEST
-        String token = request.getHeader("Authorization").replace(TOKEN_PREFIX, "");
-        String userId = JWT.decode(token).getClaim(ID_CLAIM).asString();
-        if (Long.parseLong(userId) == buildingService.getBuildingById(buildingId).getKingdom().getUser().getId()) {
+        if (buildingService.getAuthenticationService().getIdFromToken(request) == buildingService.getBuildingById(buildingId).getKingdom().getUser().getId()) {
             ModelMap modelMap = new ModelMap().addAttribute("buildings", buildingService.getBuildingById(buildingId));
             return ResponseEntity.ok(modelMap);
         } else {
@@ -57,8 +51,6 @@ public class BuildingController {
     @PutMapping("/kingdom/buildings/{buildingId}")
     public ResponseEntity updateBuilding(HttpServletRequest request, @PathVariable long buildingId, @RequestBody int level) {
         //TODO: TEST
-        String token = request.getHeader("Authorization").replace(TOKEN_PREFIX, "");
-        long userId = Long.parseLong(JWT.decode(token).getClaim(ID_CLAIM).asString());
         Building updateBuilding = buildingService.getBuildingById(buildingId);
         updateBuilding.setLevel(level);
         buildingService.saveBuilding(updateBuilding);
