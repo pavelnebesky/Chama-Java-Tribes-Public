@@ -8,19 +8,12 @@ public enum BuildingType {
 
     private final String text;
 
-    /**
-     * @param text
-     */
     BuildingType( final String text) {
         this.text = text;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Enum#toString()
-     */
     @Override
     public String toString() {
         return text;
     }
-
 }
