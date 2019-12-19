@@ -30,8 +30,8 @@ public class AuthenticationService {
                 .sign(HMAC512(SECRET.getBytes()));
     }
 
-    public Long getIdFromToken(HttpServletRequest request){
-        String token= request.getHeader(HEADER_STRING).replace(TOKEN_PREFIX,"");
+    public Long getIdFromToken(HttpServletRequest request) {
+        String token = request.getHeader(HEADER_STRING).replace(TOKEN_PREFIX, "");
         return Long.parseLong(JWT.decode(token).getClaim(ID_CLAIM).asString());
     }
 }
