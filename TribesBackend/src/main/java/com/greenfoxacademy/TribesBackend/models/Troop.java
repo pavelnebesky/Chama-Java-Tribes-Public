@@ -24,8 +24,8 @@ public class Troop {
     private int hp;
     private int attack;
     private int defence;
-    private LocalDateTime started_at;
-    private LocalDateTime finished_at;
+    private long started_at;
+    private long finished_at;
     @JsonIgnore
     @ManyToOne
     private Kingdom kingdom;
