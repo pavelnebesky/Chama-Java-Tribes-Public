@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 import static com.greenfoxacademy.TribesBackend.constants.SecurityConstants.ID_CLAIM;
+import static com.greenfoxacademy.TribesBackend.constants.SecurityConstants.TOKEN_PREFIX;
 
 @RestController
 public class KingdomController {
@@ -23,7 +24,7 @@ public class KingdomController {
     @GetMapping("/kingdom")
     public Kingdom getKingdom(HttpServletRequest request) {
         //TODO: TEST
-        String token = request.getHeader("Authorization").replace("Bearer ", "");
+        String token = request.getHeader("Authorization").replace(TOKEN_PREFIX, "");
         String userId = JWT.decode(token).getClaim(ID_CLAIM).asString();
         return kingdomService.getKingdomByUserId(Long.parseLong(userId));
     }
@@ -34,8 +35,10 @@ public class KingdomController {
         Kingdom kingdom = kingdomService.getKingdomByUserId(userId);
         if (kingdom != null) {
             return ResponseEntity.ok(kingdom);
-        } else {
-            ModelMap modelMap = new ModelMap().addAttribute("status", "some message");
+        }
+        else {
+            ModelMap modelMap = new ModelMap().addAttribute("status", "error")
+                                              .addAttribute("message","UserId not found");
             return ResponseEntity.status(404).body(modelMap);
         }
     }
