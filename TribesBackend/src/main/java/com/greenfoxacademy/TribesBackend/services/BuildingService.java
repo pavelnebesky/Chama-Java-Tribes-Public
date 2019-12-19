@@ -14,7 +14,9 @@ public class BuildingService {
 
     @Autowired
     private BuildingRepository buildingRepository;
+    @Autowired
     private KingdomRepository kingdomRepository;
+    @Autowired
     private AuthenticationService authenticationService;
 
     private static final int milisecondsToBuildMine  = 10000;

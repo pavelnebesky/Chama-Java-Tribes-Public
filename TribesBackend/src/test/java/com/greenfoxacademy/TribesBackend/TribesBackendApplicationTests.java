@@ -20,8 +20,7 @@ import javax.management.InstanceNotFoundException;
 @SpringBootTest
 class TribesBackendApplicationTests {
 
-    @Autowired
-    private HomeController homeController;
+
     @Autowired
     private KingdomController kingdomController;
     @Autowired
@@ -29,10 +28,6 @@ class TribesBackendApplicationTests {
     @Autowired
     private UserController userController;
 
-    @Test
-    public void contexLoads() throws InstanceNotFoundException {
-        assertThat(homeController).isNotNull();
-    }
 
     @Test
     public void kingdomControllerExists() throws InstanceNotFoundException {
