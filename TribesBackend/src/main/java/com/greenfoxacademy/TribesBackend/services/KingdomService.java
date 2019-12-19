@@ -10,16 +10,16 @@ import org.springframework.stereotype.Service;
 public class KingdomService {
 
     @Autowired
-    private KingdomRepository kingdomRepo;
+    private KingdomRepository kingdomRepository;
 
 
     public boolean isKingdomNameValid(String name) {
-        return kingdomRepo.findByName(name) == null
+        return kingdomRepository.findByName(name) == null
                 && name.length() > 6
                 && name.matches("[a-zA-Z]+");
     }
 
     public Kingdom getKingdomByUserId(Long userId) {
-        return kingdomRepo.findByUserId(userId);
+        return kingdomRepository.findByUserId(userId);
     }
 }

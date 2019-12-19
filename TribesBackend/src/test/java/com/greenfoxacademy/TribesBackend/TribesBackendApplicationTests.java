@@ -22,14 +22,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import javax.management.InstanceNotFoundException;
+import javax.servlet.http.HttpServletRequest;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 class TribesBackendApplicationTests {
-
-    @MockBean
-    @Autowired
-    private KingdomRepository kingdomMockRepository;
 
     @Autowired
     private HomeController homeController;
