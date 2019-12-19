@@ -22,6 +22,6 @@ public class Building {
     private int hp;
     private Timestamp started_at;
     private Timestamp finished_at;
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.ALL)
     private Kingdom kingdom;
 }
