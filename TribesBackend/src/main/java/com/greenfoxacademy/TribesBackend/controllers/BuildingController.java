@@ -1,6 +1,5 @@
 package com.greenfoxacademy.TribesBackend.controllers;
 
-import com.auth0.jwt.JWT;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.greenfoxacademy.TribesBackend.models.Building;
 import com.greenfoxacademy.TribesBackend.repositories.BuildingRepository;
@@ -11,10 +10,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-
-import static com.greenfoxacademy.TribesBackend.constants.SecurityConstants.ID_CLAIM;
-import static com.greenfoxacademy.TribesBackend.constants.SecurityConstants.TOKEN_PREFIX;
 
 @RestController
 public class BuildingController {
@@ -25,7 +20,7 @@ public class BuildingController {
     @GetMapping("/kingdom/buildings")
     public ResponseEntity getBuildings(HttpServletRequest request) {
         //TODO: TEST
-        ModelMap modelMap = new ModelMap().addAttribute("buildings", buildingService.getAllBuildingsByUserId(buildingService.getAuthenticationService().getIdFromToken(request)));
+        ModelMap modelMap = new ModelMap().addAttribute("buildings", buildingService.getBuildingsByToken(request));
         return ResponseEntity.ok(modelMap);
     }
 
@@ -33,21 +28,21 @@ public class BuildingController {
     public ResponseEntity getBuildings(HttpServletRequest request, @RequestBody Building building) {
         //TODO: TEST
         //String loudScreaming = jsonType.getJSONObject("LabelData").getString("slogan");
-        String type = building.getType().toString();
-        Building newBuilding = buildingService.createAndReturnBuilding(buildingService.getAuthenticationService().getIdFromToken(request), building.getType().toString());
+        String buildingType = building.getType().toString();
+        Long userId = buildingService.getAuthenticationService().getIdFromToken(request);
+        Building newBuilding = buildingService.createAndReturnBuilding( userId, buildingType);
         return ResponseEntity.ok(newBuilding);
     }
 
     @GetMapping("/kingdom/buildings/{buildingId}")
     public ResponseEntity getBuilding(HttpServletRequest request, @PathVariable long buildingId) {
         //TODO: TEST
-        if (buildingService.getAuthenticationService().getIdFromToken(request) == buildingService.getBuildingById(buildingId).getKingdom().getUser().getId()) {
-            return ResponseEntity.ok(buildingService.getBuildingById(buildingId));
-        } else {
-            ModelMap modelMap = new ModelMap().addAttribute("status", "error")
-                    .addAttribute("message", buildingId + " not found");
-            return ResponseEntity.status(404).body(modelMap);
-        }
+       return ResponseEntity.ok(buildingService.getBuildingById(buildingId));
+//        } else {
+//            ModelMap modelMap = new ModelMap().addAttribute("status", "error")
+//                    .addAttribute("message", buildingId + " not found");
+//            return ResponseEntity.status(404).body(modelMap);
+//        }
     }
 
     @PutMapping("/kingdom/buildings/{buildingId}")

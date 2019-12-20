@@ -8,6 +8,8 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Service
 @Getter
 public class BuildingService {
@@ -36,17 +38,14 @@ public class BuildingService {
         return buildingRepository.findById(buildingId).get();
     }
 
+    public Iterable<Building> getBuildingsByToken(HttpServletRequest request)
+    {
+        return getAllBuildingsByUserId(getAuthenticationService().getIdFromToken(request));
+    }
+
     public Building createAndReturnBuilding(long userId, String type) {
         Building newBuilding = new Building();
-        if (type=="mine") {
-            newBuilding.setType(BuildingType.mine);
-        }
-        else if (type=="farm") {
-            newBuilding.setType(BuildingType.farm);
-        }
-        else if (type=="barracks") {
-            newBuilding.setType(BuildingType.barracks);
-        }
+        newBuilding.setType(BuildingType.valueOf(type));
         newBuilding.setHp(1);
         newBuilding.setKingdom(kingdomRepository.findByUserId(userId));
         newBuilding.setLevel(1);
