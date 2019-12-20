@@ -24,7 +24,6 @@ public class HomeControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private HomeController homeController;
 

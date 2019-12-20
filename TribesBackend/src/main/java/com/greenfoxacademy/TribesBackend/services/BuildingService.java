@@ -33,7 +33,7 @@ public class BuildingService {
     }
 
     public Building getBuildingById(long buildingId) {
-        return buildingRepository.findBuildingById(buildingId);
+        return buildingRepository.findById(buildingId).get();
     }
 
     public Building createAndReturnBuilding(long userId, String type) {
