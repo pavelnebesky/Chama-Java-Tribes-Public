@@ -1,6 +1,7 @@
 package com.greenfoxacademy.TribesBackend.controllers;
 
 import com.auth0.jwt.JWT;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.greenfoxacademy.TribesBackend.models.Building;
 import com.greenfoxacademy.TribesBackend.repositories.BuildingRepository;
 import com.greenfoxacademy.TribesBackend.services.BuildingService;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.json.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -29,9 +31,11 @@ public class BuildingController {
     }
 
     @PostMapping("/kingdom/buildings")
-    public ResponseEntity getBuildings(HttpServletRequest request, @RequestBody String type) {
+    public ResponseEntity getBuildings(HttpServletRequest request, @RequestBody Building building) {
         //TODO: TEST
-        Building newBuilding = buildingService.createAndReturnBuilding(buildingService.getAuthenticationService().getIdFromToken(request), type);
+        //String loudScreaming = jsonType.getJSONObject("LabelData").getString("slogan");
+        String type = building.getType().toString();
+        Building newBuilding = buildingService.createAndReturnBuilding(buildingService.getAuthenticationService().getIdFromToken(request), building.getType().toString());
         return ResponseEntity.ok(newBuilding);
     }
 
