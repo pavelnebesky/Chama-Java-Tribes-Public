@@ -20,6 +20,7 @@ public class BuildingController {
     @GetMapping("/kingdom/buildings")
     public ResponseEntity getBuildings(HttpServletRequest request) {
         //TODO: TEST
+        //TODO: ERRORS
         ModelMap modelMap = new ModelMap().addAttribute("buildings", buildingService.getBuildingsByToken(request));
         return ResponseEntity.ok(modelMap);
     }
@@ -27,6 +28,7 @@ public class BuildingController {
     @PostMapping("/kingdom/buildings")
     public ResponseEntity getBuildings(HttpServletRequest request, @RequestBody Building building) {
         //TODO: TEST
+        //TODO: ERRORS
         //String loudScreaming = jsonType.getJSONObject("LabelData").getString("slogan");
         String buildingType = building.getType().toString();
         Long userId = buildingService.getAuthenticationService().getIdFromToken(request);
@@ -37,17 +39,14 @@ public class BuildingController {
     @GetMapping("/kingdom/buildings/{buildingId}")
     public ResponseEntity getBuilding(HttpServletRequest request, @PathVariable long buildingId) {
         //TODO: TEST
+        //TODO: ERRORS
        return ResponseEntity.ok(buildingService.getBuildingById(buildingId));
-//        } else {
-//            ModelMap modelMap = new ModelMap().addAttribute("status", "error")
-//                    .addAttribute("message", buildingId + " not found");
-//            return ResponseEntity.status(404).body(modelMap);
-//        }
     }
 
     @PutMapping("/kingdom/buildings/{buildingId}")
     public ResponseEntity updateBuilding(HttpServletRequest request, @PathVariable long buildingId, @RequestBody Building building) {
         //TODO: TEST
+        //TODO: ERRORS
         Building updateBuilding = buildingService.getBuildingById(buildingId);
         updateBuilding.setLevel(building.getLevel());
         buildingService.saveBuilding(updateBuilding);
