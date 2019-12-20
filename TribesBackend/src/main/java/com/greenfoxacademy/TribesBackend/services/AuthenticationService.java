@@ -6,6 +6,7 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -29,5 +30,10 @@ public class AuthenticationService {
                 .withClaim(ID_CLAIM, String.valueOf(id))
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .sign(HMAC512(SECRET.getBytes()));
+    }
+
+    public Long getIdFromToken(HttpServletRequest request) {
+        String token = request.getHeader(HEADER_STRING).replace(TOKEN_PREFIX, "");
+        return Long.parseLong(JWT.decode(token).getClaim(ID_CLAIM).asString());
     }
 }
