@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
-import org.json.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -43,8 +42,7 @@ public class BuildingController {
     public ResponseEntity getBuilding(HttpServletRequest request, @PathVariable long buildingId) {
         //TODO: TEST
         if (buildingService.getAuthenticationService().getIdFromToken(request) == buildingService.getBuildingById(buildingId).getKingdom().getUser().getId()) {
-            ModelMap modelMap = new ModelMap().addAttribute("buildings", buildingService.getBuildingById(buildingId));
-            return ResponseEntity.ok(modelMap);
+            return ResponseEntity.ok(buildingService.getBuildingById(buildingId));
         } else {
             ModelMap modelMap = new ModelMap().addAttribute("status", "error")
                     .addAttribute("message", buildingId + " not found");
@@ -53,10 +51,10 @@ public class BuildingController {
     }
 
     @PutMapping("/kingdom/buildings/{buildingId}")
-    public ResponseEntity updateBuilding(HttpServletRequest request, @PathVariable long buildingId, @RequestBody int level) {
+    public ResponseEntity updateBuilding(HttpServletRequest request, @PathVariable long buildingId, @RequestBody Building building) {
         //TODO: TEST
         Building updateBuilding = buildingService.getBuildingById(buildingId);
-        updateBuilding.setLevel(level);
+        updateBuilding.setLevel(building.getLevel());
         buildingService.saveBuilding(updateBuilding);
         return ResponseEntity.status(200).body(updateBuilding);
     }
