@@ -21,18 +21,11 @@ import javax.management.InstanceNotFoundException;
 class TribesBackendApplicationTests {
 
     @Autowired
-    private HomeController homeController;
-    @Autowired
     private KingdomController kingdomController;
     @Autowired
     private UserService userService;
     @Autowired
     private UserController userController;
-
-    @Test
-    public void contexLoads() throws InstanceNotFoundException {
-        assertThat(homeController).isNotNull();
-    }
 
     @Test
     public void kingdomControllerExists() throws InstanceNotFoundException {
@@ -53,9 +46,9 @@ class TribesBackendApplicationTests {
     public void getKingdomMethodExists() throws InstanceNotFoundException {
         assertThat(kingdomController.getKingdom()).isNotNull();
     }
-    
+
     @Test
-    public void doesEmailValidatorWork(){
+    public void doesEmailValidatorWork() {
         assertEquals(userService.isEmailValid("jajenc@seznam.cz"), true);
         assertEquals(userService.isEmailValid("blablafuk@smrdim,prd"), false);
     }
