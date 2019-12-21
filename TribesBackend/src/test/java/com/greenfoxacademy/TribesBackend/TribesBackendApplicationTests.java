@@ -20,18 +20,11 @@ import javax.management.InstanceNotFoundException;
 class TribesBackendApplicationTests {
 
     @Autowired
-    private HomeController homeController;
-    @Autowired
     private KingdomController kingdomController;
     @Autowired
     private UserService userService;
     @Autowired
     private UserController userController;
-
-    @Test
-    public void contexLoads() throws InstanceNotFoundException {
-        assertThat(homeController).isNotNull();
-    }
 
     @Test
     public void kingdomControllerExists() throws InstanceNotFoundException {

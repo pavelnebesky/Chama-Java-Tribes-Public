@@ -12,5 +12,4 @@ public class HomeController {
     public String greeting() {
         return "Hello World";
     }
-
 }
