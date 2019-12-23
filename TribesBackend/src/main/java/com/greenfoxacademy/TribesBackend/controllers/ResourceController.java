@@ -24,7 +24,8 @@ public class ResourceController {
 
     @GetMapping("/kingdom/resources")
     public ResponseEntity getResource(HttpServletRequest request) {
-        Kingdom kingdom = new Kingdom(); // Later on something like kingdomService.getCurrentUsersKingdom();
+        Long userId = resourceService.getAuthenticationService().getIdFromToken(request);
+        Kingdom kingdom = kingdomService.GetKingdomByUserId(userId);
         ModelMap modelMap = new ModelMap();
         modelMap.addAttribute("resources", resourceService.getResources(kingdom));
         return ResponseEntity.ok(modelMap);
@@ -32,7 +33,10 @@ public class ResourceController {
 
     @GetMapping("/kingdom/resources/{resourceType}")
     public ResponseEntity getResourceType(@PathVariable String resourceType) {
-        return ResponseEntity.ok(null);
+        resourceType type = resourceService.returnEnum(resourceType);
+        ModelMap modelMap = new ModelMap();
+        modelMap.addAttribute(resourceService.findResourceByType(type));
+        return ResponseEntity.ok(modelMap);
     }
 }
 

@@ -26,7 +26,11 @@ public class ResourceService {
         return resourceType.valueOf(type);
     }
 
-    public List<Resource> getResources(Kingdom kingdom){
+    public Resource findResourceByType(resourceType type) {
+        return resourceRepository.findByType(type);
+    }
+
+    public List<Resource> getResources(Kingdom kingdom) {
         return resourceRepository.getAllByKingdom(kingdom);
     }
 }
