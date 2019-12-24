@@ -25,23 +25,22 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity getUserById(@RequestBody User user, HttpServletRequest request) {
-        //try {
-        //    userService.checkUserParamsForLogin(user);
-        //} catch (FrontendException e) {
-        //    return userService.getExceptionService().handleResponseWithException(e);
-        //}
-        return ResponseEntity.ok(userService.generateTokenBasedOnEmail(user.getEmail(),request));
+        try {
+            userService.checkUserParamsForLogin(user);
+        } catch (FrontendException e) {
+            return userService.getExceptionService().handleResponseWithException(e);
+        }
+        return ResponseEntity.ok(userService.createLoginResponse(user, request));
     }
 
     @PostMapping("/register")
     public ResponseEntity registerUser(@RequestBody User user) {
-        //try {
-        //    userService.checkUserParamsForReg(user);
-        //} catch (FrontendException e) {
-        //    return userService.getExceptionService().handleResponseWithException(e);
-        //}
-        userService.registerUser(user);
-        return ResponseEntity.ok(null);
+        try {
+            userService.checkUserParamsForReg(user);
+        } catch (FrontendException e) {
+            return userService.getExceptionService().handleResponseWithException(e);
+        }
+        return ResponseEntity.ok(userService.registerUser(user));
     }
 
     @GetMapping("/logout")
