@@ -6,8 +6,8 @@ import com.greenfoxacademy.TribesBackend.repositories.KingdomRepository;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import javax.servlet.http.HttpServletRequest;
+import org.springframework.ui.ModelMap;
 
 @Getter
 @Service
@@ -26,9 +26,20 @@ public class KingdomService {
                 && name.matches("[a-zA-Z]+");
     }
 
-    public Kingdom GetKingdomByUserId(Long id) {
-        User user = userService.findById(id);
-        Kingdom kingdom = kingdomRepository.findByUser(user);
-        return kingdom;
+    public Kingdom getKingdomByUserId(Long userId) {
+        return kingdomRepository.findByUserId(userId);
+    }
+
+    public void updateKingdom(Kingdom kingdomToUpdate, ModelMap updatedVars) {
+        if (updatedVars.containsAttribute("name")){
+            kingdomToUpdate.setName((String)updatedVars.getAttribute("name"));
+        }
+        if (updatedVars.containsAttribute("locationX")) {
+            kingdomToUpdate.getLocation().setX((int) updatedVars.getAttribute("locationX"));
+        }
+        if (updatedVars.containsAttribute("locationY")) {
+            kingdomToUpdate.getLocation().setY((int) updatedVars.getAttribute("locationY"));
+        }
+        kingdomRepository.save(kingdomToUpdate);
     }
 }

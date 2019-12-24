@@ -1,4 +1,5 @@
 package com.greenfoxacademy.TribesBackend.repositories;
+
 import com.greenfoxacademy.TribesBackend.models.Kingdom;
 import com.greenfoxacademy.TribesBackend.models.Resource;
 import com.greenfoxacademy.TribesBackend.models.User;
@@ -11,4 +12,5 @@ import java.util.List;
 public interface KingdomRepository extends CrudRepository<Kingdom, Long> {
     Kingdom findByName(String name);
     Kingdom findByUser(User user);
+    Kingdom findByUserId(Long userId);
 }

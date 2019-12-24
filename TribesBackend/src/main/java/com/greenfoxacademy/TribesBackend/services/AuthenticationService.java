@@ -18,7 +18,7 @@ import static com.greenfoxacademy.TribesBackend.constants.SecurityConstants.*;
 @Service
 public class AuthenticationService {
 
-    public static final List<String> publicEndpoints = List.of("/login", "/register");
+    public static final List<String> publicEndpoints = List.of("/login", "/register", "/");
 
     @Autowired
     private UserRepository userRepository;
