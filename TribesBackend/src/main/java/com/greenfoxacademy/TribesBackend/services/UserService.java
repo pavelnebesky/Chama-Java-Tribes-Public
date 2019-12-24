@@ -14,6 +14,7 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.ModelMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -62,14 +63,32 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public User registerUser(User user) {
+    public String generateKingdomNameByEmail(String email){
+        if(email.contains("@")){
+            return email.split("@")[0] + "'s kingdom";
+        }
+        else {
+            return null;
+        }
+    }
+
+    public ModelMap createRegisterResponse(User user){
+        ModelMap modelMap=new ModelMap();
+        modelMap.addAttribute("id", user.getId());
+        modelMap.addAttribute("email", user.getEmail());
+        modelMap.addAttribute("kingdom", user.getKingdom().getName());
+        return modelMap;
+    }
+
+    public ModelMap registerUser(User user) {
         user.setPassword(bCryptPasswordEncoder.encode(user.getEmail()));
         Kingdom kingdom = new Kingdom();
         kingdom.setUser(user);
+        kingdom.setName(generateKingdomNameByEmail(user.getEmail()));
         user.setKingdom(kingdom);
         userRepository.save(user);
         kingdomRepository.save(kingdom);
-        return findByEmail(user.getEmail());
+        return createRegisterResponse(findByEmail(user.getEmail()));
     }
 
     public void checkUserParamsForLogin(User user) throws MissingParamsException, NoSuchEmailException, IncorrectPasswordException {
