@@ -73,10 +73,13 @@ public class UserService {
     }
 
     public String generateEmailVerificationCode(){
-        String code="";
-        for (int i=0; i<VER_CODE_LENGTH; i++){
-            code+= (char) ThreadLocalRandom.current().nextInt(65,91);
-        }
+        String code;
+        do{
+            code="";
+            for (int i=0; i<VER_CODE_LENGTH; i++){
+                code+= (char) ThreadLocalRandom.current().nextInt(65,91);
+            }
+        }while(userRepository.findByVerificationCode(code)!=null);
         return code;
     }
 
