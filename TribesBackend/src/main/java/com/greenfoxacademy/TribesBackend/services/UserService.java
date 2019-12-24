@@ -91,8 +91,8 @@ public class UserService {
     public void verifyEmail(String verCode) throws IncorrectVerCodeException, EmailAlreadyVerifiedException {
         User user=userRepository.findByVerificationCode(verCode);
         if(user!=null){
-            if(!user.getIsEmailVerified()){
-                user.setIsEmailVerified(true);
+            if(!user.isEmailVerified()){
+                user.setEmailVerified(true);
                 userRepository.save(user);
             }else{
                 throw new EmailAlreadyVerifiedException();
@@ -123,7 +123,7 @@ public class UserService {
         kingdom.setUser(user);
         kingdom.setName(generateKingdomNameByEmail(user.getEmail()));
         user.setKingdom(kingdom);
-        user.setIsEmailVerified(false);
+        user.setEmailVerified(false);
         String verCode=generateEmailVerificationCode();
         user.setVerificationCode(verCode);
         userRepository.save(user);
