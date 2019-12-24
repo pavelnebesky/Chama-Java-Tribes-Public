@@ -30,7 +30,7 @@ public class UserController {
         } catch (FrontendException e) {
             return userService.getExceptionService().handleResponseWithException(e);
         }
-        return ResponseEntity.ok(userService.generateTokenBasedOnEmail(user.getEmail(), request));
+        return ResponseEntity.ok(userService.createLoginResponse(user, request));
     }
 
     @PostMapping("/register")

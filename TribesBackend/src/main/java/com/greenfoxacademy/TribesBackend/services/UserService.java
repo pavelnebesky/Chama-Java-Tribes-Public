@@ -46,11 +46,6 @@ public class UserService {
         return userRepository.findByEmail(email) != null;
     }
 
-    public boolean doesPasswordMatchAccount(User user) {
-        String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
-        return userRepository.findByEmail(user.getEmail()).getPassword().equals(encodedPassword);
-    }
-
     public User findById(Long userId) {
         return userRepository.findById(userId).get();
     }
@@ -72,6 +67,13 @@ public class UserService {
         }
     }
 
+    public ModelMap createLoginResponse(User user, HttpServletRequest request){
+        ModelMap modelMap=new ModelMap();
+        modelMap.addAttribute("status", "ok");
+        modelMap.addAttribute("token", generateTokenBasedOnEmail(user.getEmail(),request));
+        return modelMap;
+    }
+
     public ModelMap createRegisterResponse(User user){
         ModelMap modelMap=new ModelMap();
         modelMap.addAttribute("id", user.getId());
@@ -81,7 +83,7 @@ public class UserService {
     }
 
     public ModelMap registerUser(User user) {
-        user.setPassword(bCryptPasswordEncoder.encode(user.getEmail()));
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         Kingdom kingdom = new Kingdom();
         kingdom.setUser(user);
         kingdom.setName(generateKingdomNameByEmail(user.getEmail()));
@@ -95,7 +97,7 @@ public class UserService {
         checkMissingParams(user);
         if (!doesUserExistByEmail(user.getEmail())) {
             throw new NoSuchEmailException(user.getEmail());
-        } else if (!doesPasswordMatchAccount(user)) {
+        } else if (!bCryptPasswordEncoder.matches(user.getPassword(),findByEmail(user.getEmail()).getPassword())) {
             throw new IncorrectPasswordException();
         }
     }
@@ -111,7 +113,8 @@ public class UserService {
         List<String> missingParams = new ArrayList<String>();
         if (user.getEmail() == null) {
             missingParams.add("email");
-        } else if (user.getPassword() == null) {
+        }
+        if (user.getPassword() == null) {
             missingParams.add("password");
         }
         if (!missingParams.isEmpty()) {
