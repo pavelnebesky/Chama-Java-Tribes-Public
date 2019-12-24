@@ -49,10 +49,10 @@ public class UserController {
     }
 
     @GetMapping("/verify/{verCode}")
-    public ResponseEntity verify(@PathVariable String verCode){
-        try{
+    public ResponseEntity verify(@PathVariable String verCode) {
+        try {
             userService.verifyEmail(verCode);
-        } catch (FrontendException e){
+        } catch (FrontendException e) {
             return userService.getExceptionService().handleResponseWithException(e);
         }
         return ResponseEntity.ok().body("email verified!");

@@ -72,14 +72,14 @@ public class UserService {
         javaMailSender.send(msg);
     }
 
-    public String generateEmailVerificationCode(){
+    public String generateEmailVerificationCode() {
         String code;
-        do{
-            code="";
-            for (int i=0; i<VER_CODE_LENGTH; i++){
-                code+= (char) ThreadLocalRandom.current().nextInt(65,91);
+        do {
+            code = "";
+            for (int i = 0; i < VER_CODE_LENGTH; i++) {
+                code += (char) ThreadLocalRandom.current().nextInt(65, 91);
             }
-        }while(userRepository.findByVerificationCode(code)!=null);
+        } while (userRepository.findByVerificationCode(code) != null);
         return code;
     }
 
@@ -92,15 +92,15 @@ public class UserService {
     }
 
     public void verifyEmail(String verCode) throws IncorrectVerCodeException, EmailAlreadyVerifiedException {
-        User user=userRepository.findByVerificationCode(verCode);
-        if(user!=null){
-            if(!user.isEmailVerified()){
+        User user = userRepository.findByVerificationCode(verCode);
+        if (user != null) {
+            if (!user.isEmailVerified()) {
                 user.setEmailVerified(true);
                 userRepository.save(user);
-            }else{
+            } else {
                 throw new EmailAlreadyVerifiedException();
             }
-        }else{
+        } else {
             throw new IncorrectVerCodeException();
         }
     }
@@ -127,11 +127,11 @@ public class UserService {
         kingdom.setName(generateKingdomNameByEmail(user.getEmail()));
         user.setKingdom(kingdom);
         user.setEmailVerified(false);
-        String verCode=generateEmailVerificationCode();
+        String verCode = generateEmailVerificationCode();
         user.setVerificationCode(verCode);
         userRepository.save(user);
         kingdomRepository.save(kingdom);
-        sendEmailVer(user.getEmail(),verCode);
+        sendEmailVer(user.getEmail(), verCode);
         return createRegisterResponse(findByEmail(user.getEmail()));
     }
 
@@ -140,7 +140,7 @@ public class UserService {
         if (!doesUserExistByEmail(user.getEmail())) {
             throw new NoSuchEmailException(user.getEmail());
         }
-        if(!findByEmail(user.getEmail()).isEmailVerified()){
+        if (!findByEmail(user.getEmail()).isEmailVerified()) {
             throw new EmailNotVerifiedException();
         }
         if (!bCryptPasswordEncoder.matches(user.getPassword(), findByEmail(user.getEmail()).getPassword())) {

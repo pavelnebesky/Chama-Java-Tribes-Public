@@ -15,7 +15,7 @@ public class User {
     private String email;
     private String password;
     private String fullName;
-    @OneToOne(cascade=CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
     private Kingdom kingdom;
     private String verificationCode;
     private boolean isEmailVerified;
