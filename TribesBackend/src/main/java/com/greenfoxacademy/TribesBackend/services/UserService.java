@@ -12,6 +12,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +24,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static com.greenfoxacademy.TribesBackend.constants.EmailVerConstants.VER_CODE_LENGTH;
+import static com.greenfoxacademy.TribesBackend.constants.EmailVerConstants.*;
 
 @Getter
 @Setter
@@ -41,6 +43,8 @@ public class UserService {
     private ExceptionService exceptionService;
     @Autowired
     private KingdomRepository kingdomRepository;
+    @Autowired
+    private JavaMailSender javaMailSender;
 
     public boolean doesUserExistById(Long id) {
         return userRepository.findById(id).isPresent();
@@ -66,6 +70,14 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public void sendEmailVer(String receiver, String verCode) {
+        SimpleMailMessage msg = new SimpleMailMessage();
+        msg.setTo(receiver);
+        msg.setSubject(SUBJECT);
+        msg.setText(MESSAGE.replace(CHARS_TO_BE_REPLACED, verCode));
+        javaMailSender.send(msg);
+    }
+
     public String generateEmailVerificationCode(){
         String code="";
         for (int i=0; i<VER_CODE_LENGTH; i++){
@@ -79,9 +91,11 @@ public class UserService {
         kingdom.setUser(user);
         user.setKingdom(kingdom);
         user.setEmailVerified(false);
-        user.setVerificationCode(generateEmailVerificationCode());
+        String verCode=generateEmailVerificationCode();
+        user.setVerificationCode(verCode);
         userRepository.save(user);
         kingdomRepository.save(kingdom);
+        sendEmailVer(user.getEmail(),verCode);
     }
 
     public void checkUserParamsForLogin(User user) throws MissingParamsException, NoSuchEmailException, IncorrectPasswordException {
