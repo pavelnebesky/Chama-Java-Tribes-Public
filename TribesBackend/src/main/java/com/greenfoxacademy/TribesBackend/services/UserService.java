@@ -135,11 +135,15 @@ public class UserService {
         return createRegisterResponse(findByEmail(user.getEmail()));
     }
 
-    public void checkUserParamsForLogin(User user) throws MissingParamsException, NoSuchEmailException, IncorrectPasswordException {
+    public void checkUserParamsForLogin(User user) throws MissingParamsException, NoSuchEmailException, IncorrectPasswordException, EmailNotVerifiedException {
         checkMissingParams(user);
         if (!doesUserExistByEmail(user.getEmail())) {
             throw new NoSuchEmailException(user.getEmail());
-        } else if (!bCryptPasswordEncoder.matches(user.getPassword(), findByEmail(user.getEmail()).getPassword())) {
+        }
+        if(!findByEmail(user.getEmail()).isEmailVerified()){
+            throw new EmailNotVerifiedException();
+        }
+        if (!bCryptPasswordEncoder.matches(user.getPassword(), findByEmail(user.getEmail()).getPassword())) {
             throw new IncorrectPasswordException();
         }
     }

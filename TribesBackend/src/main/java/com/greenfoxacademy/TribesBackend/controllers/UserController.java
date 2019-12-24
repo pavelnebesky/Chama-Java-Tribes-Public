@@ -55,6 +55,6 @@ public class UserController {
         } catch (FrontendException e){
             return userService.getExceptionService().handleResponseWithException(e);
         }
-        return ResponseEntity.ok().body(null);
+        return ResponseEntity.ok().body("email verified!");
     }
 }
