@@ -20,6 +20,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
+
+import static com.greenfoxacademy.TribesBackend.constants.EmailVerConstants.VER_CODE_LENGTH;
 
 @Getter
 @Setter
@@ -63,10 +66,20 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public String generateEmailVerificationCode(){
+        String code="";
+        for (int i=0; i<VER_CODE_LENGTH; i++){
+            code+= (char) ThreadLocalRandom.current().nextInt(65,91);
+        }
+        return code;
+    }
+
     public void registerUser(User user) {
         Kingdom kingdom = new Kingdom();
         kingdom.setUser(user);
         user.setKingdom(kingdom);
+        user.setEmailVerified(false);
+        user.setVerificationCode(generateEmailVerificationCode());
         userRepository.save(user);
         kingdomRepository.save(kingdom);
     }

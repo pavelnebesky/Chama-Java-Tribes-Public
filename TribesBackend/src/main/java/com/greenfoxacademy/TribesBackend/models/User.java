@@ -2,10 +2,8 @@ package com.greenfoxacademy.TribesBackend.models;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Getter
 @Setter
@@ -19,5 +17,7 @@ public class User {
     private String fullName;
     @OneToOne(cascade=CascadeType.ALL)
     private Kingdom kingdom;
+    private String verificationCode;
+    private boolean isEmailVerified;
     //Token, email and so on to be added later on
 }
