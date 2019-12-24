@@ -9,7 +9,7 @@ import org.springframework.ui.ModelMap;
 public class ExceptionService {
 
     public ResponseEntity handleResponseWithException(FrontendException e) {
-        ModelMap modelMap=new ModelMap();
+        ModelMap modelMap = new ModelMap();
         modelMap.addAttribute("status", "error");
         modelMap.addAttribute("error", e.getMessage());
         return ResponseEntity.status(e.getSc()).body(modelMap);

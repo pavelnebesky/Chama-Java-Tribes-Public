@@ -58,24 +58,23 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public String generateKingdomNameByEmail(String email){
-        if(email.contains("@")){
+    public String generateKingdomNameByEmail(String email) {
+        if (email.contains("@")) {
             return email.split("@")[0] + "'s kingdom";
-        }
-        else {
+        } else {
             return null;
         }
     }
 
-    public ModelMap createLoginResponse(User user, HttpServletRequest request){
-        ModelMap modelMap=new ModelMap();
+    public ModelMap createLoginResponse(User user, HttpServletRequest request) {
+        ModelMap modelMap = new ModelMap();
         modelMap.addAttribute("status", "ok");
-        modelMap.addAttribute("token", generateTokenBasedOnEmail(user.getEmail(),request));
+        modelMap.addAttribute("token", generateTokenBasedOnEmail(user.getEmail(), request));
         return modelMap;
     }
 
-    public ModelMap createRegisterResponse(User user){
-        ModelMap modelMap=new ModelMap();
+    public ModelMap createRegisterResponse(User user) {
+        ModelMap modelMap = new ModelMap();
         modelMap.addAttribute("id", user.getId());
         modelMap.addAttribute("email", user.getEmail());
         modelMap.addAttribute("kingdom", user.getKingdom().getName());
@@ -97,7 +96,7 @@ public class UserService {
         checkMissingParams(user);
         if (!doesUserExistByEmail(user.getEmail())) {
             throw new NoSuchEmailException(user.getEmail());
-        } else if (!bCryptPasswordEncoder.matches(user.getPassword(),findByEmail(user.getEmail()).getPassword())) {
+        } else if (!bCryptPasswordEncoder.matches(user.getPassword(), findByEmail(user.getEmail()).getPassword())) {
             throw new IncorrectPasswordException();
         }
     }
