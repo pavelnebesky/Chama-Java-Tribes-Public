@@ -46,7 +46,8 @@ public class UserService {
     }
 
     public boolean doesPasswordMatchAccount(User user) {
-        return userRepository.findByEmail(user.getEmail()).getPassword().equals(bCryptPasswordEncoder.encode(user.getPassword()));
+        String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
+        return userRepository.findByEmail(user.getEmail()).getPassword().equals(encodedPassword);
     }
 
     public User findById(Long userId) {
@@ -61,24 +62,18 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void registerUser(User user) {
+    public User registerUser(User user) {
+        user.setPassword(bCryptPasswordEncoder.encode(user.getEmail()));
         Kingdom kingdom = new Kingdom();
         kingdom.setUser(user);
         user.setKingdom(kingdom);
         userRepository.save(user);
         kingdomRepository.save(kingdom);
+        return findByEmail(user.getEmail());
     }
 
     public void checkUserParamsForLogin(User user) throws MissingParamsException, NoSuchEmailException, IncorrectPasswordException {
-        List<String> missingParams = new ArrayList<String>();
-        if (user.getEmail() == null) {
-            missingParams.add("email");
-        } else if (user.getPassword() == null) {
-            missingParams.add("password");
-        }
-        if (!missingParams.isEmpty()) {
-            throw new MissingParamsException(missingParams);
-        }
+        checkMissingParams(user);
         if (!doesUserExistByEmail(user.getEmail())) {
             throw new NoSuchEmailException(user.getEmail());
         } else if (!doesPasswordMatchAccount(user)) {
@@ -86,7 +81,14 @@ public class UserService {
         }
     }
 
-    public void checkUserParamsForReg(User user) throws MissingParamsException, NoSuchEmailException, IncorrectPasswordException, EmailAlreadyTakenException {
+    public void checkUserParamsForReg(User user) throws MissingParamsException, EmailAlreadyTakenException {
+        checkMissingParams(user);
+        if (doesUserExistByEmail(user.getEmail())) {
+            throw new EmailAlreadyTakenException(user.getEmail());
+        }
+    }
+
+    public void checkMissingParams(User user) throws MissingParamsException {
         List<String> missingParams = new ArrayList<String>();
         if (user.getEmail() == null) {
             missingParams.add("email");
@@ -95,11 +97,6 @@ public class UserService {
         }
         if (!missingParams.isEmpty()) {
             throw new MissingParamsException(missingParams);
-        }
-        if (doesUserExistByEmail(user.getEmail())) {
-            throw new EmailAlreadyTakenException(user.getEmail());
-        } else if (!doesPasswordMatchAccount(user)) {
-            throw new IncorrectPasswordException();
         }
     }
 
