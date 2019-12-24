@@ -1,9 +1,6 @@
 package com.greenfoxacademy.TribesBackend.services;
 
-import com.greenfoxacademy.TribesBackend.exceptions.EmailAlreadyTakenException;
-import com.greenfoxacademy.TribesBackend.exceptions.IncorrectPasswordException;
-import com.greenfoxacademy.TribesBackend.exceptions.MissingParamsException;
-import com.greenfoxacademy.TribesBackend.exceptions.NoSuchEmailException;
+import com.greenfoxacademy.TribesBackend.exceptions.*;
 import com.greenfoxacademy.TribesBackend.models.Kingdom;
 import com.greenfoxacademy.TribesBackend.models.User;
 import com.greenfoxacademy.TribesBackend.repositories.KingdomRepository;
@@ -89,6 +86,9 @@ public class UserService {
         } else {
             return null;
         }
+    }
+
+    public void verifyEmail(String verCode) throws IncorrectVerCodeException, EmailAlreadyVerifiedException {
     }
 
     public ModelMap createLoginResponse(User user, HttpServletRequest request) {
