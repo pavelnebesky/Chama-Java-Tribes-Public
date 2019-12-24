@@ -2,6 +2,7 @@ package com.greenfoxacademy.TribesBackend.services;
 
 import com.auth0.jwt.JWT;
 import com.greenfoxacademy.TribesBackend.repositories.UserRepository;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +17,7 @@ import static com.greenfoxacademy.TribesBackend.constants.SecurityConstants.*;
 @Service
 public class AuthenticationService {
 
-    public static final List<String> publicEndpoints = List.of("/login", "/register");
+    public static final List<String> publicEndpoints = List.of("/login", "/register", "/");
 
     @Autowired
     private UserRepository userRepository;
