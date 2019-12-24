@@ -18,6 +18,6 @@ public class User {
     @OneToOne(cascade=CascadeType.ALL)
     private Kingdom kingdom;
     private String verificationCode;
-    private boolean isEmailVerified;
+    private Boolean isEmailVerified;
     //Token, email and so on to be added later on
 }

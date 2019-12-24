@@ -89,6 +89,17 @@ public class UserService {
     }
 
     public void verifyEmail(String verCode) throws IncorrectVerCodeException, EmailAlreadyVerifiedException {
+        User user=userRepository.findByVerificationCode(verCode);
+        if(user!=null){
+            if(!user.getIsEmailVerified()){
+                user.setIsEmailVerified(true);
+                userRepository.save(user);
+            }else{
+                throw new EmailAlreadyVerifiedException();
+            }
+        }else{
+            throw new IncorrectVerCodeException();
+        }
     }
 
     public ModelMap createLoginResponse(User user, HttpServletRequest request) {
@@ -112,7 +123,7 @@ public class UserService {
         kingdom.setUser(user);
         kingdom.setName(generateKingdomNameByEmail(user.getEmail()));
         user.setKingdom(kingdom);
-        user.setEmailVerified(false);
+        user.setIsEmailVerified(false);
         String verCode=generateEmailVerificationCode();
         user.setVerificationCode(verCode);
         userRepository.save(user);
