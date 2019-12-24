@@ -1,8 +1,12 @@
 package com.greenfoxacademy.TribesBackend.controllers;
 
+import com.greenfoxacademy.TribesBackend.exceptions.FrontendException;
+import com.greenfoxacademy.TribesBackend.exceptions.MissingParamsException;
 import com.greenfoxacademy.TribesBackend.models.User;
 import com.greenfoxacademy.TribesBackend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -20,25 +24,24 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/login")
-    public String getUserById(@RequestBody User user, HttpServletRequest request, HttpServletResponse response) {
-        String checkResult = userService.checkUserLoginParams(user, response);
-        if (checkResult == null) {
-            user = userService.findByEmail(user.getEmail());
-            return userService.getAuthenticationService().generateJWT(request.getRemoteAddr(), user.getId());
-        } else {
-            return checkResult;
-        }
+    public ResponseEntity getUserById(@RequestBody User user, HttpServletRequest request) {
+        //try {
+        //    userService.checkUserParamsForLogin(user);
+        //} catch (FrontendException e) {
+        //    return userService.getExceptionService().handleResponseWithException(e);
+        //}
+        return ResponseEntity.ok(userService.generateTokenBasedOnEmail(user.getEmail(),request));
     }
 
     @PostMapping("/register")
-    public String registerUser(@RequestBody User user, HttpServletResponse response) {
-        String checkResult=userService.checkUserRegisterParams(user, response);
-        if (checkResult == null) {
-            userService.addNewUser(user);
-            return "";
-        } else {
-            return checkResult;
-        }
+    public ResponseEntity registerUser(@RequestBody User user) {
+        //try {
+        //    userService.checkUserParamsForReg(user);
+        //} catch (FrontendException e) {
+        //    return userService.getExceptionService().handleResponseWithException(e);
+        //}
+        userService.registerUser(user);
+        return ResponseEntity.ok(null);
     }
 
     @GetMapping("/logout")

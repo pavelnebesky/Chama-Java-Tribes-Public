@@ -14,9 +14,10 @@ public class Kingdom {
     @GeneratedValue
     private Long id;
     private String name;
-    @JsonIgnore
-    @OneToOne
+    @OneToOne(cascade=CascadeType.PERSIST)
     private User user;
     @OneToMany(cascade=CascadeType.ALL)
     private List<Building> buildings;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Location location;
 }
