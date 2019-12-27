@@ -20,4 +20,13 @@ public class Resource {
     @ManyToOne
     @JsonIgnore
     private Kingdom kingdom;
+
+    public Resource(){};
+
+    public Resource(resourceType type, int amount, int generation, Kingdom kingdom){
+        this.type = type;
+        this.amount = amount;
+        this.generation = generation;
+        this.kingdom = kingdom;
+    }
 }

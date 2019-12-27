@@ -36,6 +36,8 @@ public class UserService {
     private ExceptionService exceptionService;
     @Autowired
     private KingdomRepository kingdomRepository;
+    @Autowired
+    private ResourceService resourceService;
 
     public boolean doesUserExistById(Long id) {
         return userRepository.findById(id).isPresent();
@@ -112,7 +114,4 @@ public class UserService {
         return EmailValidator.getInstance().isValid(email);
     }
 
-    public void setUserStartingGold(User user) {
-        user.getKingdom().getResources().
-    }
 }

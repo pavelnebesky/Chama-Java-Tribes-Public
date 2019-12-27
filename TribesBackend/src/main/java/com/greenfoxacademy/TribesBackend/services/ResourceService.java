@@ -3,16 +3,18 @@ package com.greenfoxacademy.TribesBackend.services;
 import com.greenfoxacademy.TribesBackend.enums.resourceType;
 import com.greenfoxacademy.TribesBackend.models.Kingdom;
 import com.greenfoxacademy.TribesBackend.models.Resource;
+import com.greenfoxacademy.TribesBackend.models.User;
 import com.greenfoxacademy.TribesBackend.repositories.KingdomRepository;
 import com.greenfoxacademy.TribesBackend.repositories.ResourceRepository;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import static com.greenfoxacademy.TribesBackend.constants.ResourceConstants.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-
 @Service
 public class ResourceService {
     @Autowired
@@ -33,4 +35,18 @@ public class ResourceService {
     public List<Resource> getResources(Kingdom kingdom) {
         return resourceRepository.getAllByKingdom(kingdom);
     }
+
+    public void setInitialResources(User user) {
+        Kingdom kingdom = kingdomRepository.findByUserId(user.getId());
+        List<Resource> listOfResources = new ArrayList<Resource>(){
+            {
+            add(new Resource(resourceType.gold, 2 * BUILDING_PRICE, 0, kingdom));
+            add(new Resource(resourceType.food, 0, 0, kingdom));
+            }
+        };
+        kingdom.setResources(listOfResources);
+        kingdomRepository.save(kingdom);
+    }
+
+
 }
