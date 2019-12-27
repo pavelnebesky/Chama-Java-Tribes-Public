@@ -23,10 +23,9 @@ public class Resource {
 
     public Resource(){};
 
-    public Resource(resourceType type, int amount, int generation, Kingdom kingdom){
+    public Resource(resourceType type, int amount, int generation){
         this.type = type;
         this.amount = amount;
         this.generation = generation;
-        this.kingdom = kingdom;
     }
 }

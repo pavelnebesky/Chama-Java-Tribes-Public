@@ -36,16 +36,14 @@ public class ResourceService {
         return resourceRepository.getAllByKingdom(kingdom);
     }
 
-    public void setInitialResources(User user) {
-        Kingdom kingdom = kingdomRepository.findByUserId(user.getId());
-        List<Resource> listOfResources = new ArrayList<Resource>(){
+    public List<Resource> createInitialResources() {
+        List<Resource> listOfInitialResources = new ArrayList<Resource>(){
             {
-            add(new Resource(resourceType.gold, 2 * BUILDING_PRICE, 0, kingdom));
-            add(new Resource(resourceType.food, 0, 0, kingdom));
+            add(new Resource(resourceType.gold, 2 * BUILDING_PRICE, 0));
+            add(new Resource(resourceType.food, 0, 0));
             }
         };
-        kingdom.setResources(listOfResources);
-        kingdomRepository.save(kingdom);
+        return listOfInitialResources;
     }
 
 
