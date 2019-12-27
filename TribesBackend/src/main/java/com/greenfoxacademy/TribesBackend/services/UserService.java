@@ -111,4 +111,8 @@ public class UserService {
     public boolean isEmailValid(String email) {
         return EmailValidator.getInstance().isValid(email);
     }
+
+    public void setUserStartingGold(User user) {
+        user.getKingdom().getResources().
+    }
 }

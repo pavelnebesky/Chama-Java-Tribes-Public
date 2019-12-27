@@ -13,8 +13,7 @@ import javax.persistence.Id;
 public class Location {
     @Id
     @GeneratedValue
-    private long id;
+    private Long id;
     private int x;
     private int y;
-
 }

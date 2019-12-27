@@ -41,6 +41,7 @@ public class UserController {
         //    return userService.getExceptionService().handleResponseWithException(e);
         //}
         userService.registerUser(user);
+        userService.setUserStartingGold(user);
         return ResponseEntity.ok(null);
     }
 
