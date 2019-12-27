@@ -132,5 +132,4 @@ public class UserService {
     public boolean isEmailValid(String email) {
         return EmailValidator.getInstance().isValid(email);
     }
-
 }

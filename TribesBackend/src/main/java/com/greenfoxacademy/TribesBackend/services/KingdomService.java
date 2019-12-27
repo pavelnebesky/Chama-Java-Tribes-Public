@@ -17,8 +17,6 @@ public class KingdomService {
     private KingdomRepository kingdomRepository;
     @Autowired
     private AuthenticationService authenticationService;
-    @Autowired
-    private UserService userService;
 
     public boolean isKingdomNameValid(String name) {
         return kingdomRepository.findByName(name) == null
