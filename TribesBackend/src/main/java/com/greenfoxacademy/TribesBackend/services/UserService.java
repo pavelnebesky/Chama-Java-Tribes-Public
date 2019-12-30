@@ -42,11 +42,9 @@ public class UserService {
     @Autowired
     private KingdomRepository kingdomRepository;
     @Autowired
-<<<<<<< HEAD
     private ResourceService resourceService;
-=======
+    @Autowired
     private JavaMailSender javaMailSender;
->>>>>>> 749970e180da046fab5dd672c9833f420dc3d901
 
     public boolean doesUserExistById(Long id) {
         return userRepository.findById(id).isPresent();
