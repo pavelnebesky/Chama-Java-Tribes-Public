@@ -19,16 +19,11 @@ public class ResourceController {
 
     @Autowired
     private ResourceService resourceService;
-    @Autowired
-    private KingdomService kingdomService;
 
     @GetMapping("/kingdom/resources")
     public ResponseEntity getResource(HttpServletRequest request) {
         Long userId = resourceService.getAuthenticationService().getIdFromToken(request);
-        Kingdom kingdom = kingdomService.getKingdomByUserId(userId);
-        ModelMap modelMap = new ModelMap();
-        modelMap.addAttribute("resources", resourceService.getResources(kingdom));
-        return ResponseEntity.ok(modelMap);
+        return ResponseEntity.ok(resourceService.getResourcesModelByUserId(userId));
     }
 
     @GetMapping("/kingdom/resources/{resourceType}")

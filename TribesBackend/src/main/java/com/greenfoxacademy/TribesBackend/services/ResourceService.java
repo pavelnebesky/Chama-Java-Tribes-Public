@@ -9,6 +9,8 @@ import com.greenfoxacademy.TribesBackend.repositories.ResourceRepository;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.ModelMap;
+
 import static com.greenfoxacademy.TribesBackend.constants.ResourceConstants.*;
 
 import java.util.ArrayList;
@@ -20,9 +22,9 @@ public class ResourceService {
     @Autowired
     private ResourceRepository resourceRepository;
     @Autowired
-    private KingdomRepository kingdomRepository;
-    @Autowired
     private AuthenticationService authenticationService;
+    @Autowired
+    private KingdomService kingdomService;
 
     public resourceType returnEnum(String type) {
         return resourceType.valueOf(type);
@@ -46,5 +48,8 @@ public class ResourceService {
         return listOfInitialResources;
     }
 
-
+    public ModelMap getResourcesModelByUserId(Long userId) {
+        Kingdom kingdom = kingdomService.getKingdomByUserId(userId);
+        return new ModelMap().addAttribute("resources", this.getResources(kingdom));
+    }
 }
