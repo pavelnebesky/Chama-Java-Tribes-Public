@@ -47,4 +47,14 @@ public class UserController {
     public void logout(HttpServletResponse response) {
         response.setStatus(200);
     }
+
+    @GetMapping("/verify/{verCode}")
+    public ResponseEntity verify(@PathVariable String verCode) {
+        try {
+            userService.verifyEmail(verCode);
+        } catch (FrontendException e) {
+            return userService.getExceptionService().handleResponseWithException(e);
+        }
+        return ResponseEntity.ok().body("email verified!");
+    }
 }

@@ -39,5 +39,4 @@ public class KingdomService {
         }
         kingdomRepository.save(kingdomToUpdate);
     }
-
 }
