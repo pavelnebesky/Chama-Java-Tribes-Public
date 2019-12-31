@@ -14,6 +14,7 @@ import java.util.Map;
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
 import static com.greenfoxacademy.TribesBackend.constants.SecurityConstants.*;
 
+@Getter
 @Service
 public class AuthenticationService {
 

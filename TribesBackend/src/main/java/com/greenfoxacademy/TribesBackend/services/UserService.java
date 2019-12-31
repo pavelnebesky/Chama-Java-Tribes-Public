@@ -42,6 +42,8 @@ public class UserService {
     @Autowired
     private KingdomRepository kingdomRepository;
     @Autowired
+    private ResourceService resourceService;
+    @Autowired
     private JavaMailSender javaMailSender;
 
     public boolean doesUserExistById(Long id) {
@@ -125,6 +127,7 @@ public class UserService {
         Kingdom kingdom = new Kingdom();
         kingdom.setUser(user);
         kingdom.setName(generateKingdomNameByEmail(user.getEmail()));
+        kingdom.setResources(resourceService.createInitialResources());
         user.setKingdom(kingdom);
         user.setEmailVerified(false);
         String verCode = generateEmailVerificationCode();
