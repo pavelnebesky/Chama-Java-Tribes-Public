@@ -15,7 +15,7 @@ public class Building {
     @GeneratedValue
     private Long id;
     private BuildingType type;
-    private int level = 1;
+    private int level;
     private int hp;
     private Long started_at;
     private Long finished_at;
