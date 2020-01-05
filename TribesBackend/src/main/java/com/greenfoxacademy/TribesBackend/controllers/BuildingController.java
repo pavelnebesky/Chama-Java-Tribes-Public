@@ -43,6 +43,14 @@ public class BuildingController {
        return ResponseEntity.ok(buildingService.getBuildingById(buildingId));
     }
 
+    @GetMapping("/leaderboard/buildings/")
+    public ResponseEntity getBuildingsLeaderboard() {
+        //TODO: TEST
+        //TODO: ERRORS
+        ModelMap modelMap = new ModelMap().addAttribute("leaderboard", buildingService.getLeaderboard());
+        return ResponseEntity.ok(modelMap);
+    }
+
     @PutMapping("/kingdom/buildings/{buildingId}")
     public ResponseEntity updateBuilding(HttpServletRequest request, @PathVariable long buildingId, @RequestBody Building building) {
         //TODO: TEST

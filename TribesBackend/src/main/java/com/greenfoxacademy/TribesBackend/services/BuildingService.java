@@ -2,6 +2,7 @@ package com.greenfoxacademy.TribesBackend.services;
 
 import com.greenfoxacademy.TribesBackend.enums.BuildingType;
 import com.greenfoxacademy.TribesBackend.models.Building;
+import com.greenfoxacademy.TribesBackend.models.Kingdom;
 import com.greenfoxacademy.TribesBackend.repositories.BuildingRepository;
 import com.greenfoxacademy.TribesBackend.repositories.KingdomRepository;
 import lombok.Getter;
@@ -9,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @Getter
@@ -41,6 +45,16 @@ public class BuildingService {
     public Iterable<Building> getBuildingsByToken(HttpServletRequest request)
     {
         return getAllBuildingsByUserId(getAuthenticationService().getIdFromToken(request));
+    }
+
+    public Map<String, Integer> getLeaderboard()
+    {
+        Map<String, Integer> map = new HashMap<String, Integer>();
+        for (Kingdom kingdom:kingdomRepository.findAll()
+             ) {
+            map.put(kingdom.getName(), kingdom.getBuildings().size());
+        }
+        return map;
     }
 
     public Building createAndReturnBuilding(long userId, String type) {
