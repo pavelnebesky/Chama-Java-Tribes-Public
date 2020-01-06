@@ -9,7 +9,6 @@ import com.greenfoxacademy.TribesBackend.repositories.KingdomRepository;
 import com.greenfoxacademy.TribesBackend.repositories.ResourceRepository;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +17,7 @@ import java.util.List;
 
 import static com.greenfoxacademy.TribesBackend.constants.BuildingConstants.*;
 import static com.greenfoxacademy.TribesBackend.enums.BuildingType.townhall;
-import static com.greenfoxacademy.TribesBackend.enums.resourceType.gold;
+import static com.greenfoxacademy.TribesBackend.enums.ResourceType.gold;
 
 @Service
 @Getter

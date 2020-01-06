@@ -33,19 +33,19 @@ public class KingdomController {
         Kingdom kingdom = kingdomService.getKingdomByUserId(userId);
         if (kingdom != null) {
             return ResponseEntity.ok(kingdom);
-        }
-        else {
+        } else {
             ModelMap modelMap = new ModelMap().addAttribute("status", "error")
-                                              .addAttribute("message","UserId not found");
+                    .addAttribute("message", "UserId not found");
             return ResponseEntity.status(404).body(modelMap);
         }
     }
+
     @PutMapping("/kingdom")
-    public ResponseEntity updateKingdom(@RequestBody ModelMap kingdomVars, HttpServletRequest request){
+    public ResponseEntity updateKingdom(@RequestBody ModelMap kingdomDataToUpdate, HttpServletRequest request) {
         //TODO: TEST
         Long userId = kingdomService.getAuthenticationService().getIdFromToken(request);
         Kingdom kingdom = kingdomService.getKingdomByUserId(userId);
-        kingdomService.updateKingdom(kingdom, kingdomVars);
+        kingdomService.updateKingdom(kingdom, kingdomDataToUpdate);
         return ResponseEntity.ok(kingdom);
     }
 }

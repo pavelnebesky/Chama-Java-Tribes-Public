@@ -28,15 +28,15 @@ public class KingdomService {
         return kingdomRepository.findByUserId(userId);
     }
 
-    public void updateKingdom(Kingdom kingdomToUpdate, ModelMap updatedVars) {
-        if (updatedVars.containsAttribute("name")){
-            kingdomToUpdate.setName((String)updatedVars.getAttribute("name"));
+    public void updateKingdom(Kingdom kingdomToUpdate, ModelMap kingdomDataToUpdate) {
+        if (kingdomDataToUpdate.containsAttribute("name")){
+            kingdomToUpdate.setName((String)kingdomDataToUpdate.getAttribute("name"));
         }
-        if (updatedVars.containsAttribute("locationX")) {
-            kingdomToUpdate.getLocation().setX((int) updatedVars.getAttribute("locationX"));
+        if (kingdomDataToUpdate.containsAttribute("locationX")) {
+            kingdomToUpdate.getLocation().setX((int) kingdomDataToUpdate.getAttribute("locationX"));
         }
-        if (updatedVars.containsAttribute("locationY")) {
-            kingdomToUpdate.getLocation().setY((int) updatedVars.getAttribute("locationY"));
+        if (kingdomDataToUpdate.containsAttribute("locationY")) {
+            kingdomToUpdate.getLocation().setY((int) kingdomDataToUpdate.getAttribute("locationY"));
         }
         kingdomRepository.save(kingdomToUpdate);
     }
