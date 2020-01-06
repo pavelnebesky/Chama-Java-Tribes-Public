@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 @RestController
 public class ResourceController {
@@ -29,10 +30,15 @@ public class ResourceController {
 
     @GetMapping("/kingdom/resources/{resourceType}")
     public ResponseEntity getResourceType(@PathVariable String resourceType) {
-        ResourceType type = resourceService.returnEnum(resourceType);
-        Resource maybeResource = resourceService.findResourceByType(type);
-        if (maybeResource != null) return ResponseEntity.ok(maybeResource);
-        else return exceptionService.handleResponseWithException(new ParameterNotFoundException(resourceType));
+
+        resourceType type = resourceService.returnEnum(resourceType);
+        Optional<Resource> maybeResource = resourceService.findResourceByType(type);
+        if (maybeResource.isPresent()) {
+            return ResponseEntity.ok(maybeResource);
+        }
+        else {
+            return exceptionService.handleResponseWithException(new ParameterNotFoundException(resourceType));
+        }
     }
 }
 
