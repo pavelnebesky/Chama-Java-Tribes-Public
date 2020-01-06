@@ -21,8 +21,7 @@ public class BuildingController {
     public ResponseEntity getBuildings(HttpServletRequest request) {
         //TODO: TEST
         //TODO: ERRORS
-        ModelMap modelMap = new ModelMap().addAttribute("buildings", buildingService.getBuildingsByToken(request));
-        return ResponseEntity.ok(modelMap);
+        return ResponseEntity.ok(buildingService.getMapOfAllBuildingsByToken(request));
     }
 
     @PostMapping("/kingdom/buildings")
@@ -32,7 +31,7 @@ public class BuildingController {
         //String loudScreaming = jsonType.getJSONObject("LabelData").getString("slogan");
         String buildingType = building.getType().toString();
         Long userId = buildingService.getAuthenticationService().getIdFromToken(request);
-        Building newBuilding = buildingService.createAndReturnBuilding( userId, buildingType);
+        Building newBuilding = buildingService.createAndReturnBuilding(userId, buildingType);
         return ResponseEntity.ok(newBuilding);
     }
 
@@ -40,7 +39,7 @@ public class BuildingController {
     public ResponseEntity getBuilding(HttpServletRequest request, @PathVariable long buildingId) {
         //TODO: TEST
         //TODO: ERRORS
-       return ResponseEntity.ok(buildingService.getBuildingById(buildingId));
+        return ResponseEntity.ok(buildingService.getBuildingById(buildingId));
     }
 
     @PutMapping("/kingdom/buildings/{buildingId}")
