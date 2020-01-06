@@ -21,7 +21,7 @@ public class ResourceService {
     @Autowired
     private ResourceRepository resourceRepository;
     @Autowired
-    private AuthenticationService authenticationService;
+    private UtilityService utilityService;
     @Autowired
     private KingdomService kingdomService;
 

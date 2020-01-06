@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
@@ -16,7 +15,7 @@ import static com.greenfoxacademy.TribesBackend.constants.SecurityConstants.*;
 
 @Getter
 @Service
-public class AuthenticationService {
+public class UtilityService {
 
     @Autowired
     private UserRepository userRepository;

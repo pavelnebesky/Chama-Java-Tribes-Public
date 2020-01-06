@@ -31,7 +31,7 @@ public class BuildingService {
     @Autowired
     private ResourceRepository resourceRepository;
     @Autowired
-    private AuthenticationService authenticationService;
+    private UtilityService utilityService;
 
     public Building saveBuilding(Building building) {
         buildingRepository.save(building);
@@ -53,7 +53,7 @@ public class BuildingService {
     }
 
     public Iterable<Building> getBuildingsByToken(HttpServletRequest request) {
-        return getAllBuildingsByUserId(getAuthenticationService().getIdFromToken(request));
+        return getAllBuildingsByUserId(getUtilityService().getIdFromToken(request));
     }
 
     public Building buildingLevelUp(Building building, int newLevel) {
