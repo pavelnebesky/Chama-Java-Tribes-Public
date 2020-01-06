@@ -21,8 +21,8 @@ public class TroopService {
     @Autowired
     private BuildingRepository buildingRepository;
 
-    public Troop createTrooperToKingdom (Kingdom kingdom){
-        Troop newTrooper = new Troop(kingdom);
-        newTrooper.setKingdom(kingdomRepository.)
+  //  public Troop createTrooperToKingdom (Kingdom kingdom){
+  //      Troop newTrooper = new Troop(kingdom);
+    // newTrooper.setKingdom(kingdomRepository.)
     }
 }
