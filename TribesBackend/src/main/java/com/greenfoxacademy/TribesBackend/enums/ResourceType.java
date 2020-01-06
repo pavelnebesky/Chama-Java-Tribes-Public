@@ -1,6 +1,6 @@
 package com.greenfoxacademy.TribesBackend.enums;
 
-public enum resourceType {
+public enum ResourceType {
     gold,
     food
 }

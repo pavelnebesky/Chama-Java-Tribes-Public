@@ -1,7 +1,7 @@
 package com.greenfoxacademy.TribesBackend.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.greenfoxacademy.TribesBackend.enums.resourceType;
+import com.greenfoxacademy.TribesBackend.enums.ResourceType;
 import lombok.Getter;
 import lombok.Setter;
 import javax.persistence.*;
@@ -14,7 +14,7 @@ public class Resource {
     @GeneratedValue
     @JsonIgnore
     private Long id;
-    private resourceType type;
+    private ResourceType type;
     private int amount;
     private int generation;
     @ManyToOne
@@ -23,7 +23,7 @@ public class Resource {
 
     public Resource(){};
 
-    public Resource(resourceType type, int amount, int generation){
+    public Resource(ResourceType type, int amount, int generation){
         this.type = type;
         this.amount = amount;
         this.generation = generation;

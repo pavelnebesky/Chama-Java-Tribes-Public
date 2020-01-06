@@ -9,8 +9,8 @@ import com.greenfoxacademy.TribesBackend.repositories.KingdomRepository;
 import com.greenfoxacademy.TribesBackend.repositories.ResourceRepository;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.ModelMap;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,7 +18,7 @@ import java.util.List;
 
 import static com.greenfoxacademy.TribesBackend.constants.BuildingConstants.*;
 import static com.greenfoxacademy.TribesBackend.enums.BuildingType.townhall;
-import static com.greenfoxacademy.TribesBackend.enums.resourceType.gold;
+import static com.greenfoxacademy.TribesBackend.enums.ResourceType.gold;
 
 @Service
 @Getter
@@ -33,7 +33,7 @@ public class BuildingService {
     @Autowired
     private AuthenticationService authenticationService;
 
-    public Building saveBuilding (Building building) {
+    public Building saveBuilding(Building building) {
         buildingRepository.save(building);
         return building;
     }
@@ -46,11 +46,17 @@ public class BuildingService {
         return buildingRepository.findById(buildingId).get();
     }
 
+    public ModelMap getMapOfAllBuildingsByToken(HttpServletRequest request) {
+        ModelMap modelMap = new ModelMap();
+        modelMap.addAttribute("buildings", getBuildingsByToken(request));
+        return modelMap;
+    }
+
     public Iterable<Building> getBuildingsByToken(HttpServletRequest request) {
         return getAllBuildingsByUserId(getAuthenticationService().getIdFromToken(request));
     }
 
-    public Building buildingLevelUp (Building building, int newLevel) {
+    public Building buildingLevelUp(Building building, int newLevel) {
         int kingdomsGold = building.getKingdom().getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get().getAmount();
         int townhallLevel = building.getKingdom().getBuildings().stream().filter(b -> b.getType().equals(townhall)).findAny().get().getLevel();
         int goldToLevelUp = (newLevel - building.getLevel()) * GOLD_TO_LEVEL_UP_BUILDING;
@@ -58,7 +64,7 @@ public class BuildingService {
             building.setLevel(newLevel);
             saveBuilding(building);
             Resource resourceToUpdate = building.getKingdom().getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get();
-            resourceToUpdate.setAmount(resourceToUpdate.getAmount()-goldToLevelUp);
+            resourceToUpdate.setAmount(resourceToUpdate.getAmount() - goldToLevelUp);
             resourceRepository.save(resourceToUpdate);
         }
         return building;
@@ -71,16 +77,13 @@ public class BuildingService {
         newBuilding.setKingdom(kingdomRepository.findByUserId(userId));
         newBuilding.setLevel(1);
         newBuilding.setStarted_at(System.currentTimeMillis());
-        if (type=="mine") {
+        if (type == "mine") {
             newBuilding.setFinished_at(newBuilding.getStarted_at() + MILISECONDS_TO_BUILD_MINE);
-        }
-        else if (type=="farm") {
+        } else if (type == "farm") {
             newBuilding.setFinished_at(newBuilding.getStarted_at() + MILISECONDS_TO_BUILD_FARM);
-        }
-        else if (type=="barracks") {
+        } else if (type == "barracks") {
             newBuilding.setFinished_at(newBuilding.getStarted_at() + MILISECONDS_TO_BUILD_BARRACKS);
-        }
-        else if (type=="townhall") {
+        } else if (type == "townhall") {
             newBuilding.setFinished_at(newBuilding.getStarted_at() + MILISECONDS_TO_BUILD_TOWNHALL);
         }
         saveBuilding(newBuilding);
