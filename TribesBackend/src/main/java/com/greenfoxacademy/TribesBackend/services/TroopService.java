@@ -14,4 +14,5 @@ public class TroopService {
     @Autowired
     TroopRepository troopRepository;
 
+   // public Troop troopLvlUp(long id, Kingdom kingdom){}
 }
