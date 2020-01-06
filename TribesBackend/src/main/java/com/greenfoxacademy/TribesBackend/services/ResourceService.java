@@ -29,7 +29,7 @@ public class ResourceService {
         return ResourceType.valueOf(type);
     }
 
-    public Optional<Resource> findResourceByType(resourceType type) {
+    public Optional<Resource> findResourceByType(ResourceType type) {
         return Optional.ofNullable(resourceRepository.findByType(type));
     }
 
