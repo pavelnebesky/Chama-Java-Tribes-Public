@@ -49,4 +49,11 @@ public class BuildingController {
         Building updatedBuilding = buildingService.buildingLevelUp(buildingService.getBuildingById(buildingId), building.getLevel());
         return ResponseEntity.status(200).body(updatedBuilding);
     }
+
+    @GetMapping("/leaderboard/buildings/")
+    public ResponseEntity getBuildingsLeaderboard() {
+        //TODO: TEST
+        //TODO: ERRORS
+        return ResponseEntity.ok(buildingService.getLeaderboard());
+    }
 }
