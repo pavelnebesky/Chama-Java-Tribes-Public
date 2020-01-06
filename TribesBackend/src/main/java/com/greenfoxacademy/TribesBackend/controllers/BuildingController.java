@@ -47,9 +47,7 @@ public class BuildingController {
     public ResponseEntity updateBuilding(HttpServletRequest request, @PathVariable long buildingId, @RequestBody Building building) {
         //TODO: TEST
         //TODO: ERRORS
-        Building updateBuilding = buildingService.getBuildingById(buildingId);
-        updateBuilding.setLevel(building.getLevel());
-        buildingService.saveBuilding(updateBuilding);
-        return ResponseEntity.status(200).body(updateBuilding);
+        Building updatedBuilding = buildingService.buildingLevelUp(buildingService.getBuildingById(buildingId), building.getLevel());
+        return ResponseEntity.status(200).body(updatedBuilding);
     }
 }
