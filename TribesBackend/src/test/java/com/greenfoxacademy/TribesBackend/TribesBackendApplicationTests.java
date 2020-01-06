@@ -6,7 +6,6 @@ import static org.junit.Assert.assertEquals;
 import com.greenfoxacademy.TribesBackend.controllers.HomeController;
 import com.greenfoxacademy.TribesBackend.controllers.UserController;
 import com.greenfoxacademy.TribesBackend.controllers.KingdomController;
-import com.greenfoxacademy.TribesBackend.models.User;
 import com.greenfoxacademy.TribesBackend.services.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -21,18 +20,11 @@ import javax.management.InstanceNotFoundException;
 class TribesBackendApplicationTests {
 
     @Autowired
-    private HomeController homeController;
-    @Autowired
     private KingdomController kingdomController;
     @Autowired
     private UserService userService;
     @Autowired
     private UserController userController;
-
-    @Test
-    public void contexLoads() throws InstanceNotFoundException {
-        assertThat(homeController).isNotNull();
-    }
 
     @Test
     public void kingdomControllerExists() throws InstanceNotFoundException {
@@ -48,14 +40,9 @@ class TribesBackendApplicationTests {
     public void controllerLoads() throws InstanceNotFoundException {
         assertThat(userController).isNotNull();
     }
-
-    @Test
-    public void getKingdomMethodExists() throws InstanceNotFoundException {
-        assertThat(kingdomController.getKingdom()).isNotNull();
-    }
     
     @Test
-    public void doesEmailValidatorWork(){
+    public void doesEmailValidatorWork() throws Exception{
         assertEquals(userService.isEmailValid("jajenc@seznam.cz"), true);
         assertEquals(userService.isEmailValid("blablafuk@smrdim,prd"), false);
     }
