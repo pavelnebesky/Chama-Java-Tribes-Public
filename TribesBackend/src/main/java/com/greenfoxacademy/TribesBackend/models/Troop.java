@@ -29,5 +29,4 @@ public class Troop {
     @JsonIgnore
     @ManyToOne
     private Kingdom kingdom;
-
 }

@@ -7,12 +7,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@Getter
+@Setter
 @Service
 public class TroopService {
 
     @Autowired
-    TroopRepository troopRepository;
+    private TroopRepository troopRepository;
+    @Autowired
+    private KingdomRepository kingdomRepository;
+    @Autowired
+    private ResourceRepository resourceRepository;
+    @Autowired
+    private BuildingRepository buildingRepository;
 
-   // public Troop troopLvlUp(long id, Kingdom kingdom){}
+    public Troop createTrooperToKingdom (Kingdom kingdom){
+        Troop newTrooper = new Troop(kingdom);
+        newTrooper.setKingdom(kingdomRepository.)
+    }
 }
