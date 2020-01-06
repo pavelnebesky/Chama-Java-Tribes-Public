@@ -15,6 +15,7 @@ import static com.greenfoxacademy.TribesBackend.constants.ResourceConstants.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 @Service
@@ -30,8 +31,8 @@ public class ResourceService {
         return resourceType.valueOf(type);
     }
 
-    public Resource findResourceByType(resourceType type) {
-        return resourceRepository.findByType(type);
+    public Optional<Resource> findResourceByType(resourceType type) {
+        return Optional.ofNullable(resourceRepository.findByType(type));
     }
 
     public List<Resource> getResources(Kingdom kingdom) {
