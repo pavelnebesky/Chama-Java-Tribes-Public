@@ -1,7 +1,7 @@
 # Chama-Java-Tribes
 Chama Java tribes project for project phase
 
-CircleCI status badge: <img src="https://circleci.com/gh/green-fox-academy/Chama-Java-Tribes.svg">
+CircleCI status badge: ![status badge](https://circleci.com/gh/green-fox-academy/Chama-Java-Tribes.svg)
 
 ## Description
 
