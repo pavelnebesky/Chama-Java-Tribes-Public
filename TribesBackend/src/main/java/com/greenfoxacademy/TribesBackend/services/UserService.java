@@ -16,13 +16,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static com.greenfoxacademy.TribesBackend.constants.EmailVerConstants.*;
+import static com.greenfoxacademy.TribesBackend.constants.EmailVerificationConstants.*;
 
 @Getter
 @Setter
@@ -66,7 +64,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void sendEmailVer(String receiver, String verCode) {
+    public void sendEmailVerification(String receiver, String verCode) {
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setTo(receiver);
         msg.setSubject(SUBJECT);
@@ -79,7 +77,7 @@ public class UserService {
         String code;
         do {
             code = "";
-            for (int i = 0; i < VER_CODE_LENGTH; i++) {
+            for (int i = 0; i < VERIFICATION_CODE_LENGTH; i++) {
                 code += (char) ThreadLocalRandom.current().nextInt(65, 91);
             }
         } while (userRepository.findByVerificationCode(code) != null);
@@ -135,7 +133,7 @@ public class UserService {
         user.setVerificationCode(verCode);
         userRepository.save(user);
         kingdomRepository.save(kingdom);
-        sendEmailVer(user.getEmail(), verCode);
+        sendEmailVerification(user.getEmail(), verCode);
         return createRegisterResponse(findByEmail(user.getEmail()));
     }
 
