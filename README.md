@@ -3,6 +3,8 @@ Chama Java tribes project for project phase
 
 CircleCI status badge: ![status badge](https://circleci.com/gh/green-fox-academy/Chama-Java-Tribes.svg)
 
+[![CircleCI](https://circleci.com/gh/pavelnebesky/CITest.svg?style=svg)](https://circleci.com/gh/pavelnebesky/CITest)
+
 ## Description
 
 A strategy game based on the logic of Travian
