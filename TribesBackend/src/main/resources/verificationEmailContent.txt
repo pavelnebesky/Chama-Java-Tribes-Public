@@ -1,5 +1,5 @@
 Tribes are awaiting You!
 Proceed to the link below and You may start Your journey!
-http://localhost:8080/verify/!@#$%^&*()_+
+https://tribes-java-backend.herokuapp.com/verify/!@#$%^&*()_+
 Sincirely
 Your Tribes team
