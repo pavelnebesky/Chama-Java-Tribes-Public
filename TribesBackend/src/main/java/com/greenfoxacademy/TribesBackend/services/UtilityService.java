@@ -33,14 +33,14 @@ public class UtilityService {
                 .sign(HMAC512(SECRET.getBytes()));
     }
 
-    public String readFile(String path){
-        path="src/main/resources/"+path;
-        String data="";
+    public String readFile(String path) {
+        path = "src/main/resources/" + path;
+        String data = "";
         try {
             File myFile = new File(path);
             Scanner myReader = new Scanner(myFile);
             while (myReader.hasNextLine()) {
-                data += myReader.nextLine()+"\n";
+                data += myReader.nextLine() + "\n";
             }
             myReader.close();
         } catch (FileNotFoundException e) {
