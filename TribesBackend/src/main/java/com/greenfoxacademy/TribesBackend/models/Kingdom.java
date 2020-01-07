@@ -22,4 +22,6 @@ public class Kingdom {
     private Location location;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Building> buildings;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Troop> troops;
 }
