@@ -42,7 +42,7 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
         String header = req.getHeader(HEADER_STRING);
-        if (List.of(PUBLIC_ENDPOINTS).stream().anyMatch(e -> req.getRequestURI().equals(e))
+        if (List.of(PUBLIC_ENDPOINTS).stream().anyMatch(e -> req.getRequestURI().contains(e))
                 || (header != null && header.startsWith(TOKEN_PREFIX) && isAuthorized(req, res))) {
             chain.doFilter(req, res);
         } else {
