@@ -24,7 +24,7 @@ public class ResourceController {
 
     @GetMapping("/kingdom/resources")
     public ResponseEntity getResource(HttpServletRequest request) {
-        Long userId = resourceService.getAuthenticationService().getIdFromToken(request);
+        Long userId = resourceService.getUtilityService().getIdFromToken(request);
         return ResponseEntity.ok(resourceService.getResourcesModelByUserId(userId));
     }
 

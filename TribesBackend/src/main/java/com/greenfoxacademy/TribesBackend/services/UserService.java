@@ -32,7 +32,7 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private AuthenticationService authenticationService;
+    private UtilityService utilityService;
     @Autowired
     private KingdomService kingdomService;
     @Autowired
@@ -173,7 +173,7 @@ public class UserService {
 
     public String generateTokenBasedOnEmail(String email, HttpServletRequest request) {
         User user = findByEmail(email);
-        return authenticationService.generateJWT(request.getRemoteAddr(), user.getId());
+        return utilityService.generateJWT(request.getRemoteAddr(), user.getId());
     }
 
     public boolean isEmailValid(String email) {
