@@ -18,5 +18,9 @@ public class TroopService {
     public Iterable<Troop> getAllTroopsByKingdom(Kingdom kingdom){
         return troopRepository.findAllTroopsByKingdom(kingdom);
     }
+
+    public Troop getTroopById(long trooperId){
+        return troopRepository.findTrooperById(trooperId);
+    }
 }
 
