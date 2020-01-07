@@ -1,7 +1,9 @@
 package com.greenfoxacademy.TribesBackend.models;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import javax.persistence.Entity;
@@ -12,6 +14,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 public class Troop {
     @Id
     @GeneratedValue
