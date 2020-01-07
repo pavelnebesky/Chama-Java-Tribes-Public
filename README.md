@@ -5,7 +5,7 @@ CircleCI status badge:
 
 [![CircleCI](https://circleci.com/gh/green-fox-academy/Chama-Java-Tribes.svg?style=svg)](https://circleci.com/gh/green-fox-academy/Chama-Java-Tribes)
 
-[![CircleCI](https://circleci.com/gh/pavelnebesky/CITest.svg?style=svg)](https://circleci.com/gh/pavelnebesky/CITest)
+[![CircleCI2](https://circleci.com/gh/pavelnebesky/CITest.svg?style=svg)](https://circleci.com/gh/pavelnebesky/CITest)
 
 
 ## Description
