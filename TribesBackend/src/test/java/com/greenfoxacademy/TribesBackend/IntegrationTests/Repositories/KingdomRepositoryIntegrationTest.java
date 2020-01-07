@@ -21,33 +21,33 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class KingdomRepositoryIntegrationTest {
 
     @Autowired
-    private static TestEntityManager entityManager;
+    private TestEntityManager entityManager;
     @Autowired
     private KingdomRepository kingdomRepository;
 
-    private static User user;
-    private static Kingdom kingdom;
-
-    @BeforeClass
-    public static void SetUp(){
-        kingdom = new Kingdom();
-        user  = new User(1L, "test@test.com", "test",
-                "Johnny test", kingdom, "ehfiweugfhiweg", true);
-        kingdom = new Kingdom(1L, "Testonia", user, new ArrayList<Resource>(), new Location(),
-                new ArrayList<Building>(), new ArrayList<Troop>());
-        entityManager.persist(user);
-        entityManager.persist(kingdom);
-        entityManager.flush();
-    }
     @Test
     public void whenFindByName_thenReturnKingdom() {
+        Kingdom kingdom = new Kingdom();
+        kingdom.setName("Testonia");
+
+        entityManager.persistAndFlush(kingdom);
+
         Kingdom found = kingdomRepository.findByName(kingdom.getName());
         assertThat(found.getName()).isEqualTo(kingdom.getName());
     }
 
     @Test
     public void whenFindByUserId_thenReturnKingdom() {
-        Kingdom found = kingdomRepository.findByUserId(1L);
+        User user  = new User();
+        Kingdom kingdom = new Kingdom();
+        kingdom.setUser(user);
+        user.setKingdom(kingdom);
+
+        entityManager.persist(user);
+        entityManager.persist(kingdom);
+        entityManager.flush();
+
+        Kingdom found = kingdomRepository.findByUserId(user.getId());
         assertThat(found.getId()).isEqualTo(kingdom.getId());
     }
 }
