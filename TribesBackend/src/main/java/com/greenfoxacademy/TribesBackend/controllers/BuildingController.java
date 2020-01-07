@@ -30,7 +30,7 @@ public class BuildingController {
         //TODO: ERRORS
         //String loudScreaming = jsonType.getJSONObject("LabelData").getString("slogan");
         String buildingType = building.getType().toString();
-        Long userId = buildingService.getAuthenticationService().getIdFromToken(request);
+        Long userId = buildingService.getUtilityService().getIdFromToken(request);
         Building newBuilding = buildingService.createAndReturnBuilding(userId, buildingType);
         return ResponseEntity.ok(newBuilding);
     }

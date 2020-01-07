@@ -23,7 +23,7 @@ public class KingdomController {
     @GetMapping("/kingdom")
     public ResponseEntity getKingdom(HttpServletRequest request) {
         //TODO: TEST
-        Long userId = kingdomService.getAuthenticationService().getIdFromToken(request);
+        Long userId = kingdomService.getUtilityService().getIdFromToken(request);
         return ResponseEntity.ok(kingdomService.getKingdomByUserId(userId));
     }
 
@@ -43,7 +43,7 @@ public class KingdomController {
     @PutMapping("/kingdom")
     public ResponseEntity updateKingdom(@RequestBody ModelMap kingdomDataToUpdate, HttpServletRequest request) {
         //TODO: TEST
-        Long userId = kingdomService.getAuthenticationService().getIdFromToken(request);
+        Long userId = kingdomService.getUtilityService().getIdFromToken(request);
         Kingdom kingdom = kingdomService.getKingdomByUserId(userId);
         kingdomService.updateKingdom(kingdom, kingdomDataToUpdate);
         return ResponseEntity.ok(kingdom);

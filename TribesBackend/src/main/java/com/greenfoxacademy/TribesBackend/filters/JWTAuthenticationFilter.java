@@ -13,9 +13,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 import static com.greenfoxacademy.TribesBackend.constants.SecurityConstants.*;
-import static com.greenfoxacademy.TribesBackend.services.AuthenticationService.publicEndpoints;
 
 @Component
 public class JWTAuthenticationFilter extends GenericFilterBean {
@@ -42,7 +42,7 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
         String header = req.getHeader(HEADER_STRING);
-        if (publicEndpoints.stream().anyMatch(e -> req.getRequestURI().equals(e))
+        if (List.of(PUBLIC_ENDPOINTS).stream().anyMatch(e -> req.getRequestURI().equals(e))
                 || (header != null && header.startsWith(TOKEN_PREFIX) && isAuthorized(req, res))) {
             chain.doFilter(req, res);
         } else {
