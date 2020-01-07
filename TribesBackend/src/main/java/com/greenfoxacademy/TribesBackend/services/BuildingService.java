@@ -14,7 +14,8 @@ import org.springframework.ui.ModelMap;
 
 import javax.servlet.http.HttpServletRequest;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.greenfoxacademy.TribesBackend.constants.BuildingConstants.*;
 import static com.greenfoxacademy.TribesBackend.enums.BuildingType.townhall;
@@ -95,4 +96,23 @@ public class BuildingService {
         return newBuilding;
     }
 
+    public ModelMap getLeaderboard() {
+        Map<String, Integer> leaderboardDictionary = new HashMap<String, Integer>();
+        for (Kingdom kingdom : kingdomRepository.findAll()
+        ) {
+            leaderboardDictionary.put(kingdom.getName(), kingdom.getBuildings().size());
+        }
+        Map<String, Integer> sortedLeaderboardDictionary = leaderboardDictionary.entrySet()
+                .stream()
+                .sorted((Map.Entry.<String, Integer>comparingByValue().reversed()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+        ArrayList<ModelMap> leaderboard = new ArrayList<ModelMap>();
+        for (Map.Entry<String, Integer> entry : sortedLeaderboardDictionary.entrySet()) {
+            ModelMap modelMap = new ModelMap();
+            modelMap.addAttribute("kingdomname", entry.getKey());
+            modelMap.addAttribute("buildings", entry.getValue());
+            leaderboard.add(modelMap);
+        }
+        return new ModelMap().addAttribute("leaderboard", leaderboard);
+    }
 }
