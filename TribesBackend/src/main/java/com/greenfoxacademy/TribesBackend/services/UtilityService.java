@@ -7,8 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Date;
 import java.util.Map;
+import java.util.Scanner;
 
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
 import static com.greenfoxacademy.TribesBackend.constants.SecurityConstants.*;
@@ -27,6 +30,21 @@ public class UtilityService {
                 .withClaim(ID_CLAIM, String.valueOf(id))
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .sign(HMAC512(SECRET.getBytes()));
+    }
+
+    public String readFile(String path){
+        String data="";
+        try {
+            File myFile = new File(path);
+            Scanner myReader = new Scanner(myFile);
+            while (myReader.hasNextLine()) {
+                data += myReader.nextLine();
+            }
+            myReader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("Email content was not found");
+        }
+        return data;
     }
 
     public Long getIdFromToken(HttpServletRequest request) {

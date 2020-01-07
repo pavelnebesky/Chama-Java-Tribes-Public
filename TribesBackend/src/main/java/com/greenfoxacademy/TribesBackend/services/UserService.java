@@ -70,7 +70,8 @@ public class UserService {
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setTo(receiver);
         msg.setSubject(SUBJECT);
-        msg.setText(MESSAGE.replace(CHARS_TO_BE_REPLACED, verCode));
+        String content=utilityService.readFile("verificationEmailContent");
+        msg.setText(content.replace(CHARS_TO_BE_REPLACED, verCode));
         javaMailSender.send(msg);
     }
 
