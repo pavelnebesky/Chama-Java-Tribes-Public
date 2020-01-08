@@ -1,5 +1,6 @@
 package com.greenfoxacademy.TribesBackend.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,6 +16,7 @@ public class Kingdom {
     private Long id;
     private String name;
     @OneToOne(cascade = CascadeType.PERSIST)
+    @JsonIgnore
     private User user;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Resource> resources;
