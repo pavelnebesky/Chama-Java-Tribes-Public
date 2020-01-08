@@ -14,7 +14,8 @@ import org.springframework.ui.ModelMap;
 
 import javax.servlet.http.HttpServletRequest;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.greenfoxacademy.TribesBackend.constants.BuildingConstants.*;
 import static com.greenfoxacademy.TribesBackend.enums.BuildingType.townhall;
@@ -31,7 +32,7 @@ public class BuildingService {
     @Autowired
     private ResourceRepository resourceRepository;
     @Autowired
-    private AuthenticationService authenticationService;
+    private UtilityService utilityService;
 
     public Building saveBuilding(Building building) {
         buildingRepository.save(building);
@@ -53,7 +54,7 @@ public class BuildingService {
     }
 
     public Iterable<Building> getBuildingsByToken(HttpServletRequest request) {
-        return getAllBuildingsByUserId(getAuthenticationService().getIdFromToken(request));
+        return getAllBuildingsByUserId(getUtilityService().getIdFromToken(request));
     }
 
     public Building buildingLevelUp(Building building, int newLevel) {
@@ -77,15 +78,7 @@ public class BuildingService {
         newBuilding.setKingdom(kingdomRepository.findByUserId(userId));
         newBuilding.setLevel(1);
         newBuilding.setStarted_at(System.currentTimeMillis());
-        if (type == "mine") {
-            newBuilding.setFinished_at(newBuilding.getStarted_at() + MILISECONDS_TO_BUILD_MINE);
-        } else if (type == "farm") {
-            newBuilding.setFinished_at(newBuilding.getStarted_at() + MILISECONDS_TO_BUILD_FARM);
-        } else if (type == "barracks") {
-            newBuilding.setFinished_at(newBuilding.getStarted_at() + MILISECONDS_TO_BUILD_BARRACKS);
-        } else if (type == "townhall") {
-            newBuilding.setFinished_at(newBuilding.getStarted_at() + MILISECONDS_TO_BUILD_TOWNHALL);
-        }
+        newBuilding.setFinished_at(newBuilding.getStarted_at() + BUILDING_TIMES.get(BuildingType.valueOf(type)));
         saveBuilding(newBuilding);
         Kingdom kingdomToUpdate = kingdomRepository.findByUserId(userId);
         List<Building> kingdomsBuildings = kingdomToUpdate.getBuildings();
@@ -95,4 +88,23 @@ public class BuildingService {
         return newBuilding;
     }
 
+    public ModelMap getLeaderboard() {
+        Map<String, Integer> leaderboardDictionary = new HashMap<String, Integer>();
+        for (Kingdom kingdom : kingdomRepository.findAll()
+        ) {
+            leaderboardDictionary.put(kingdom.getName(), kingdom.getBuildings().size());
+        }
+        Map<String, Integer> sortedLeaderboardDictionary = leaderboardDictionary.entrySet()
+                .stream()
+                .sorted((Map.Entry.<String, Integer>comparingByValue().reversed()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+        ArrayList<ModelMap> leaderboard = new ArrayList<ModelMap>();
+        for (Map.Entry<String, Integer> entry : sortedLeaderboardDictionary.entrySet()) {
+            ModelMap modelMap = new ModelMap();
+            modelMap.addAttribute("kingdomname", entry.getKey());
+            modelMap.addAttribute("buildings", entry.getValue());
+            leaderboard.add(modelMap);
+        }
+        return new ModelMap().addAttribute("leaderboard", leaderboard);
+    }
 }

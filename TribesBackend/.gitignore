@@ -30,3 +30,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Special ###
+application.properties
+verificationEmailContent.txt

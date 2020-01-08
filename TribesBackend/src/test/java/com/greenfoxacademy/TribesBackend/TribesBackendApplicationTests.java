@@ -3,7 +3,6 @@ package com.greenfoxacademy.TribesBackend;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
-import com.greenfoxacademy.TribesBackend.controllers.HomeController;
 import com.greenfoxacademy.TribesBackend.controllers.UserController;
 import com.greenfoxacademy.TribesBackend.controllers.KingdomController;
 import com.greenfoxacademy.TribesBackend.services.UserService;

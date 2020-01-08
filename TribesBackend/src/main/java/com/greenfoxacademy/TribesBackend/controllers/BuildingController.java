@@ -30,7 +30,7 @@ public class BuildingController {
         //TODO: ERRORS
         //String loudScreaming = jsonType.getJSONObject("LabelData").getString("slogan");
         String buildingType = building.getType().toString();
-        Long userId = buildingService.getAuthenticationService().getIdFromToken(request);
+        Long userId = buildingService.getUtilityService().getIdFromToken(request);
         Building newBuilding = buildingService.createAndReturnBuilding(userId, buildingType);
         return ResponseEntity.ok(newBuilding);
     }
@@ -48,5 +48,12 @@ public class BuildingController {
         //TODO: ERRORS
         Building updatedBuilding = buildingService.buildingLevelUp(buildingService.getBuildingById(buildingId), building.getLevel());
         return ResponseEntity.status(200).body(updatedBuilding);
+    }
+
+    @GetMapping("/leaderboard/buildings/")
+    public ResponseEntity getBuildingsLeaderboard() {
+        //TODO: TEST
+        //TODO: ERRORS
+        return ResponseEntity.ok(buildingService.getLeaderboard());
     }
 }
