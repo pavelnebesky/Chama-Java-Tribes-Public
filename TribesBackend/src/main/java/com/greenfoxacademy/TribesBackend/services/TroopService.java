@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 @Setter
 @Service
 public class TroopService {
+    
     @Autowired
     private TroopRepository troopRepository;
     @Autowired
