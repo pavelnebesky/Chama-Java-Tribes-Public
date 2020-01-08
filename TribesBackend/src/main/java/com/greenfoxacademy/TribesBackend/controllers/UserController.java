@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.crypto.dsig.spec.XSLTTransformParameterSpec;
+import java.io.IOException;
 import java.net.http.HttpClient;
 import java.util.Optional;
 
@@ -46,6 +47,16 @@ public class UserController {
     @GetMapping("/logout")
     public void logout(HttpServletResponse response) {
         response.setStatus(200);
+    }
+
+    @GetMapping("/facebook/login")
+    public void createFacebookAuthorization(HttpServletResponse response)
+    {
+        try {
+            response.sendRedirect(userService.createRedirectionToFacebook());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @GetMapping("/verify/{verCode}")

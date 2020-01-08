@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.social.facebook.connect.FacebookConnectionFactory;
+import org.springframework.social.oauth2.OAuth2Operations;
+import org.springframework.social.oauth2.OAuth2Parameters;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 
@@ -60,6 +63,15 @@ public class UserService {
 
     public void save(User user) {
         userRepository.save(user);
+    }
+
+    public String createRedirectionToFacebook() {
+        FacebookConnectionFactory connectionFactory = new FacebookConnectionFactory("558093108347119", "45f3212797329b800873fdb783ae1193");
+        OAuth2Operations oauthOperations = connectionFactory.getOAuthOperations();
+        OAuth2Parameters params = new OAuth2Parameters();
+        params.setRedirectUri("http://localhost:8080/facebook/authentication");
+        params.setScope("email");
+        return oauthOperations.buildAuthorizeUrl(params);
     }
 
     public void sendEmailVerification(String receiver, String verCode) {
