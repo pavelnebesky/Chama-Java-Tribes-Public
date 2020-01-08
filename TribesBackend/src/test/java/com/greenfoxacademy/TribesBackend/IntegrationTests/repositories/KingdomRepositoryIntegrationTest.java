@@ -1,4 +1,4 @@
-package com.greenfoxacademy.TribesBackend.IntegrationTests.Repositories;
+package com.greenfoxacademy.TribesBackend.IntegrationTests.repositories;
 
 import com.greenfoxacademy.TribesBackend.models.*;
 import com.greenfoxacademy.TribesBackend.repositories.KingdomRepository;
