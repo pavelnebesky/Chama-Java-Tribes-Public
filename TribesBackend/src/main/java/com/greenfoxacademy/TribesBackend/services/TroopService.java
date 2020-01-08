@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.ModelMap;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Getter
 @Setter
@@ -14,6 +17,8 @@ import org.springframework.stereotype.Service;
 public class TroopService {
     @Autowired
     private TroopRepository troopRepository;
+    @Autowired
+    private UtilityService utilityService;
 
     public Iterable<Troop> getAllTroopsByKingdom(Kingdom kingdom){
         return troopRepository.findAllTroopsByKingdom(kingdom);
@@ -21,6 +26,16 @@ public class TroopService {
 
     public Troop getTroopById(long trooperId){
         return troopRepository.findTrooperById(trooperId);
+    }
+
+    public ModelMap getMapOfAllTroopsByUserId(HttpServletRequest request){
+        ModelMap modelMap = new ModelMap();
+        modelMap.addAttribute("troops", getAllTroopsByToken(request));
+        return modelMap;
+    }
+
+    public Iterable<Troop> getAllTroopsByToken(HttpServletRequest request){
+        return getMapOfAllTroopsByUserId(getUtilityService().)
     }
 }
 
