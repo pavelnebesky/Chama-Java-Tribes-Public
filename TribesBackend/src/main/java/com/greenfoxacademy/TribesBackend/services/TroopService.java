@@ -1,6 +1,5 @@
 package com.greenfoxacademy.TribesBackend.services;
 
-import com.greenfoxacademy.TribesBackend.models.Kingdom;
 import com.greenfoxacademy.TribesBackend.models.Troop;
 import com.greenfoxacademy.TribesBackend.repositories.TroopRepository;
 import lombok.Getter;
@@ -20,22 +19,22 @@ public class TroopService {
     @Autowired
     private UtilityService utilityService;
 
-    public Iterable<Troop> getAllTroopsByKingdom(Kingdom kingdom){
-        return troopRepository.findAllTroopsByKingdom(kingdom);
-    }
-
     public Troop getTroopById(long trooperId){
         return troopRepository.findTrooperById(trooperId);
     }
 
-    public ModelMap getMapOfAllTroopsByUserId(HttpServletRequest request){
+    public Iterable<Troop> getAllTroopsByUserId(long userId) {
+        return troopRepository.findAllTroopsByKingdomUserId(userId);
+    }
+
+    public ModelMap getModelMapOfAllTroopsByUserId(HttpServletRequest request){
         ModelMap modelMap = new ModelMap();
         modelMap.addAttribute("troops", getAllTroopsByToken(request));
         return modelMap;
     }
 
     public Iterable<Troop> getAllTroopsByToken(HttpServletRequest request){
-        return getMapOfAllTroopsByUserId(getUtilityService().)
+        return getAllTroopsByUserId(getUtilityService().getIdFromToken(request));
     }
 }
 
