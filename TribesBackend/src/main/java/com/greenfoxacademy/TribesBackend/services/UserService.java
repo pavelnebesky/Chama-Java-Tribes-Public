@@ -98,7 +98,7 @@ public class UserService {
                 throw new FbAccountWithNoEmailException();
             }
             User user = new User();
-            user.setEmail(userProfile.getEmail());
+            user.setUsername(userProfile.getEmail());
             user.setPassword("");
             authGrantAccessToken = new AuthGrantAccessToken();
             authGrantAccessToken.setFacebookId(userProfile.getId());
@@ -106,7 +106,7 @@ public class UserService {
             user.setAuthGrantAccessToken(authGrantAccessToken);
             authGrantAccessTokenRepository.save(authGrantAccessToken);
             registerUser(user);
-            return createRegisterResponse(userRepository.findByEmail(user.getEmail()));
+            return createRegisterResponse(userRepository.findByUsername(user.getUsername()));
         } else {
             return createLoginResponse(authGrantAccessToken.getUser(), request);
         }
