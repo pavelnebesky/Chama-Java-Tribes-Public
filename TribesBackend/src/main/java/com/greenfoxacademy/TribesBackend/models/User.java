@@ -13,7 +13,7 @@ public class User {
     @Id
     @GeneratedValue
     private Long id;
-    private String email;
+    private String username;
     private String password;
     private String fullName;
     @OneToOne(cascade = CascadeType.ALL)
@@ -21,5 +21,4 @@ public class User {
     private Kingdom kingdom;
     private String verificationCode;
     private boolean isEmailVerified;
-    //Token, email and so on to be added later on
 }
