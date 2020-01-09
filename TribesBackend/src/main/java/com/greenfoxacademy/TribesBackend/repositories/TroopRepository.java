@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface TroopRepository extends CrudRepository<Troop, Long> {
     List<Troop> findAllTroopsByKingdomUserId(Long id);
-    Troop findTrooperById(long id);
+    Troop findTroopById(long id);
 }

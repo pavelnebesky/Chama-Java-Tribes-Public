@@ -32,8 +32,8 @@ public class TroopService {
     @Autowired
     private KingdomService kingdomService;
 
-    public Troop getTrooperById(long trooperId){
-        return troopRepository.findTrooperById(trooperId);
+    public Troop getTroopById(long trooperId){
+        return troopRepository.findTroopById(trooperId);
     }
 
     public Iterable<Troop> getAllTroopsByUserId(long userId) {
