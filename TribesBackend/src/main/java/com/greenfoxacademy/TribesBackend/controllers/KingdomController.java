@@ -1,18 +1,13 @@
 package com.greenfoxacademy.TribesBackend.controllers;
 
-import com.auth0.jwt.JWT;
 import com.greenfoxacademy.TribesBackend.models.Kingdom;
 import com.greenfoxacademy.TribesBackend.services.KingdomService;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-
-import static com.greenfoxacademy.TribesBackend.constants.SecurityConstants.ID_CLAIM;
-import static com.greenfoxacademy.TribesBackend.constants.SecurityConstants.TOKEN_PREFIX;
 
 @RestController
 public class KingdomController {
