@@ -48,8 +48,6 @@ public class UserService {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Autowired
-    private ExceptionService exceptionService;
-    @Autowired
     private KingdomRepository kingdomRepository;
     @Autowired
     private ResourceService resourceService;
