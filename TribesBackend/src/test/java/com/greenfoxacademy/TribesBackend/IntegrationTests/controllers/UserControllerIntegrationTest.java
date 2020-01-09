@@ -1,22 +1,22 @@
 package com.greenfoxacademy.TribesBackend.IntegrationTests.controllers;
 
 import com.greenfoxacademy.TribesBackend.controllers.UserController;
-import com.greenfoxacademy.TribesBackend.models.Kingdom;
 import com.greenfoxacademy.TribesBackend.models.User;
 import com.greenfoxacademy.TribesBackend.services.UserService;
 
+import static org.hamcrest.core.Is.is;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.ui.ModelMap;
+
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(UserController.class)
 public class UserControllerIntegrationTest {
@@ -28,22 +28,22 @@ public class UserControllerIntegrationTest {
 
     @Test
     public void givenNewCorrectUser_whenRegisterUser_thenReturnUserModelMap() throws Exception {
-        User user = new User();
-        user.setEmail("test@test.cz");
-        user.setPassword("awudhakuhwd");
-        user.setKingdom(new Kingdom());
-        user.getKingdom().setName("testKingdom");
 
         ModelMap modelMap = new ModelMap();
-        modelMap.addAttribute("id", user.getId());
-        modelMap.addAttribute("email", user.getEmail());
-        modelMap.addAttribute("kingdom", user.getKingdom().getName());
+        modelMap.addAttribute("id", "1");
+        modelMap.addAttribute("email", "something@gmail.com");
+        modelMap.addAttribute("kingdom", "something's kingdom");
 
-        given(userService.registerUser(user)).willReturn(modelMap);
+        given(userService.registerUser(any(User.class))).willReturn(modelMap);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/register")
+        mockMvc.perform(post("/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{ \"email\": \"something@gmail.com\", \"password\": \"seven\" }"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id", is("1")))
+                .andExpect(jsonPath("$.email", is("something@gmail.com")))
+                .andExpect(jsonPath("$.kingdom", is("something's kingdom")));
+
     }
 }
