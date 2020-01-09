@@ -16,6 +16,7 @@ import java.util.stream.StreamSupport;
 
 import static com.greenfoxacademy.TribesBackend.enums.BuildingType.barracks;
 import static com.greenfoxacademy.TribesBackend.enums.ResourceType.gold;
+import  static com.greenfoxacademy.TribesBackend.constants.TroopConstants.TROOP_TRAINING_TIME;
 
 @Getter
 @Setter
@@ -30,8 +31,6 @@ public class TroopService {
     private BuildingService buildingService;
     @Autowired
     private KingdomService kingdomService;
-
-    static final long TRAINING_TIME = 60000;
 
     public Troop getTrooperById(long trooperId){
         return troopRepository.findTrooperById(trooperId);
@@ -56,8 +55,7 @@ public class TroopService {
         return troop;
     }
 
-    public Troop createAndReturnNewTroop(long userId) throws NotEnoughGoldException{
-        //int barraksLevel = buildingService.getAllBuildingsByUserId(userId).toList().stream().filter(b -> b.getType().equals(barracks)).findAny().get().getLevel();
+    public Troop createAndReturnNewTroop(Long userId) throws NotEnoughGoldException{
         int kingdomsGold = buildingService.getKingdomRepository().findByUserId(userId).getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get().getAmount();
         int barracksLevel = StreamSupport.stream(buildingService.getAllBuildingsByUserId(userId).spliterator(), false).filter(b -> b.getType().equals(barracks)).findAny().get().getLevel();
         if (kingdomsGold >= 10) {
@@ -66,7 +64,7 @@ public class TroopService {
             newTroop.setAttack(1);
             newTroop.setDefence(1);
             newTroop.setStarted_at(System.currentTimeMillis());
-            newTroop.setFinished_at(newTroop.getStarted_at() + TRAINING_TIME);
+            newTroop.setFinished_at(newTroop.getStarted_at() + TROOP_TRAINING_TIME);
             newTroop.setKingdom(kingdomService.getKingdomByUserId(userId));
             saveTroop(newTroop);
             Kingdom kingdomToUpdate = buildingService.getKingdomRepository().findByUserId(userId);
@@ -74,7 +72,6 @@ public class TroopService {
             kingdomTroops.add(newTroop);
             return newTroop;
         }else throw new NotEnoughGoldException();
-
     }
 }
 

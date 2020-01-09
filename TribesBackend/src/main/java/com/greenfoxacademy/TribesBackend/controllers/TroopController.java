@@ -21,12 +21,12 @@ public class TroopController {
     }
 
     @GetMapping("/kingdom/troops/[troopId]")
-    public ResponseEntity getTrooperById(HttpServletRequest request, long troopId){
+    public ResponseEntity getTroopById(HttpServletRequest request, Long troopId){
         return ResponseEntity.ok(troopService.getTrooperById(troopId));
     }
 
     @PostMapping("/kingdom/troops")
-    public ResponseEntity createNewTrooper(HttpServletRequest request){
+    public ResponseEntity createNewTroop(HttpServletRequest request){
         Long userId = troopService.getUtilityService().getIdFromToken(request);
         try {
           return ResponseEntity.ok(troopService.createAndReturnNewTroop(userId)) ;
