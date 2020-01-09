@@ -38,13 +38,17 @@ public class ResourceService {
     }
 
     public List<Resource> createInitialResources() {
-        List<Resource> listOfInitialResources = new ArrayList<Resource>(){
+        List<Resource> listOfInitialResources = new ArrayList<Resource>() {
             {
-            add(new Resource(ResourceType.gold, 2 * BUILDING_PRICE, 0));
-            add(new Resource(ResourceType.food, 0, 0));
+                add(new Resource(ResourceType.gold, 2 * BUILDING_PRICE, 0));
+                add(new Resource(ResourceType.food, 0, 0));
             }
         };
         return listOfInitialResources;
+    }
+
+    public double calculateAmountOfGold(Long userId) {
+        
     }
 
     public ModelMap getResourcesModelByUserId(Long userId) {
