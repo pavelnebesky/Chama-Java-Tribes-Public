@@ -59,10 +59,10 @@ public class TroopService {
     public Troop createAndReturnNewTroop(long userId) throws NotEnoughGoldException{
         //int barraksLevel = buildingService.getAllBuildingsByUserId(userId).toList().stream().filter(b -> b.getType().equals(barracks)).findAny().get().getLevel();
         int kingdomsGold = buildingService.getKingdomRepository().findByUserId(userId).getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get().getAmount();
-        int barraksLevel = StreamSupport.stream(buildingService.getAllBuildingsByUserId(userId).spliterator(), false).filter(b -> b.getType().equals(barracks)).findAny().get().getLevel();
+        int barracksLevel = StreamSupport.stream(buildingService.getAllBuildingsByUserId(userId).spliterator(), false).filter(b -> b.getType().equals(barracks)).findAny().get().getLevel();
         if (kingdomsGold >= 10) {
             Troop newTroop = new Troop();
-            newTroop.setHp(barraksLevel * 10);
+            newTroop.setHp(barracksLevel * 10);
             newTroop.setAttack(1);
             newTroop.setDefence(1);
             newTroop.setStarted_at(System.currentTimeMillis());
