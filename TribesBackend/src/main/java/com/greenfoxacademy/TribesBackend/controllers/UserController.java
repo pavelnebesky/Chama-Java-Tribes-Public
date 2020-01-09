@@ -50,8 +50,7 @@ public class UserController {
     }
 
     @GetMapping("/facebook/login")
-    public void createFacebookAuthorization(HttpServletResponse response)
-    {
+    public void createFacebookAuthorization(HttpServletResponse response) {
         try {
             response.sendRedirect(userService.createRedirectionToFacebook());
         } catch (IOException e) {
@@ -60,13 +59,12 @@ public class UserController {
     }
 
     @GetMapping("/facebook/authentication")
-    public ResponseEntity createFacebookAccessToken(@RequestParam("code") String code, HttpServletRequest request){
-        try{
+    public ResponseEntity createFacebookAccessToken(@RequestParam("code") String code, HttpServletRequest request) {
+        try {
             return ResponseEntity.ok(userService.authenticateFbUser(code, request));
-        } catch(FrontendException e){
+        } catch (FrontendException e) {
             return userService.getUtilityService().handleResponseWithException(e);
         }
-
     }
 
     @GetMapping("/verify/{verCode}")

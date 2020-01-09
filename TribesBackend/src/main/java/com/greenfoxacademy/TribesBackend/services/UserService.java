@@ -88,17 +88,16 @@ public class UserService {
         String accessToken = accessGrant.getAccessToken();
         FacebookTemplate fbTemplate = new FacebookTemplate(accessToken);
         String[] fields = {"id", "email"};
-
         org.springframework.social.facebook.api.User userProfile = fbTemplate.fetchObject("me", org.springframework.social.facebook.api.User.class, fields);
         AuthGrantAccessToken authGrantAccessToken = authGrantAccessTokenRepository.findByFacebookId(userProfile.getId());
         if (authGrantAccessToken == null) {
-            if(userProfile.getEmail()==null){
+            if (userProfile.getEmail() == null) {
                 throw new FbAccountWithNoEmailException();
             }
-            User user=new User();
+            User user = new User();
             user.setEmail(userProfile.getEmail());
             user.setPassword("");
-            authGrantAccessToken=new AuthGrantAccessToken();
+            authGrantAccessToken = new AuthGrantAccessToken();
             authGrantAccessToken.setFacebookId(userProfile.getId());
             authGrantAccessToken.setUser(user);
             user.setAuthGrantAccessToken(authGrantAccessToken);
