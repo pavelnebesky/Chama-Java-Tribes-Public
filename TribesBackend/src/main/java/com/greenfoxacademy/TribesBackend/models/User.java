@@ -17,6 +17,8 @@ public class User {
     private String password;
     private String fullName;
     @OneToOne(cascade = CascadeType.ALL)
+    private AuthGrantAccessToken authGrantAccessToken;
+    @OneToOne(cascade = CascadeType.ALL)
     @JsonIgnore
     private Kingdom kingdom;
     private String verificationCode;
