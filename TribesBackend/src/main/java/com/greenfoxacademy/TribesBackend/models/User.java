@@ -1,6 +1,7 @@
 package com.greenfoxacademy.TribesBackend.models;
 
 import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,6 +21,7 @@ public class User {
     private String password;
     private String fullName;
     @OneToOne(cascade = CascadeType.ALL)
+    @JsonIgnore
     private Kingdom kingdom;
     private String verificationCode;
     private boolean isEmailVerified;

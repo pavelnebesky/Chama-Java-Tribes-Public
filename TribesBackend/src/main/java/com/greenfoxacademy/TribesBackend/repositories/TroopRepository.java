@@ -1,10 +1,13 @@
 package com.greenfoxacademy.TribesBackend.repositories;
-import com.greenfoxacademy.TribesBackend.models.Kingdom;
+
 import com.greenfoxacademy.TribesBackend.models.Troop;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
 @Repository
 public interface TroopRepository extends CrudRepository<Troop, Long> {
-    Iterable<Troop> findAllTroopsByKingdom(Kingdom kingdom);
-    Troop findTrooperById(long id);
+    List<Troop> findAllTroopsByKingdomUserId(Long id);
+    Troop findTroopById(long id);
 }

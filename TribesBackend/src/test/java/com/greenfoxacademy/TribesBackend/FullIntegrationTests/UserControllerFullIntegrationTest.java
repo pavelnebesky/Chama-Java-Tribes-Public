@@ -1,6 +1,5 @@
-package com.greenfoxacademy.TribesBackend.IntegrationTests.controllers;
+package com.greenfoxacademy.TribesBackend.FullIntegrationTests;
 
-import com.greenfoxacademy.TribesBackend.controllers.UserController;
 import com.greenfoxacademy.TribesBackend.models.Kingdom;
 import com.greenfoxacademy.TribesBackend.models.User;
 import com.greenfoxacademy.TribesBackend.services.UserService;
@@ -8,7 +7,6 @@ import com.greenfoxacademy.TribesBackend.services.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -18,8 +16,9 @@ import org.springframework.ui.ModelMap;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(UserController.class)
-public class UserControllerIntegrationTest {
+@SpringBootTest
+@AutoConfigureMockMvc
+public class UserControllerFullIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -47,3 +46,4 @@ public class UserControllerIntegrationTest {
                 .andExpect(status().isOk());
     }
 }
+

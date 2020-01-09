@@ -2,6 +2,7 @@ package com.greenfoxacademy.TribesBackend.services;
 
 import com.greenfoxacademy.TribesBackend.exceptions.*;
 import com.greenfoxacademy.TribesBackend.models.Kingdom;
+import com.greenfoxacademy.TribesBackend.models.Location;
 import com.greenfoxacademy.TribesBackend.models.User;
 import com.greenfoxacademy.TribesBackend.repositories.KingdomRepository;
 import com.greenfoxacademy.TribesBackend.repositories.UserRepository;
@@ -35,8 +36,6 @@ public class UserService {
     private KingdomService kingdomService;
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
-    @Autowired
-    private ExceptionService exceptionService;
     @Autowired
     private KingdomRepository kingdomRepository;
     @Autowired
@@ -124,14 +123,15 @@ public class UserService {
     public ModelMap registerUser(User user) {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         Kingdom kingdom = new Kingdom();
-        kingdom.setUser(user);
         kingdom.setName(generateKingdomNameByEmail(user.getEmail()));
         kingdom.setResources(resourceService.createInitialResources());
+        kingdom.setLocation(new Location());
         user.setKingdom(kingdom);
         user.setEmailVerified(false);
         String verCode = generateEmailVerificationCode();
         user.setVerificationCode(verCode);
         userRepository.save(user);
+        kingdom.setUserId(user.getId());
         kingdomRepository.save(kingdom);
         sendEmailVerification(user.getEmail(), verCode);
         return createRegisterResponse(findByEmail(user.getEmail()));

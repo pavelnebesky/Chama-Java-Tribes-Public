@@ -19,9 +19,7 @@ public class Kingdom {
     @GeneratedValue
     private Long id;
     private String name;
-    @OneToOne(cascade = CascadeType.PERSIST)
-    @JsonIgnore
-    private User user;
+    private Long userId;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Resource> resources;
     @OneToOne(cascade = CascadeType.ALL)
