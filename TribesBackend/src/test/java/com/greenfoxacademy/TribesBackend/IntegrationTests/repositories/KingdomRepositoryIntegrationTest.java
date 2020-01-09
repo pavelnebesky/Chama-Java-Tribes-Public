@@ -40,7 +40,7 @@ public class KingdomRepositoryIntegrationTest {
     public void whenFindByUserId_thenReturnKingdom() {
         User user  = new User();
         Kingdom kingdom = new Kingdom();
-        kingdom.setUser(user);
+        kingdom.setUserId(user.getId());
         user.setKingdom(kingdom);
 
         entityManager.persist(user);
