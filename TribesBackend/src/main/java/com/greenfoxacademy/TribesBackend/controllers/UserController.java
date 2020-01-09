@@ -60,8 +60,13 @@ public class UserController {
     }
 
     @GetMapping("/facebook/authentication")
-    public String createFacebookAccessToken(@RequestParam("code") String code){
-        return userService.authenticateFbUser(code);
+    public ResponseEntity createFacebookAccessToken(@RequestParam("code") String code, HttpServletRequest request){
+        try{
+            return ResponseEntity.ok(userService.authenticateFbUser(code, request));
+        } catch(FrontendException e){
+            return userService.getUtilityService().handleResponseWithException(e);
+        }
+
     }
 
     @GetMapping("/verify/{verCode}")

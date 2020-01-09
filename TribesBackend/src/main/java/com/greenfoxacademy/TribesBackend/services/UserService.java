@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static com.greenfoxacademy.TribesBackend.constants.EmailVerificationConstants.*;
+import static com.greenfoxacademy.TribesBackend.constants.FacebookConstants.*;
 
 @Getter
 @Setter
@@ -72,17 +74,17 @@ public class UserService {
     }
 
     public String createRedirectionToFacebook() {
-        FacebookConnectionFactory connectionFactory = new FacebookConnectionFactory("558093108347119", "45f3212797329b800873fdb783ae1193");
+        FacebookConnectionFactory connectionFactory = new FacebookConnectionFactory(APP_ID, APP_SECRET);
         OAuth2Operations oauthOperations = connectionFactory.getOAuthOperations();
         OAuth2Parameters params = new OAuth2Parameters();
-        params.setRedirectUri("http://localhost:8080/facebook/authentication");
+        params.setRedirectUri(REDIRECT_URI_FOR_FACEBOOK);
         params.setScope("email");
         return oauthOperations.buildAuthorizeUrl(params);
     }
 
-    public String authenticateFbUser(String authenticationCode) {
-        FacebookConnectionFactory connectionFactory = new FacebookConnectionFactory("558093108347119", "45f3212797329b800873fdb783ae1193");
-        AccessGrant accessGrant = connectionFactory.getOAuthOperations().exchangeForAccess(authenticationCode, "http://localhost:8080/facebook/authentication", null);
+    public ModelMap authenticateFbUser(String authenticationCode, HttpServletRequest request) throws FbAccountWithNoEmailException {
+        FacebookConnectionFactory connectionFactory = new FacebookConnectionFactory(APP_ID, APP_SECRET);
+        AccessGrant accessGrant = connectionFactory.getOAuthOperations().exchangeForAccess(authenticationCode, REDIRECT_URI_FOR_FACEBOOK, null);
         String accessToken = accessGrant.getAccessToken();
         FacebookTemplate fbTemplate = new FacebookTemplate(accessToken);
         String[] fields = {"id", "email"};
@@ -90,6 +92,9 @@ public class UserService {
         org.springframework.social.facebook.api.User userProfile = fbTemplate.fetchObject("me", org.springframework.social.facebook.api.User.class, fields);
         AuthGrantAccessToken authGrantAccessToken = authGrantAccessTokenRepository.findByFacebookId(userProfile.getId());
         if (authGrantAccessToken == null) {
+            if(userProfile.getEmail()==null){
+                throw new FbAccountWithNoEmailException();
+            }
             User user=new User();
             user.setEmail(userProfile.getEmail());
             user.setPassword("");
@@ -99,10 +104,9 @@ public class UserService {
             user.setAuthGrantAccessToken(authGrantAccessToken);
             authGrantAccessTokenRepository.save(authGrantAccessToken);
             registerUser(user);
-            return "registration successful";
+            return createRegisterResponse(userRepository.findByEmail(user.getEmail()));
         } else {
-            //login
-            return "loggedIn successfully";
+            return createLoginResponse(authGrantAccessToken.getUser(), request);
         }
     }
 
