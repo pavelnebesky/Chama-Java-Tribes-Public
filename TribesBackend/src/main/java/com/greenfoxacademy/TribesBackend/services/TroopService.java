@@ -1,5 +1,6 @@
 package com.greenfoxacademy.TribesBackend.services;
 
+import com.greenfoxacademy.TribesBackend.constants.TroopConstants;
 import com.greenfoxacademy.TribesBackend.exceptions.NotEnoughGoldException;
 import com.greenfoxacademy.TribesBackend.models.Kingdom;
 import com.greenfoxacademy.TribesBackend.models.Troop;
@@ -17,7 +18,6 @@ import java.util.stream.StreamSupport;
 
 import static com.greenfoxacademy.TribesBackend.enums.BuildingType.barracks;
 import static com.greenfoxacademy.TribesBackend.enums.ResourceType.gold;
-import  static com.greenfoxacademy.TribesBackend.constants.TroopConstants.TROOP_TRAINING_TIME;
 
 @Getter
 @Setter
@@ -61,13 +61,13 @@ public class TroopService {
     public Troop createAndReturnNewTroop(Long userId) throws NotEnoughGoldException{
         int kingdomsGold = buildingService.getKingdomRepository().findByUserId(userId).getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get().getAmount();
         int barracksLevel = StreamSupport.stream(buildingService.getAllBuildingsByUserId(userId).spliterator(), false).filter(b -> b.getType().equals(barracks)).findAny().get().getLevel();
-        if (kingdomsGold >= 10) {
+        if (kingdomsGold >= TroopConstants.TROOP_PRICE) {
             Troop newTroop = new Troop();
-            newTroop.setHp(barracksLevel * 10);
+            newTroop.setHp(barracksLevel * TroopConstants.TROOP_BASE_HP);
             newTroop.setAttack(1);
             newTroop.setDefence(1);
             newTroop.setStarted_at(System.currentTimeMillis());
-            newTroop.setFinished_at(newTroop.getStarted_at() + TROOP_TRAINING_TIME);
+            newTroop.setFinished_at(newTroop.getStarted_at() + TroopConstants.TROOP_TRAINING_TIME);
             newTroop.setKingdom(kingdomService.getKingdomByUserId(userId));
             saveTroop(newTroop);
             Kingdom kingdomToUpdate = kingdomRepository.findByUserId(userId);
