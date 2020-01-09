@@ -1,10 +1,14 @@
 package com.greenfoxacademy.TribesBackend.services;
 
+import com.greenfoxacademy.TribesBackend.enums.BuildingType;
 import com.greenfoxacademy.TribesBackend.enums.ResourceType;
+import com.greenfoxacademy.TribesBackend.constants.ResourceConstants;
+import com.greenfoxacademy.TribesBackend.models.Building;
 import com.greenfoxacademy.TribesBackend.models.Kingdom;
 import com.greenfoxacademy.TribesBackend.models.Resource;
 import com.greenfoxacademy.TribesBackend.repositories.ResourceRepository;
 import lombok.Getter;
+import org.aspectj.apache.bcel.classfile.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
@@ -47,8 +51,18 @@ public class ResourceService {
         return listOfInitialResources;
     }
 
-    public double calculateAmountOfGold(Long userId) {
-        
+    public double calculateAmountOfResourceToAdd(Building building) {
+        if (building.getType() == BuildingType.mine) {
+            Long differenceInTime = (System.currentTimeMillis() - building.getUpdated_at())/ONE_MINUTE_MILLIS;
+            double AmountOfResourceToAdd = differenceInTime * (GOLD_PER_MINUTE + GOLD_TO_INCREASE_BY_LEVEL * building.getLevel());
+            return AmountOfResourceToAdd;
+        }
+        else if (building.getType() == BuildingType.farm) {
+            Long differenceInTime = (System.currentTimeMillis() - building.getUpdated_at()) / ONE_MINUTE_MILLIS;
+            double AmountOfResourceToAdd = differenceInTime * (FOOD_PER_MINUTE + FOOD_TO_INCREASE_BY_LEVEL * building.getLevel());
+            return AmountOfResourceToAdd;
+        }
+        else return 0;
     }
 
     public ModelMap getResourcesModelByUserId(Long userId) {
