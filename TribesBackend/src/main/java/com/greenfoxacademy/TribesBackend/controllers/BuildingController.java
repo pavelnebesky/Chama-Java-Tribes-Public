@@ -50,7 +50,7 @@ public class BuildingController {
         return ResponseEntity.status(200).body(updatedBuilding);
     }
 
-    @GetMapping("/leaderboard/buildings/")
+    @GetMapping("/leaderboard/buildings")
     public ResponseEntity getBuildingsLeaderboard() {
         //TODO: TEST
         //TODO: ERRORS
