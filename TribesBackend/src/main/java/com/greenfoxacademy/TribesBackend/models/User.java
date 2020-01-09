@@ -16,6 +16,8 @@ public class User {
     private String password;
     private String fullName;
     @OneToOne(cascade = CascadeType.ALL)
+    private AuthGrantAccessToken authGrantAccessToken;
+    @OneToOne(cascade = CascadeType.ALL)
     private Kingdom kingdom;
     private String verificationCode;
     private boolean isEmailVerified;

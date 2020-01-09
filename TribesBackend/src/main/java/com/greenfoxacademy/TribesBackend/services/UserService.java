@@ -1,8 +1,10 @@
 package com.greenfoxacademy.TribesBackend.services;
 
 import com.greenfoxacademy.TribesBackend.exceptions.*;
+import com.greenfoxacademy.TribesBackend.models.AuthGrantAccessToken;
 import com.greenfoxacademy.TribesBackend.models.Kingdom;
 import com.greenfoxacademy.TribesBackend.models.User;
+import com.greenfoxacademy.TribesBackend.repositories.AuthGrantAccessTokenRepository;
 import com.greenfoxacademy.TribesBackend.repositories.KingdomRepository;
 import com.greenfoxacademy.TribesBackend.repositories.UserRepository;
 import lombok.Getter;
@@ -12,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.social.facebook.api.impl.FacebookTemplate;
 import org.springframework.social.facebook.connect.FacebookConnectionFactory;
+import org.springframework.social.oauth2.AccessGrant;
 import org.springframework.social.oauth2.OAuth2Operations;
 import org.springframework.social.oauth2.OAuth2Parameters;
 import org.springframework.stereotype.Service;
@@ -32,6 +36,8 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private AuthGrantAccessTokenRepository authGrantAccessTokenRepository;
     @Autowired
     private UtilityService utilityService;
     @Autowired
@@ -72,6 +78,32 @@ public class UserService {
         params.setRedirectUri("http://localhost:8080/facebook/authentication");
         params.setScope("email");
         return oauthOperations.buildAuthorizeUrl(params);
+    }
+
+    public String authenticateFbUser(String authenticationCode) {
+        FacebookConnectionFactory connectionFactory = new FacebookConnectionFactory("558093108347119", "45f3212797329b800873fdb783ae1193");
+        AccessGrant accessGrant = connectionFactory.getOAuthOperations().exchangeForAccess(authenticationCode, "http://localhost:8080/facebook/authentication", null);
+        String accessToken = accessGrant.getAccessToken();
+        FacebookTemplate fbTemplate = new FacebookTemplate(accessToken);
+        String[] fields = {"id", "email"};
+
+        org.springframework.social.facebook.api.User userProfile = fbTemplate.fetchObject("me", org.springframework.social.facebook.api.User.class, fields);
+        AuthGrantAccessToken authGrantAccessToken = authGrantAccessTokenRepository.findByFacebookId(userProfile.getId());
+        if (authGrantAccessToken == null) {
+            User user=new User();
+            user.setEmail(userProfile.getEmail());
+            user.setPassword("");
+            authGrantAccessToken=new AuthGrantAccessToken();
+            authGrantAccessToken.setFacebookId(userProfile.getId());
+            authGrantAccessToken.setUser(user);
+            user.setAuthGrantAccessToken(authGrantAccessToken);
+            authGrantAccessTokenRepository.save(authGrantAccessToken);
+            registerUser(user);
+            return "registration successful";
+        } else {
+            //login
+            return "loggedIn successfully";
+        }
     }
 
     public void sendEmailVerification(String receiver, String verCode) {

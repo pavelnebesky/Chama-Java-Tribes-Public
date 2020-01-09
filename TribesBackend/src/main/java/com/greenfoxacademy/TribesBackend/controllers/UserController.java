@@ -59,6 +59,11 @@ public class UserController {
         }
     }
 
+    @GetMapping("/facebook/authentication")
+    public String createFacebookAccessToken(@RequestParam("code") String code){
+        return userService.authenticateFbUser(code);
+    }
+
     @GetMapping("/verify/{verCode}")
     public ResponseEntity verify(@PathVariable String verCode) {
         try {
