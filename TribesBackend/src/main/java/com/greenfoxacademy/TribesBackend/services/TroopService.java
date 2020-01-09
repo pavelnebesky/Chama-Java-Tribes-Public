@@ -3,6 +3,7 @@ package com.greenfoxacademy.TribesBackend.services;
 import com.greenfoxacademy.TribesBackend.exceptions.NotEnoughGoldException;
 import com.greenfoxacademy.TribesBackend.models.Kingdom;
 import com.greenfoxacademy.TribesBackend.models.Troop;
+import com.greenfoxacademy.TribesBackend.repositories.KingdomRepository;
 import com.greenfoxacademy.TribesBackend.repositories.TroopRepository;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,6 +32,8 @@ public class TroopService {
     private BuildingService buildingService;
     @Autowired
     private KingdomService kingdomService;
+    @Autowired
+    private KingdomRepository kingdomRepository;
 
     public Troop getTroopById(long trooperId){
         return troopRepository.findTroopById(trooperId);
@@ -67,9 +70,10 @@ public class TroopService {
             newTroop.setFinished_at(newTroop.getStarted_at() + TROOP_TRAINING_TIME);
             newTroop.setKingdom(kingdomService.getKingdomByUserId(userId));
             saveTroop(newTroop);
-            Kingdom kingdomToUpdate = buildingService.getKingdomRepository().findByUserId(userId);
-            List<Troop> kingdomTroops = troopRepository.findAllTroopsByKingdomUserId(userId);
+            Kingdom kingdomToUpdate = kingdomRepository.findByUserId(userId);
+            List<Troop> kingdomTroops = kingdomToUpdate.getTroops();
             kingdomTroops.add(newTroop);
+            kingdomRepository.save(kingdomToUpdate);
             return newTroop;
         }else throw new NotEnoughGoldException();
     }

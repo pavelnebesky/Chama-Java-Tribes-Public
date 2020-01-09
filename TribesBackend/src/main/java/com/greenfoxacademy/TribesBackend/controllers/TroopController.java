@@ -22,7 +22,7 @@ public class TroopController {
 
     @GetMapping("/kingdom/troops/[troopId]")
     public ResponseEntity getTroopById(HttpServletRequest request, Long troopId){
-        return ResponseEntity.ok(troopService.getTrooperById(troopId));
+        return ResponseEntity.ok(troopService.getTroopById(troopId));
     }
 
     @PostMapping("/kingdom/troops")
