@@ -28,7 +28,7 @@ public class UserController {
         try {
             userService.checkUserParamsForLogin(user);
         } catch (FrontendException e) {
-            return userService.getExceptionService().handleResponseWithException(e);
+            return userService.getUtilityService().handleResponseWithException(e);
         }
         return ResponseEntity.ok(userService.createLoginResponse(user, request));
     }
@@ -38,7 +38,7 @@ public class UserController {
         try {
             userService.checkUserParamsForReg(user);
         } catch (FrontendException e) {
-            return userService.getExceptionService().handleResponseWithException(e);
+            return userService.getUtilityService().handleResponseWithException(e);
         }
         return ResponseEntity.ok(userService.registerUser(user));
     }
@@ -53,7 +53,7 @@ public class UserController {
         try {
             userService.verifyEmail(verCode);
         } catch (FrontendException e) {
-            return userService.getExceptionService().handleResponseWithException(e);
+            return userService.getUtilityService().handleResponseWithException(e);
         }
         return ResponseEntity.ok().body("email verified!");
     }

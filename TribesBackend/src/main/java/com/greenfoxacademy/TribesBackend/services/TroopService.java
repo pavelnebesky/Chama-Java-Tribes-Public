@@ -21,6 +21,7 @@ import static com.greenfoxacademy.TribesBackend.enums.ResourceType.gold;
 @Setter
 @Service
 public class TroopService {
+    
     @Autowired
     private TroopRepository troopRepository;
     @Autowired
