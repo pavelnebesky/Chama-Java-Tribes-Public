@@ -40,14 +40,13 @@ public class KingdomRepositoryIntegrationTest {
     public void whenFindByUserId_thenReturnKingdom() {
         User user  = new User();
         Kingdom kingdom = new Kingdom();
-        kingdom.setUserId(user.getId());
         user.setKingdom(kingdom);
-
-        entityManager.persist(user);
-        entityManager.persist(kingdom);
+        Long userId = (Long)entityManager.persistAndGetId(user);
+        kingdom.setUserId(userId);
+        Long kingdomId = (Long)entityManager.persistAndGetId(kingdom);
         entityManager.flush();
 
-        Kingdom found = kingdomRepository.findByUserId(user.getId());
-        assertThat(found.getId()).isEqualTo(kingdom.getId());
+        Kingdom found = kingdomRepository.findByUserId(userId);
+        assertThat(found.getId()).isEqualTo(kingdomId);
     }
 }
