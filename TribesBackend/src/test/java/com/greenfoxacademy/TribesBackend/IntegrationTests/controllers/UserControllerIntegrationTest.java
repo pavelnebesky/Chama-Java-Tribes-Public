@@ -38,7 +38,7 @@ public class UserControllerIntegrationTest {
 
         mockMvc.perform(post("/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{ \"email\": \"something@gmail.com\", \"password\": \"seven\" }"))
+                .content("{ \"username\": \"something@gmail.com\", \"password\": \"seven\" }"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is("1")))
