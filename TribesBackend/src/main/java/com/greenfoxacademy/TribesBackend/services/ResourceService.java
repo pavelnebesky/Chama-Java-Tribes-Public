@@ -55,9 +55,7 @@ public class ResourceService {
         return new ModelMap().addAttribute("resources", this.getResources(kingdom));
     }
 
-    public void checkResourceTypeIfItExists(String resourceType)throws ParameterNotFoundException {
-        if (ResourceType.valueOf(resourceType) == null){
-            throw new ParameterNotFoundException(resourceType);
-        }
+    public void checkResourceTypeIfItExists(String resourceType)throws IllegalArgumentException {
+        ResourceType.valueOf(resourceType);
     }
 }
