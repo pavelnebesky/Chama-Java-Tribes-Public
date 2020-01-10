@@ -1,6 +1,9 @@
 package com.greenfoxacademy.TribesBackend.services;
 
+import com.greenfoxacademy.TribesBackend.enums.BuildingType;
 import com.greenfoxacademy.TribesBackend.enums.ResourceType;
+import com.greenfoxacademy.TribesBackend.exceptions.FrontendException;
+import com.greenfoxacademy.TribesBackend.exceptions.ParameterNotFoundException;
 import com.greenfoxacademy.TribesBackend.models.Kingdom;
 import com.greenfoxacademy.TribesBackend.models.Resource;
 import com.greenfoxacademy.TribesBackend.repositories.ResourceRepository;
@@ -52,7 +55,9 @@ public class ResourceService {
         return new ModelMap().addAttribute("resources", this.getResources(kingdom));
     }
 
-    public void checkResourceTypeIfItExists(String resourceType) {
-
+    public void checkResourceTypeIfItExists(String resourceType)throws ParameterNotFoundException {
+        if (ResourceType.valueOf(resourceType) == null){
+            throw new ParameterNotFoundException(resourceType);
+        }
     }
 }

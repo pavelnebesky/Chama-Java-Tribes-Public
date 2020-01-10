@@ -30,15 +30,14 @@ public class ResourceController {
 
     @GetMapping("/kingdom/resources/{resourceType}")
     public ResponseEntity getResourceType(@PathVariable String ResourceType) {
-
         ResourceType type = resourceService.returnEnum(ResourceType);
         Optional<Resource> maybeResource = resourceService.findResourceByType(type);
-        if (maybeResource.isPresent()) {
-            return ResponseEntity.ok(maybeResource);
+        try {
+            resourceService.checkResourceTypeIfItExists(ResourceType);
+        } catch (ParameterNotFoundException e) {
+            return resourceService.getUtilityService().handleResponseWithException(e);
         }
-        else {
-            return utilityService.handleResponseWithException(new ParameterNotFoundException(ResourceType));
-        }
+        return ResponseEntity.ok(maybeResource);
     }
 }
 
