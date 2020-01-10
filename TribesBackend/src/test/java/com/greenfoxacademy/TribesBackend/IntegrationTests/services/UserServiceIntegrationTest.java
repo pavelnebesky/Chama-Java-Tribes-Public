@@ -24,9 +24,9 @@ public class UserServiceIntegrationTest {
     @Before
     public void SetUp() {
         User user = new User();
-        user.setEmail("bloblo@cactus.cz");
+        user.setUsername("bloblo@cactus.cz");
 
-        Mockito.when(userRepository.findByEmail(user.getEmail())).thenReturn(user);
+        Mockito.when(userRepository.findByUsername(user.getUsername())).thenReturn(user);
     }
 
     @Test
@@ -34,6 +34,6 @@ public class UserServiceIntegrationTest {
         String email = "bloblo@cactus.cz";
         User found = userservice.findByEmail(email);
 
-        assertThat(found.getEmail()).isEqualTo(email);
+        assertThat(found.getUsername()).isEqualTo(email);
     }
 }

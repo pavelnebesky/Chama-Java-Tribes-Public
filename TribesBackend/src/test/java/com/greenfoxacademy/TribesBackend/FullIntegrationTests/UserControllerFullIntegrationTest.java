@@ -1,7 +1,4 @@
-/*
 package com.greenfoxacademy.TribesBackend.FullIntegrationTests;
-
-import com.greenfoxacademy.TribesBackend.services.UserService;
 
 import static org.hamcrest.core.Is.is;
 import org.junit.jupiter.api.Test;
@@ -20,20 +17,17 @@ public class UserControllerFullIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private UserService userService;
 
     @Test
     public void givenNewCorrectUser_whenRegisterUser_thenReturnUserModelMap() throws Exception {
         mockMvc.perform(post("/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{ \"email\": \"something@gmail.com\", \"password\": \"seven\" }"))
+                .content("{ \"username\": \"something@gmail.com\", \"password\": \"seven\" }"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").exists())
-                .andExpect(jsonPath("$.email", is("something@gmail.com")))
+                .andExpect(jsonPath("$.username", is("something@gmail.com")))
                 .andExpect(jsonPath("$.kingdom", is("something's kingdom")));
     }
 }
 
-*/

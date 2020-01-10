@@ -31,7 +31,7 @@ public class UserControllerIntegrationTest {
 
         ModelMap modelMap = new ModelMap();
         modelMap.addAttribute("id", "1");
-        modelMap.addAttribute("email", "something@gmail.com");
+        modelMap.addAttribute("username", "something@gmail.com");
         modelMap.addAttribute("kingdom", "something's kingdom");
 
         given(userService.registerUser(any(User.class))).willReturn(modelMap);
@@ -42,7 +42,7 @@ public class UserControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is("1")))
-                .andExpect(jsonPath("$.email", is("something@gmail.com")))
+                .andExpect(jsonPath("$.username", is("something@gmail.com")))
                 .andExpect(jsonPath("$.kingdom", is("something's kingdom")));
 
     }
