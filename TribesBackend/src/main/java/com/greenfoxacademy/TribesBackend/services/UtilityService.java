@@ -12,7 +12,6 @@ import org.springframework.ui.ModelMap;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
 import java.util.Scanner;

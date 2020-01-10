@@ -39,10 +39,5 @@ class TribesBackendApplicationTests {
     public void controllerLoads() throws InstanceNotFoundException {
         assertThat(userController).isNotNull();
     }
-    
-    @Test
-    public void doesEmailValidatorWork() throws Exception{
-        assertEquals(userService.isEmailValid("jajenc@seznam.cz"), true);
-        assertEquals(userService.isEmailValid("blablafuk@smrdim,prd"), false);
-    }
+
 }

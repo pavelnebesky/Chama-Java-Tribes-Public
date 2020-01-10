@@ -4,6 +4,7 @@ import com.greenfoxacademy.TribesBackend.enums.ResourceType;
 import com.greenfoxacademy.TribesBackend.exceptions.ParameterNotFoundException;
 import com.greenfoxacademy.TribesBackend.models.Resource;
 import com.greenfoxacademy.TribesBackend.services.ResourceService;
+import com.greenfoxacademy.TribesBackend.services.UtilityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +19,8 @@ public class ResourceController {
 
     @Autowired
     private ResourceService resourceService;
+    @Autowired
+    private UtilityService utilityService;
 
     @GetMapping("/kingdom/resources")
     public ResponseEntity getResource(HttpServletRequest request) {
@@ -34,7 +37,7 @@ public class ResourceController {
             return ResponseEntity.ok(maybeResource);
         }
         else {
-            return resourceService.getUtilityService().handleResponseWithException(new ParameterNotFoundException(ResourceType));
+            return utilityService.handleResponseWithException(new ParameterNotFoundException(ResourceType));
         }
     }
 }

@@ -1,12 +1,9 @@
 package com.greenfoxacademy.TribesBackend.controllers;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.greenfoxacademy.TribesBackend.models.Building;
-import com.greenfoxacademy.TribesBackend.repositories.BuildingRepository;
 import com.greenfoxacademy.TribesBackend.services.BuildingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
