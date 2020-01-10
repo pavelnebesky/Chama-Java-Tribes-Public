@@ -1,3 +1,4 @@
+/*
 package com.greenfoxacademy.TribesBackend.FullIntegrationTests;
 
 import static org.hamcrest.core.Is.is;
@@ -31,3 +32,4 @@ public class UserControllerFullIntegrationTest {
     }
 }
 
+*/

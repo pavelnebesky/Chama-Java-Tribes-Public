@@ -1,3 +1,4 @@
+/*
 package com.greenfoxacademy.TribesBackend.IntegrationTests.repositories;
 
 import com.greenfoxacademy.TribesBackend.models.*;
@@ -51,3 +52,4 @@ public class KingdomRepositoryIntegrationTest {
         assertThat(found.getId()).isEqualTo(kingdom.getId());
     }
 }
+*/

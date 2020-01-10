@@ -34,6 +34,8 @@ public class TroopService {
     private KingdomService kingdomService;
     @Autowired
     private KingdomRepository kingdomRepository;
+    @Autowired
+    private PurchaseService purchaseService;
 
     public Troop getTroopById(long trooperId){
         return troopRepository.findTroopById(trooperId);
@@ -59,9 +61,9 @@ public class TroopService {
     }
 
     public Troop createAndReturnNewTroop(Long userId) throws NotEnoughGoldException{
-        int kingdomsGold = buildingService.getKingdomRepository().findByUserId(userId).getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get().getAmount();
-        int barracksLevel = StreamSupport.stream(buildingService.getAllBuildingsByUserId(userId).spliterator(), false).filter(b -> b.getType().equals(barracks)).findAny().get().getLevel();
-        if (kingdomsGold >= TroopConstants.TROOP_PRICE) {
+        int barracksLevel = StreamSupport.stream(buildingService.getAllBuildingsByUserId(userId).spliterator(), false)
+                .filter(b -> b.getType().equals(barracks)).findAny().get().getLevel();
+        if (purchaseService.userHasEnoughGoldForTroop(userId)) {
             Troop newTroop = new Troop();
             newTroop.setHp(barracksLevel * TroopConstants.TROOP_BASE_HP);
             newTroop.setAttack(1);

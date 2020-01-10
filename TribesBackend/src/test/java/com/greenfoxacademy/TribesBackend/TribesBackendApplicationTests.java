@@ -1,3 +1,4 @@
+/*
 package com.greenfoxacademy.TribesBackend;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,3 +42,4 @@ class TribesBackendApplicationTests {
     }
 
 }
+*/
