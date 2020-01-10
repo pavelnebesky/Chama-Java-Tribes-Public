@@ -1,6 +1,9 @@
 package com.greenfoxacademy.TribesBackend.services;
 
 import com.greenfoxacademy.TribesBackend.enums.BuildingType;
+import com.greenfoxacademy.TribesBackend.exceptions.IdNotFoundException;
+import com.greenfoxacademy.TribesBackend.exceptions.InvalidBuildingTypeException;
+import com.greenfoxacademy.TribesBackend.exceptions.MissingParamsException;
 import com.greenfoxacademy.TribesBackend.models.Building;
 import com.greenfoxacademy.TribesBackend.models.Kingdom;
 import com.greenfoxacademy.TribesBackend.models.Resource;
@@ -69,6 +72,21 @@ public class BuildingService {
             resourceRepository.save(resourceToUpdate);
         }
         return building;
+    }
+
+    public void checkBuildingId (Long buildingId) throws IdNotFoundException {
+        if (buildingId == null || !buildingRepository.findById(buildingId).isPresent()) {
+            throw new IdNotFoundException(buildingId);
+        }
+    }
+
+    public void checkBuildingType (String type) throws InvalidBuildingTypeException, MissingParamsException {
+        if (type == null) {
+            throw new MissingParamsException(List.of("type"));
+        }
+        if (BuildingType.valueOf(type) == null) {
+            throw new InvalidBuildingTypeException();
+        }
     }
 
     public Building createAndReturnBuilding(long userId, String type) {

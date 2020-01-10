@@ -1,9 +1,14 @@
 package com.greenfoxacademy.TribesBackend.controllers;
 
+import com.greenfoxacademy.TribesBackend.exceptions.FrontendException;
+import com.greenfoxacademy.TribesBackend.exceptions.IdNotFoundException;
+import com.greenfoxacademy.TribesBackend.exceptions.InvalidBuildingTypeException;
+import com.greenfoxacademy.TribesBackend.exceptions.MissingParamsException;
 import com.greenfoxacademy.TribesBackend.models.Building;
 import com.greenfoxacademy.TribesBackend.services.BuildingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,30 +22,43 @@ public class BuildingController {
     @GetMapping("/kingdom/buildings")
     public ResponseEntity getBuildings(HttpServletRequest request) {
         //TODO: TEST
-        //TODO: ERRORS
         return ResponseEntity.ok(buildingService.getMapOfAllBuildingsByToken(request));
     }
 
     @PostMapping("/kingdom/buildings")
-    public ResponseEntity getBuildings(HttpServletRequest request, @RequestBody Building building) {
+    public ResponseEntity postBuildings(HttpServletRequest request, @RequestBody ModelMap type) {
         //TODO: TEST
-        //TODO: ERRORS
-        //String loudScreaming = jsonType.getJSONObject("LabelData").getString("slogan");
-        String buildingType = building.getType().toString();
+        try {
+            buildingService.checkBuildingType((String)type.getAttribute("type"));
+        }
+        catch (FrontendException e)
+        {
+            return buildingService.getUtilityService().handleResponseWithException(e);
+        }
+        catch (IllegalArgumentException e )
+        {
+            return buildingService.getUtilityService().handleResponseWithException(new InvalidBuildingTypeException());
+        }
+
         Long userId = buildingService.getUtilityService().getIdFromToken(request);
-        Building newBuilding = buildingService.createAndReturnBuilding(userId, buildingType);
+        Building newBuilding = buildingService.createAndReturnBuilding(userId, (String)type.getAttribute("type"));
         return ResponseEntity.ok(newBuilding);
     }
 
     @GetMapping("/kingdom/buildings/{buildingId}")
-    public ResponseEntity getBuilding(HttpServletRequest request, @PathVariable long buildingId) {
+    public ResponseEntity getBuilding(HttpServletRequest request, @PathVariable Long buildingId) {
         //TODO: TEST
-        //TODO: ERRORS
+        try {
+            buildingService.checkBuildingId(buildingId);
+        }
+        catch (IdNotFoundException e) {
+            return buildingService.getUtilityService().handleResponseWithException(e);
+        }
         return ResponseEntity.ok(buildingService.getBuildingById(buildingId));
     }
 
     @PutMapping("/kingdom/buildings/{buildingId}")
-    public ResponseEntity updateBuilding(HttpServletRequest request, @PathVariable long buildingId, @RequestBody Building building) {
+    public ResponseEntity updateBuilding(HttpServletRequest request, @PathVariable Long buildingId, @RequestBody Building building) {
         //TODO: TEST
         //TODO: ERRORS
         Building updatedBuilding = buildingService.buildingLevelUp(buildingService.getBuildingById(buildingId), building.getLevel());
