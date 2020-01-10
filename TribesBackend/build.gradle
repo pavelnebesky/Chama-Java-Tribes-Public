@@ -2,6 +2,7 @@ plugins {
 	id 'org.springframework.boot' version '2.2.1.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.8.RELEASE'
 	id 'java'
+	id 'idea'
 }
 
 group = 'com.greenfoxacademy'
@@ -34,10 +35,7 @@ dependencies {
 	compile 'org.springframework.boot:spring-boot-starter-mail'
 	compile group: 'org.springframework.social', name: 'spring-social-facebook', version: '2.0.3.RELEASE'
 	testCompile("org.springframework.boot:spring-boot-starter-test")
-	testImplementation('org.springframework.boot:spring-boot-starter-test') {
-		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-	}
-	implementation 'junit:junit:4.12'
+	testImplementation('org.junit.jupiter:junit-jupiter:5.5.2')
 	testImplementation 'org.springframework.security:spring-security-test'
 }
 
