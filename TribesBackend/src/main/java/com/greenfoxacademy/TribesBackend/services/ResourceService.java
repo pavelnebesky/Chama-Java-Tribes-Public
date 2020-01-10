@@ -6,6 +6,7 @@ import com.greenfoxacademy.TribesBackend.constants.ResourceConstants;
 import com.greenfoxacademy.TribesBackend.models.Building;
 import com.greenfoxacademy.TribesBackend.models.Kingdom;
 import com.greenfoxacademy.TribesBackend.models.Resource;
+import com.greenfoxacademy.TribesBackend.repositories.BuildingRepository;
 import com.greenfoxacademy.TribesBackend.repositories.ResourceRepository;
 import lombok.Getter;
 import org.aspectj.apache.bcel.classfile.Constant;
@@ -28,6 +29,8 @@ public class ResourceService {
     private UtilityService utilityService;
     @Autowired
     private KingdomService kingdomService;
+    @Autowired
+    private BuildingRepository buildingRepository;
 
     public ResourceType returnEnum(String type) {
         return ResourceType.valueOf(type);
@@ -51,18 +54,20 @@ public class ResourceService {
         return listOfInitialResources;
     }
 
-    public double calculateAmountOfResourceToAdd(Building building) {
+    public int calculateAmountOfResourceToAdd(Building building) {
         if (building.getType() == BuildingType.mine) {
-            Long differenceInTime = (System.currentTimeMillis() - building.getUpdated_at())/ONE_MINUTE_MILLIS;
-            double AmountOfResourceToAdd = differenceInTime * (GOLD_PER_MINUTE + GOLD_TO_INCREASE_BY_LEVEL * building.getLevel());
+            int differenceInTime = (int) (System.currentTimeMillis() - building.getUpdated_at()) / ONE_MINUTE_MILLIS;
+            int AmountOfResourceToAdd = differenceInTime * (GOLD_PER_MINUTE + GOLD_TO_INCREASE_BY_LEVEL * building.getLevel());
+            building.setUpdated_at(building.getUpdated_at() + differenceInTime);
+            buildingRepository.save(building);
             return AmountOfResourceToAdd;
-        }
-        else if (building.getType() == BuildingType.farm) {
-            Long differenceInTime = (System.currentTimeMillis() - building.getUpdated_at()) / ONE_MINUTE_MILLIS;
-            double AmountOfResourceToAdd = differenceInTime * (FOOD_PER_MINUTE + FOOD_TO_INCREASE_BY_LEVEL * building.getLevel());
+        } else if (building.getType() == BuildingType.farm) {
+            int differenceInTime = (int) (System.currentTimeMillis() - building.getUpdated_at()) / ONE_MINUTE_MILLIS;
+            int AmountOfResourceToAdd = differenceInTime * (FOOD_PER_MINUTE + FOOD_TO_INCREASE_BY_LEVEL * building.getLevel());
+            building.setUpdated_at(building.getUpdated_at() + differenceInTime);
+            buildingRepository.save(building);
             return AmountOfResourceToAdd;
-        }
-        else return 0;
+        } else return 0;
     }
 
     public ModelMap getResourcesModelByUserId(Long userId) {
