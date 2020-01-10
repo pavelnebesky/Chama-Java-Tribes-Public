@@ -38,10 +38,10 @@ public class ResourceService {
     }
 
     public List<Resource> createInitialResources() {
-        List<Resource> listOfInitialResources = new ArrayList<Resource>(){
+        List<Resource> listOfInitialResources = new ArrayList<Resource>() {
             {
-            add(new Resource(ResourceType.gold, 2 * BUILDING_PRICE, 0));
-            add(new Resource(ResourceType.food, 0, 0));
+                add(new Resource(ResourceType.gold, 2 * BUILDING_PRICE, 0));
+                add(new Resource(ResourceType.food, 0, 0));
             }
         };
         return listOfInitialResources;
@@ -50,5 +50,9 @@ public class ResourceService {
     public ModelMap getResourcesModelByUserId(Long userId) {
         Kingdom kingdom = kingdomService.getKingdomByUserId(userId);
         return new ModelMap().addAttribute("resources", this.getResources(kingdom));
+    }
+
+    public void checkResourceTypeIfItExists(String resourceType) {
+
     }
 }
