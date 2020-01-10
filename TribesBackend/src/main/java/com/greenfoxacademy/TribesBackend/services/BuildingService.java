@@ -1,9 +1,8 @@
 package com.greenfoxacademy.TribesBackend.services;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.greenfoxacademy.TribesBackend.enums.BuildingType;
-import com.greenfoxacademy.TribesBackend.exceptions.IdNotFoundException;
-import com.greenfoxacademy.TribesBackend.exceptions.InvalidBuildingTypeException;
-import com.greenfoxacademy.TribesBackend.exceptions.MissingParamsException;
+import com.greenfoxacademy.TribesBackend.exceptions.*;
 import com.greenfoxacademy.TribesBackend.models.Building;
 import com.greenfoxacademy.TribesBackend.models.Kingdom;
 import com.greenfoxacademy.TribesBackend.models.Resource;
@@ -74,18 +73,29 @@ public class BuildingService {
         return building;
     }
 
-    public void checkBuildingId (Long buildingId) throws IdNotFoundException {
+    public void checkBuildingId(Long buildingId) throws IdNotFoundException {
         if (buildingId == null || !buildingRepository.findById(buildingId).isPresent()) {
             throw new IdNotFoundException(buildingId);
         }
     }
 
-    public void checkBuildingType (String type) throws InvalidBuildingTypeException, MissingParamsException {
+    public void checkBuildingType(String type) throws InvalidBuildingTypeException, MissingParamsException {
         if (type == null) {
             throw new MissingParamsException(List.of("type"));
         }
         if (BuildingType.valueOf(type) == null) {
             throw new InvalidBuildingTypeException();
+        }
+    }
+
+    public void checkBuildingToUpdate(Long buildingId, Building building) throws NotEnoughGoldException, InvalidLevelException {
+        if (building.getLevel() <= buildingRepository.findById(buildingId).get().getLevel()) {
+            throw new InvalidLevelException("building");
+        }
+        int kingdomsGold = buildingRepository.findById(buildingId).get().getKingdom().getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get().getAmount();
+        int goldToLevelUp = (building.getLevel() - buildingRepository.findById(buildingId).get().getLevel()) * GOLD_TO_LEVEL_UP_BUILDING;
+        if (kingdomsGold < goldToLevelUp) {
+            throw new NotEnoughGoldException();
         }
     }
 
