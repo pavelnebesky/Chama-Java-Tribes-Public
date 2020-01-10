@@ -78,15 +78,7 @@ public class BuildingService {
         newBuilding.setKingdom(kingdomRepository.findByUserId(userId));
         newBuilding.setLevel(1);
         newBuilding.setStarted_at(System.currentTimeMillis());
-        if (type == "mine") {
-            newBuilding.setFinished_at(newBuilding.getStarted_at() + MILISECONDS_TO_BUILD_MINE);
-        } else if (type == "farm") {
-            newBuilding.setFinished_at(newBuilding.getStarted_at() + MILISECONDS_TO_BUILD_FARM);
-        } else if (type == "barracks") {
-            newBuilding.setFinished_at(newBuilding.getStarted_at() + MILISECONDS_TO_BUILD_BARRACKS);
-        } else if (type == "townhall") {
-            newBuilding.setFinished_at(newBuilding.getStarted_at() + MILISECONDS_TO_BUILD_TOWNHALL);
-        }
+        newBuilding.setFinished_at(newBuilding.getStarted_at() + BUILDING_TIMES.get(BuildingType.valueOf(type)));
         saveBuilding(newBuilding);
         Kingdom kingdomToUpdate = kingdomRepository.findByUserId(userId);
         List<Building> kingdomsBuildings = kingdomToUpdate.getBuildings();

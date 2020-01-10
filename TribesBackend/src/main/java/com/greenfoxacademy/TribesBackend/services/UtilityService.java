@@ -1,15 +1,17 @@
 package com.greenfoxacademy.TribesBackend.services;
 
 import com.auth0.jwt.JWT;
+import com.greenfoxacademy.TribesBackend.exceptions.FrontendException;
 import com.greenfoxacademy.TribesBackend.repositories.UserRepository;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.ModelMap;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
 import java.util.Scanner;
@@ -52,5 +54,12 @@ public class UtilityService {
     public Long getIdFromToken(HttpServletRequest request) {
         String token = request.getHeader(HEADER_STRING).replace(TOKEN_PREFIX, "");
         return Long.parseLong(JWT.decode(token).getClaim(ID_CLAIM).asString());
+    }
+
+    public ResponseEntity handleResponseWithException(FrontendException e) {
+        ModelMap modelMap = new ModelMap();
+        modelMap.addAttribute("status", "error");
+        modelMap.addAttribute("error", e.getMessage());
+        return ResponseEntity.status(e.getSc()).body(modelMap);
     }
 }

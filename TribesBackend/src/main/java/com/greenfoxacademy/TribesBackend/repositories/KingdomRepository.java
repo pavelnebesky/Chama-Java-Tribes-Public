@@ -11,6 +11,5 @@ import java.util.List;
 @Repository
 public interface KingdomRepository extends CrudRepository<Kingdom, Long> {
     Kingdom findByName(String name);
-    Kingdom findByUser(User user);
     Kingdom findByUserId(Long userId);
 }
