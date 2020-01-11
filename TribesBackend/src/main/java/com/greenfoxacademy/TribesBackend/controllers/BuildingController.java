@@ -33,7 +33,6 @@ public class BuildingController {
         } catch (IllegalArgumentException e) {
             return buildingService.getUtilityService().handleResponseWithException(new InvalidBuildingTypeException());
         }
-
         Long userId = buildingService.getUtilityService().getIdFromToken(request);
         Building newBuilding = buildingService.createAndReturnBuilding(userId, (String) type.getAttribute("type"));
         return ResponseEntity.ok(newBuilding);

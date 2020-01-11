@@ -88,7 +88,10 @@ public class BuildingService {
         }
     }
 
-    public void checkBuildingToUpdate(Long buildingId, Building building) throws NotEnoughGoldException, InvalidLevelException {
+    public void checkBuildingToUpdate(Long buildingId, Building building) throws IdNotFoundException, NotEnoughGoldException, InvalidLevelException {
+        if (!buildingRepository.findById(buildingId).isPresent()) {
+            throw new IdNotFoundException(buildingId);
+        }
         if (building.getLevel() <= buildingRepository.findById(buildingId).get().getLevel()) {
             throw new InvalidLevelException("building");
         }
