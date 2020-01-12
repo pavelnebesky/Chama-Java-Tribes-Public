@@ -17,6 +17,9 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.social.facebook.api.impl.FacebookTemplate;
 import org.springframework.social.facebook.connect.FacebookConnectionFactory;
+import org.springframework.social.google.api.impl.GoogleTemplate;
+import org.springframework.social.google.api.userinfo.GoogleUserInfo;
+import org.springframework.social.google.connect.GoogleConnectionFactory;
 import org.springframework.social.oauth2.AccessGrant;
 import org.springframework.social.oauth2.OAuth2Operations;
 import org.springframework.social.oauth2.OAuth2Parameters;
@@ -29,7 +32,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static com.greenfoxacademy.TribesBackend.constants.EmailVerificationConstants.*;
-import static com.greenfoxacademy.TribesBackend.constants.FacebookConstants.*;
+import static com.greenfoxacademy.TribesBackend.constants.ExternalLoginConstants.*;
 
 @Getter
 @Setter
@@ -73,32 +76,68 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public String createRedirectionToFacebook() {
-        FacebookConnectionFactory connectionFactory = new FacebookConnectionFactory(APP_ID, APP_SECRET);
+    public String createRedirectionToGoogle() {
+        GoogleConnectionFactory connectionFactory = new GoogleConnectionFactory(GOOGLE_APP_ID, GOOGLE_APP_SECRET);
         OAuth2Operations oauthOperations = connectionFactory.getOAuthOperations();
         OAuth2Parameters params = new OAuth2Parameters();
-        params.setRedirectUri(REDIRECT_URI_FOR_FACEBOOK);
+        params.setRedirectUri(GOOGLE_REDIRECT_URI);
         params.setScope("email");
         return oauthOperations.buildAuthorizeUrl(params);
     }
 
-    public ModelMap authenticateFbUser(String authenticationCode, HttpServletRequest request) throws FbAccountWithNoEmailException {
-        FacebookConnectionFactory connectionFactory = new FacebookConnectionFactory(APP_ID, APP_SECRET);
-        AccessGrant accessGrant = connectionFactory.getOAuthOperations().exchangeForAccess(authenticationCode, REDIRECT_URI_FOR_FACEBOOK, null);
+    public ModelMap authenticateGoogleUser(String authenticationCode, HttpServletRequest request) throws ExternalAccountWithNoEmailException {
+        GoogleConnectionFactory connectionFactory = new GoogleConnectionFactory(GOOGLE_APP_ID, GOOGLE_APP_SECRET);
+        AccessGrant accessGrant = connectionFactory.getOAuthOperations().exchangeForAccess(authenticationCode, GOOGLE_REDIRECT_URI, null);
+        String accessToken = accessGrant.getAccessToken();
+        GoogleTemplate googleTemplate = new GoogleTemplate(accessToken);
+        String[] fields = {"id", "email"};
+        GoogleUserInfo userInfo = googleTemplate.userOperations().getUserInfo();
+        AuthGrantAccessToken authGrantAccessToken = authGrantAccessTokenRepository.findByIdExternal(userInfo.getId());
+        if (authGrantAccessToken == null) {
+            if (userInfo.getEmail() == null) {
+                throw new ExternalAccountWithNoEmailException();
+            }
+            User user = new User();
+            user.setUsername(userInfo.getEmail());
+            user.setPassword("");
+            authGrantAccessToken = new AuthGrantAccessToken();
+            authGrantAccessToken.setIdExternal(userInfo.getId());
+            authGrantAccessToken.setUser(user);
+            user.setAuthGrantAccessToken(authGrantAccessToken);
+            authGrantAccessTokenRepository.save(authGrantAccessToken);
+            registerUser(user);
+            return createRegisterResponse(userRepository.findByUsername(user.getUsername()));
+        } else {
+            return createLoginResponse(authGrantAccessToken.getUser(), request);
+        }
+    }
+
+    public String createRedirectionToFacebook() {
+        FacebookConnectionFactory connectionFactory = new FacebookConnectionFactory(FACEBOOK_APP_ID, FACEBOOK_APP_SECRET);
+        OAuth2Operations oauthOperations = connectionFactory.getOAuthOperations();
+        OAuth2Parameters params = new OAuth2Parameters();
+        params.setRedirectUri(FACEBOOK_REDIRECT_URI);
+        params.setScope("email");
+        return oauthOperations.buildAuthorizeUrl(params);
+    }
+
+    public ModelMap authenticateFbUser(String authenticationCode, HttpServletRequest request) throws ExternalAccountWithNoEmailException {
+        FacebookConnectionFactory connectionFactory = new FacebookConnectionFactory(FACEBOOK_APP_ID, FACEBOOK_APP_SECRET);
+        AccessGrant accessGrant = connectionFactory.getOAuthOperations().exchangeForAccess(authenticationCode, FACEBOOK_REDIRECT_URI, null);
         String accessToken = accessGrant.getAccessToken();
         FacebookTemplate fbTemplate = new FacebookTemplate(accessToken);
         String[] fields = {"id", "email"};
         org.springframework.social.facebook.api.User userProfile = fbTemplate.fetchObject("me", org.springframework.social.facebook.api.User.class, fields);
-        AuthGrantAccessToken authGrantAccessToken = authGrantAccessTokenRepository.findByFacebookId(userProfile.getId());
+        AuthGrantAccessToken authGrantAccessToken = authGrantAccessTokenRepository.findByIdExternal(userProfile.getId());
         if (authGrantAccessToken == null) {
             if (userProfile.getEmail() == null) {
-                throw new FbAccountWithNoEmailException();
+                throw new ExternalAccountWithNoEmailException();
             }
             User user = new User();
             user.setUsername(userProfile.getEmail());
             user.setPassword("");
             authGrantAccessToken = new AuthGrantAccessToken();
-            authGrantAccessToken.setFacebookId(userProfile.getId());
+            authGrantAccessToken.setIdExternal(userProfile.getId());
             authGrantAccessToken.setUser(user);
             user.setAuthGrantAccessToken(authGrantAccessToken);
             authGrantAccessTokenRepository.save(authGrantAccessToken);

@@ -60,6 +60,24 @@ public class UserController {
         }
     }
 
+    @GetMapping("/google/login")
+    public void createGoogleAuthorization(HttpServletResponse response) {
+        try {
+            response.sendRedirect(userService.createRedirectionToGoogle());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @GetMapping("/google/authentication")
+    public ResponseEntity createGoogleAccessToken(@RequestParam("code") String code, HttpServletRequest request) {
+        try {
+            return ResponseEntity.ok(userService.authenticateGoogleUser(code, request));
+        } catch (FrontendException e) {
+            return userService.getUtilityService().handleResponseWithException(e);
+        }
+    }
+
     @GetMapping("/verify/{verCode}")
     public ResponseEntity verify(@PathVariable String verCode) {
         try {
