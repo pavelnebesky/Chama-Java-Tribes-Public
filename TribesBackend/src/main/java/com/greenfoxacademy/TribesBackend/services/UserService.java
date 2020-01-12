@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.social.connect.support.OAuth2ConnectionFactory;
 import org.springframework.social.facebook.api.impl.FacebookTemplate;
 import org.springframework.social.facebook.connect.FacebookConnectionFactory;
 import org.springframework.social.google.api.impl.GoogleTemplate;
@@ -76,13 +77,38 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public String createRedirectionToGoogle() {
-        GoogleConnectionFactory connectionFactory = new GoogleConnectionFactory(GOOGLE_APP_ID, GOOGLE_APP_SECRET);
+    public String createOAuthRedirection(String redirectUri, OAuth2ConnectionFactory connectionFactory) {
         OAuth2Operations oauthOperations = connectionFactory.getOAuthOperations();
         OAuth2Parameters params = new OAuth2Parameters();
-        params.setRedirectUri(GOOGLE_REDIRECT_URI);
+        params.setRedirectUri(redirectUri);
         params.setScope("email");
         return oauthOperations.buildAuthorizeUrl(params);
+    }
+
+    public ModelMap authenticateExternalUser(String idExternal, String email, String accessGrantToken, HttpServletRequest request) throws ExternalAccountWithNoEmailException {
+        AuthGrantAccessToken authGrantAccessToken = authGrantAccessTokenRepository.findByIdExternal(idExternal);
+        if (authGrantAccessToken == null) {
+            if (email == null) {
+                throw new ExternalAccountWithNoEmailException();
+            }
+            User user = new User();
+            user.setUsername(email);
+            user.setPassword("");
+            authGrantAccessToken = new AuthGrantAccessToken();
+            authGrantAccessToken.setIdExternal(idExternal);
+            authGrantAccessToken.setUser(user);
+            user.setAuthGrantAccessToken(authGrantAccessToken);
+            authGrantAccessTokenRepository.save(authGrantAccessToken);
+            registerUser(user);
+            return createRegisterResponse(userRepository.findByUsername(user.getUsername()));
+        } else {
+            return createLoginResponse(authGrantAccessToken.getUser(), request);
+        }
+    }
+
+    public String createRedirectionToGoogle() {
+        GoogleConnectionFactory connectionFactory = new GoogleConnectionFactory(GOOGLE_APP_ID, GOOGLE_APP_SECRET);
+        return createOAuthRedirection(GOOGLE_REDIRECT_URI, connectionFactory);
     }
 
     public ModelMap authenticateGoogleUser(String authenticationCode, HttpServletRequest request) throws ExternalAccountWithNoEmailException {
@@ -92,33 +118,12 @@ public class UserService {
         GoogleTemplate googleTemplate = new GoogleTemplate(accessToken);
         String[] fields = {"id", "email"};
         GoogleUserInfo userInfo = googleTemplate.userOperations().getUserInfo();
-        AuthGrantAccessToken authGrantAccessToken = authGrantAccessTokenRepository.findByIdExternal(userInfo.getId());
-        if (authGrantAccessToken == null) {
-            if (userInfo.getEmail() == null) {
-                throw new ExternalAccountWithNoEmailException();
-            }
-            User user = new User();
-            user.setUsername(userInfo.getEmail());
-            user.setPassword("");
-            authGrantAccessToken = new AuthGrantAccessToken();
-            authGrantAccessToken.setIdExternal(userInfo.getId());
-            authGrantAccessToken.setUser(user);
-            user.setAuthGrantAccessToken(authGrantAccessToken);
-            authGrantAccessTokenRepository.save(authGrantAccessToken);
-            registerUser(user);
-            return createRegisterResponse(userRepository.findByUsername(user.getUsername()));
-        } else {
-            return createLoginResponse(authGrantAccessToken.getUser(), request);
-        }
+        return authenticateExternalUser(userInfo.getId(), userInfo.getEmail(), accessToken, request);
     }
 
     public String createRedirectionToFacebook() {
         FacebookConnectionFactory connectionFactory = new FacebookConnectionFactory(FACEBOOK_APP_ID, FACEBOOK_APP_SECRET);
-        OAuth2Operations oauthOperations = connectionFactory.getOAuthOperations();
-        OAuth2Parameters params = new OAuth2Parameters();
-        params.setRedirectUri(FACEBOOK_REDIRECT_URI);
-        params.setScope("email");
-        return oauthOperations.buildAuthorizeUrl(params);
+        return createOAuthRedirection(FACEBOOK_REDIRECT_URI, connectionFactory);
     }
 
     public ModelMap authenticateFbUser(String authenticationCode, HttpServletRequest request) throws ExternalAccountWithNoEmailException {
@@ -128,24 +133,7 @@ public class UserService {
         FacebookTemplate fbTemplate = new FacebookTemplate(accessToken);
         String[] fields = {"id", "email"};
         org.springframework.social.facebook.api.User userProfile = fbTemplate.fetchObject("me", org.springframework.social.facebook.api.User.class, fields);
-        AuthGrantAccessToken authGrantAccessToken = authGrantAccessTokenRepository.findByIdExternal(userProfile.getId());
-        if (authGrantAccessToken == null) {
-            if (userProfile.getEmail() == null) {
-                throw new ExternalAccountWithNoEmailException();
-            }
-            User user = new User();
-            user.setUsername(userProfile.getEmail());
-            user.setPassword("");
-            authGrantAccessToken = new AuthGrantAccessToken();
-            authGrantAccessToken.setIdExternal(userProfile.getId());
-            authGrantAccessToken.setUser(user);
-            user.setAuthGrantAccessToken(authGrantAccessToken);
-            authGrantAccessTokenRepository.save(authGrantAccessToken);
-            registerUser(user);
-            return createRegisterResponse(userRepository.findByUsername(user.getUsername()));
-        } else {
-            return createLoginResponse(authGrantAccessToken.getUser(), request);
-        }
+        return authenticateExternalUser(userProfile.getId(), userProfile.getEmail(), accessToken, request);
     }
 
     public void sendEmailVerification(String receiver, String verCode) {
