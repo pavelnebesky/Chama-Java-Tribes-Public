@@ -97,6 +97,7 @@ public class UserService {
             authGrantAccessToken = new AuthGrantAccessToken();
             authGrantAccessToken.setIdExternal(idExternal);
             authGrantAccessToken.setUser(user);
+            authGrantAccessToken.setAccessGrantToken(accessGrantToken);
             user.setAuthGrantAccessToken(authGrantAccessToken);
             authGrantAccessTokenRepository.save(authGrantAccessToken);
             registerUser(user);
