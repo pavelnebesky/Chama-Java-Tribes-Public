@@ -5,6 +5,7 @@ import com.greenfoxacademy.TribesBackend.models.User;
 import com.greenfoxacademy.TribesBackend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,13 +29,13 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity registerUser(@RequestBody User user) {
+    public ResponseEntity registerUser(@RequestBody ModelMap modelMap) {
         try {
-            userService.checkUserParamsForReg(user);
+            userService.checkUserParamsForReg(userService.getUserFromModelMap(modelMap));
         } catch (FrontendException e) {
             return userService.getUtilityService().handleResponseWithException(e);
         }
-        return ResponseEntity.ok(userService.registerUser(user));
+        return ResponseEntity.ok(userService.registerUser(userService.getUserFromModelMap(modelMap), (String) modelMap.getAttribute("kingdom")));
     }
 
     @GetMapping("/logout")
