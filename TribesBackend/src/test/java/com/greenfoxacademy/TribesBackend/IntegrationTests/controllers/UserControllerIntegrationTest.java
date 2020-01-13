@@ -3,19 +3,19 @@ package com.greenfoxacademy.TribesBackend.IntegrationTests.controllers;
 import com.greenfoxacademy.TribesBackend.controllers.UserController;
 import com.greenfoxacademy.TribesBackend.models.User;
 import com.greenfoxacademy.TribesBackend.services.UserService;
-
-import static org.hamcrest.core.Is.is;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.ui.ModelMap;
 
+import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(UserController.class)
@@ -36,9 +36,10 @@ public class UserControllerIntegrationTest {
 
         given(userService.registerUser(any(User.class))).willReturn(modelMap);
 
-        mockMvc.perform(post("/register")
+        RequestBuilder request = post("/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{ \"username\": \"something@gmail.com\", \"password\": \"seven\" }"))
+                .content("{ \"username\": \"something@gmail.com\", \"password\": \"seven\" }");
+        mockMvc.perform(request)
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is("1")))

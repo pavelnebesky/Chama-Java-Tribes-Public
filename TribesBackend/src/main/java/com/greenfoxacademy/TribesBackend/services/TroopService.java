@@ -43,7 +43,7 @@ public class TroopService {
         return troopRepository.findTroopById(troopId);
     }
 
-    public Iterable<Troop> getAllTroopsByUserId(long userId) {
+    public Iterable<Troop> getAllTroopsByUserId(Long userId) {
         return troopRepository.findAllTroopsByKingdomUserId(userId);
     }
 
@@ -86,10 +86,10 @@ public class TroopService {
         }else throw new NotEnoughGoldException();
     }
 
-    public Troop troopLevelUp(Troop troop, long userId){
+    public Troop troopLevelUp(Troop troop, Long userId) throws NotEnoughGoldException{
         int kingdomsGold = troop.getKingdom().getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get().getAmount();
         int troopLevel = StreamSupport.stream(troopRepository.findAllTroopsByKingdomUserId(userId).spliterator(), false).findAny().get().getLevel();
-        int goldToLevelUp = TroopConstants.TROOP_PRICE;
+        int goldToLevelUp = TroopConstants.TROOP_UPGRADE_PRICE;
         if (goldToLevelUp <= kingdomsGold) {
             int newLevel = troopLevel + TroopConstants.AMOUNT_OF_LEVELS_TO_ADD;
             troop.setLevel(newLevel);
@@ -99,7 +99,7 @@ public class TroopService {
             Resource resourceToUpdate = troop.getKingdom().getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get();
             resourceToUpdate.setAmount(resourceToUpdate.getAmount() - goldToLevelUp);
             resourceRepository.save(resourceToUpdate);
-        }
-        return troop;
+            return troop;
+        }else throw new NotEnoughGoldException();
     }
 }

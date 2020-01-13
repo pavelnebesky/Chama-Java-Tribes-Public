@@ -36,9 +36,14 @@ public class TroopController {
 
     @PutMapping("/kingdom/troops/{troopId}")
     public ResponseEntity trainTroop(HttpServletRequest request, @PathVariable Long troopId, @RequestBody Troop troop){
-        Troop troopToUpgrade = troopService.troopLevelUp(troopService.getTroopById(troopId),troop.getLevel());
+        try {
+            Troop troopToUpgrade = troopService.troopLevelUp(troopService.getTroopById(troopId), troop.getKingdom().getUserId());
             return ResponseEntity.status(200).body(troopToUpgrade);
         }
+        catch (NotEnoughGoldException e) {
+            return troopService.getUtilityService().handleResponseWithException(e);
+        }
     }
+}
 
 
