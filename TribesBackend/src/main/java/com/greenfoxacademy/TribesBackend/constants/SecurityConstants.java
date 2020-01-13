@@ -7,6 +7,6 @@ public class SecurityConstants {
     public static final String HEADER_STRING = "Authorization";
     public static final String ID_CLAIM = "id";
     public static final String IP_CLAIM = "ip";
+    public static final String[] PUBLIC_ENDPOINTS = {"/login", "/register", "/verify", "/authentication/"};
     public static final String USERNAME_CLAIM = "username";
-    public static final String[] PUBLIC_ENDPOINTS = {"/login", "/register", "/verify", "/facebook/"};
 }

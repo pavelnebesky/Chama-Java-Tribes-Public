@@ -3,6 +3,7 @@ package com.greenfoxacademy.TribesBackend.controllers;
 import com.greenfoxacademy.TribesBackend.exceptions.FrontendException;
 import com.greenfoxacademy.TribesBackend.models.User;
 import com.greenfoxacademy.TribesBackend.services.UserService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,19 +43,30 @@ public class UserController {
         response.setStatus(200);
     }
 
-    @GetMapping("/facebook/login")
-    public void createFacebookAuthorization(HttpServletResponse response) {
+    @GetMapping("/login/{externalSite}")
+    public void createFacebookAuthorization(@PathVariable String externalSite, HttpServletResponse response) {
         try {
-            response.sendRedirect(userService.createRedirectionToFacebook());
+            if (externalSite.matches("facebook")) {
+                response.sendRedirect(userService.createRedirectionToFacebook());
+            } else if (externalSite.matches("google")) {
+                response.sendRedirect(userService.createRedirectionToGoogle());
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    @GetMapping("/facebook/authentication")
-    public ResponseEntity createFacebookAccessToken(@RequestParam("code") String code, HttpServletRequest request) {
+    @GetMapping("/authentication/{externalSite}")
+    public ResponseEntity createFacebookAccessToken(@PathVariable String externalSite, @RequestParam("code") String code, HttpServletRequest request) {
         try {
-            return ResponseEntity.ok(userService.authenticateFbUser(code, request));
+            if (externalSite.matches("facebook")) {
+                return ResponseEntity.ok(userService.authenticateFbUser(code, request));
+            } else if (externalSite.matches("google")) {
+                return ResponseEntity.ok(userService.authenticateGoogleUser(code, request));
+            } else {
+                //TODO EXCEPTION
+                return ResponseEntity.ok().body(null);
+            }
         } catch (FrontendException e) {
             return userService.getUtilityService().handleResponseWithException(e);
         }

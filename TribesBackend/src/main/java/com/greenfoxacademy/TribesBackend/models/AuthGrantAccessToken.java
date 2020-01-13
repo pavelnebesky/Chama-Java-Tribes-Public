@@ -15,5 +15,5 @@ public class AuthGrantAccessToken {
     @OneToOne(cascade = CascadeType.ALL)
     private User user;
     private String accessGrantToken;
-    private String facebookId;
+    private String idExternal;
 }
