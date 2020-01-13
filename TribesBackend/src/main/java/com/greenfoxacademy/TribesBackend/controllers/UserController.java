@@ -37,7 +37,7 @@ public class UserController {
             return userService.getUtilityService().handleResponseWithException(e);
         }
         return ResponseEntity.ok(userService.registerUser(userService.getUserFromModelMap(modelMap), (String) modelMap.getAttribute("kingdom")));
-    }
+}
 
     @GetMapping("/logout")
     public void logout(HttpServletResponse response) {
