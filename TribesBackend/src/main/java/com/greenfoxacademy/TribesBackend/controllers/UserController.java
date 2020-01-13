@@ -1,6 +1,8 @@
 package com.greenfoxacademy.TribesBackend.controllers;
 
+import com.greenfoxacademy.TribesBackend.constants.ExternalLoginConstants;
 import com.greenfoxacademy.TribesBackend.exceptions.FrontendException;
+import com.greenfoxacademy.TribesBackend.exceptions.OAuthCancelledException;
 import com.greenfoxacademy.TribesBackend.models.User;
 import com.greenfoxacademy.TribesBackend.services.UserService;
 import org.apache.coyote.Response;
@@ -60,13 +62,16 @@ public class UserController {
     @GetMapping("/authentication/{externalSite}")
     public ResponseEntity createFacebookAccessToken(@PathVariable String externalSite, @RequestParam("code") String code, HttpServletRequest request) {
         try {
+            if(code==null){
+                throw new OAuthCancelledException();
+            }
             if (externalSite.matches("facebook")) {
                 return ResponseEntity.ok(userService.authenticateFbUser(code, request));
             } else if (externalSite.matches("google")) {
                 return ResponseEntity.ok(userService.authenticateGoogleUser(code, request));
             } else {
                 //TODO EXCEPTION
-                return ResponseEntity.ok().body(null);
+                return ResponseEntity.badRequest().body(null);
             }
         } catch (FrontendException e) {
             return userService.getUtilityService().handleResponseWithException(e);
