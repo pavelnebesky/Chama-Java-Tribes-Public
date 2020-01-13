@@ -26,11 +26,12 @@ public class UtilityService {
     @Autowired
     private UserRepository userRepository;
 
-    public String generateJWT(String ip, Long id) {
+    public String generateJWT(String ip, Long id, String username) {
         Map<String, Object> headerMap = Map.of(IP_CLAIM, ip);
         return JWT.create()
                 .withHeader(headerMap)
                 .withClaim(ID_CLAIM, String.valueOf(id))
+                .withClaim(USERNAME_CLAIM, username)
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .sign(HMAC512(SECRET.getBytes()));
     }
