@@ -100,7 +100,7 @@ public class UserService {
             authGrantAccessToken.setAccessGrantToken(accessGrantToken);
             user.setAuthGrantAccessToken(authGrantAccessToken);
             authGrantAccessTokenRepository.save(authGrantAccessToken);
-            registerUser(user);
+            registerUser(user, null);
             return createRegisterResponse(userRepository.findByUsername(user.getUsername()));
         } else {
             return createLoginResponse(authGrantAccessToken.getUser(), request);
@@ -194,10 +194,21 @@ public class UserService {
         return modelMap;
     }
 
-    public ModelMap registerUser(User user) {
+    public User getUserFromModelMap(ModelMap modelMap) {
+        User user = new User();
+        user.setUsername((String) modelMap.getAttribute("username"));
+        user.setPassword((String) modelMap.getAttribute("password"));
+        return user;
+    }
+
+    public ModelMap registerUser(User user, String kingdomName) {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         Kingdom kingdom = new Kingdom();
-        kingdom.setName(generateKingdomNameByEmail(user.getUsername()));
+        if (kingdomName == null) {
+            kingdom.setName(generateKingdomNameByEmail(user.getUsername()));
+        } else {
+            kingdom.setName(kingdomName);
+        }
         kingdom.setResources(resourceService.createInitialResources());
         kingdom.setLocation(new Location());
         user.setKingdom(kingdom);
