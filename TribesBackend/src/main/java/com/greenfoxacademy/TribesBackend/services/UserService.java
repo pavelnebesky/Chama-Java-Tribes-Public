@@ -85,11 +85,14 @@ public class UserService {
         return oauthOperations.buildAuthorizeUrl(params);
     }
 
-    public ModelMap authenticateExternalUser(String idExternal, String email, String accessGrantToken, HttpServletRequest request) throws ExternalAccountWithNoEmailException {
+    public ModelMap authenticateExternalUser(String idExternal, String email, String accessGrantToken, HttpServletRequest request) throws ExternalAccountWithNoEmailException, EmailAlreadyTakenException {
         AuthGrantAccessToken authGrantAccessToken = authGrantAccessTokenRepository.findByIdExternal(idExternal);
         if (authGrantAccessToken == null) {
             if (email == null) {
                 throw new ExternalAccountWithNoEmailException();
+            }
+            if( userRepository.findByUsername(email) !=null ){
+                throw new EmailAlreadyTakenException(email);
             }
             User user = new User();
             user.setUsername(email);
@@ -112,7 +115,7 @@ public class UserService {
         return createOAuthRedirection(GOOGLE_REDIRECT_URI, connectionFactory);
     }
 
-    public ModelMap authenticateGoogleUser(String authenticationCode, HttpServletRequest request) throws ExternalAccountWithNoEmailException {
+    public ModelMap authenticateGoogleUser(String authenticationCode, HttpServletRequest request) throws ExternalAccountWithNoEmailException, EmailAlreadyTakenException {
         GoogleConnectionFactory connectionFactory = new GoogleConnectionFactory(GOOGLE_APP_ID, GOOGLE_APP_SECRET);
         AccessGrant accessGrant = connectionFactory.getOAuthOperations().exchangeForAccess(authenticationCode, GOOGLE_REDIRECT_URI, null);
         String accessToken = accessGrant.getAccessToken();
@@ -127,7 +130,7 @@ public class UserService {
         return createOAuthRedirection(FACEBOOK_REDIRECT_URI, connectionFactory);
     }
 
-    public ModelMap authenticateFbUser(String authenticationCode, HttpServletRequest request) throws ExternalAccountWithNoEmailException {
+    public ModelMap authenticateFbUser(String authenticationCode, HttpServletRequest request) throws ExternalAccountWithNoEmailException, EmailAlreadyTakenException {
         FacebookConnectionFactory connectionFactory = new FacebookConnectionFactory(FACEBOOK_APP_ID, FACEBOOK_APP_SECRET);
         AccessGrant accessGrant = connectionFactory.getOAuthOperations().exchangeForAccess(authenticationCode, FACEBOOK_REDIRECT_URI, null);
         String accessToken = accessGrant.getAccessToken();
