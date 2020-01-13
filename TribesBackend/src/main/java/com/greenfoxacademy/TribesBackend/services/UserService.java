@@ -246,7 +246,7 @@ public class UserService {
 
     public String generateTokenBasedOnEmail(String email, HttpServletRequest request) {
         User user = findByEmail(email);
-        return utilityService.generateJWT(request.getRemoteAddr(), user.getId());
+        return utilityService.generateJWT(request.getRemoteAddr(), user.getId(), user.getUsername());
     }
 
     public boolean isEmailValid(String email) {

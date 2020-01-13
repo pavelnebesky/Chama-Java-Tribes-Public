@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
@@ -18,6 +19,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
+@TestPropertySource(
+        locations = "classpath:application-testing.properties")
 public class KingdomRepositoryIntegrationTest {
 
     @Autowired
@@ -40,14 +43,13 @@ public class KingdomRepositoryIntegrationTest {
     public void whenFindByUserId_thenReturnKingdom() {
         User user  = new User();
         Kingdom kingdom = new Kingdom();
-        kingdom.setUserId(user.getId());
         user.setKingdom(kingdom);
-
-        entityManager.persist(user);
-        entityManager.persist(kingdom);
+        Long userId = (Long)entityManager.persistAndGetId(user);
+        kingdom.setUserId(userId);
+        Long kingdomId = (Long)entityManager.persistAndGetId(kingdom);
         entityManager.flush();
 
-        Kingdom found = kingdomRepository.findByUserId(user.getId());
-        assertThat(found.getId()).isEqualTo(kingdom.getId());
+        Kingdom found = kingdomRepository.findByUserId(userId);
+        assertThat(found.getId()).isEqualTo(kingdomId);
     }
 }
