@@ -29,13 +29,14 @@ public class ResourceController {
     }
 
     @GetMapping("/kingdom/resources/{resourceType}")
-    public ResponseEntity getResourceType(@PathVariable String resourceType) {
+    public ResponseEntity getResourceType(@PathVariable String resourceType, HttpServletRequest request) {
         try {
             resourceService.checkResourceTypeIfItExists(resourceType);
         } catch (IllegalArgumentException e) {
             return resourceService.getUtilityService().handleResponseWithException(new ParameterNotFoundException(resourceType));
         }
-        return ResponseEntity.ok(ResourceType.valueOf(resourceType));
+        Long id = resourceService.getUtilityService().getIdFromToken(request);
+        return ResponseEntity.ok(resourceService.getResourceTypeModelByUserId(id, resourceType));
     }
 }
 

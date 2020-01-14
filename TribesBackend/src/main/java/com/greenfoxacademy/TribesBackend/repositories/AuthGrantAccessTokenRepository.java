@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AuthGrantAccessTokenRepository extends CrudRepository<AuthGrantAccessToken, Long> {
-    AuthGrantAccessToken findByFacebookId(String id);
+    AuthGrantAccessToken findByIdExternal(String id);
 }
