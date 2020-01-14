@@ -20,6 +20,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.greenfoxacademy.TribesBackend.constants.BuildingConstants.*;
+import static com.greenfoxacademy.TribesBackend.constants.ResourceConstants.BUILDING_PRICE;
 import static com.greenfoxacademy.TribesBackend.enums.BuildingType.townhall;
 import static com.greenfoxacademy.TribesBackend.enums.ResourceType.gold;
 
@@ -60,16 +61,12 @@ public class BuildingService {
     }
 
     public Building buildingLevelUp(Building building, int newLevel) {
-        int kingdomsGold = building.getKingdom().getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get().getAmount();
-        int townhallLevel = building.getKingdom().getBuildings().stream().filter(b -> b.getType().equals(townhall)).findAny().get().getLevel();
-        int goldToLevelUp = (newLevel - building.getLevel()) * GOLD_TO_LEVEL_UP_BUILDING;
-        if (newLevel <= townhallLevel && goldToLevelUp <= kingdomsGold) {
-            building.setLevel(newLevel);
-            saveBuilding(building);
-            Resource resourceToUpdate = building.getKingdom().getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get();
-            resourceToUpdate.setAmount(resourceToUpdate.getAmount() - goldToLevelUp);
-            resourceRepository.save(resourceToUpdate);
-        }
+        int goldToLevelUp = (building.getLevel() + 1) * GOLD_TO_LEVEL_UP_BUILDING;
+        building.setLevel(building.getLevel() + 1);
+        saveBuilding(building);
+        Resource resourceToUpdate = building.getKingdom().getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get();
+        resourceToUpdate.setAmount(resourceToUpdate.getAmount() - goldToLevelUp);
+        resourceRepository.save(resourceToUpdate);
         return building;
     }
 
@@ -79,24 +76,30 @@ public class BuildingService {
         }
     }
 
-    public void checkBuildingType(String type) throws InvalidBuildingTypeException, MissingParamsException {
+    public void checksForNewBuilding(String type, int kingdomGold) throws InvalidBuildingTypeException, MissingParamsException, NotEnoughGoldException {
         if (type == null) {
             throw new MissingParamsException(List.of("type"));
         }
         if (BuildingType.valueOf(type) == null) {
             throw new InvalidBuildingTypeException();
         }
+        if (kingdomGold < BUILDING_PRICE) {
+            throw new NotEnoughGoldException();
+        }
     }
 
-    public void checkBuildingToUpdate(Long buildingId, Building building) throws IdNotFoundException, NotEnoughGoldException, InvalidLevelException {
+    public void checksForUpdateBuilding(Long buildingId, Building building) throws IdNotFoundException, NotEnoughGoldException, InvalidLevelException, TownhallLevelTooLowException {
         if (!buildingRepository.findById(buildingId).isPresent()) {
             throw new IdNotFoundException(buildingId);
         }
         if (building.getLevel() <= buildingRepository.findById(buildingId).get().getLevel()) {
             throw new InvalidLevelException("building");
         }
+        if (((buildingRepository.findById(buildingId).get().getLevel())+1) > buildingRepository.findById(buildingId).get().getKingdom().getBuildings().stream().filter(b -> b.getType().equals(townhall)).findAny().get().getLevel()) {
+            throw new TownhallLevelTooLowException();
+        }
         int kingdomsGold = buildingRepository.findById(buildingId).get().getKingdom().getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get().getAmount();
-        int goldToLevelUp = (building.getLevel() - buildingRepository.findById(buildingId).get().getLevel()) * GOLD_TO_LEVEL_UP_BUILDING;
+        int goldToLevelUp = ((buildingRepository.findById(buildingId).get().getLevel())+1) * GOLD_TO_LEVEL_UP_BUILDING;
         if (kingdomsGold < goldToLevelUp) {
             throw new NotEnoughGoldException();
         }
@@ -115,6 +118,8 @@ public class BuildingService {
         List<Building> kingdomsBuildings = kingdomToUpdate.getBuildings();
         kingdomsBuildings.add(newBuilding);
         kingdomToUpdate.setBuildings(kingdomsBuildings);
+        int updatedGoldAmount = kingdomToUpdate.getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get().getAmount() - BUILDING_PRICE;
+        kingdomToUpdate.getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get().setAmount(updatedGoldAmount);
         kingdomRepository.save(kingdomToUpdate);
         return newBuilding;
     }
