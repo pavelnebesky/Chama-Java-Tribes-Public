@@ -7,4 +7,5 @@ public class TroopConstants {
     public static final int TROOP_BASE_HP = 10;
     public static final int AMOUNT_OF_LEVELS_TO_ADD = 1;
     public static final int AMOUNT_OF_STATS_TO_ADD = 1;
+    public static final int FOOD_CONSUMED_BY_ONE = 1;
 }
