@@ -104,7 +104,7 @@ public class TroopService {
         }else throw new NotEnoughGoldException();
     }
 
-    public int troopConsumtion(Long id){
+    public void troopConsumtion(Long id){
         int foodConsumedByAllTroops = 0;
         List<Troop> troops = getKingdomService().getKingdomByUserId(id).getTroops();
         for (Troop troop: troops) {
@@ -115,6 +115,7 @@ public class TroopService {
         if (foodConsumedByAllTroops <= kingdomsFood){
             Resource resourceToUpdate = getKingdomService().getKingdomByUserId(id).getResources().stream().filter(r -> r.getType().equals(food)).findAny().get();
             resourceToUpdate.setAmount(resourceToUpdate.getAmount() - foodConsumedByAllTroops);
+            resourceRepository.save(resourceToUpdate);
         }
     }
 }
