@@ -64,7 +64,7 @@ public class BuildingController {
     public ResponseEntity updateBuilding(HttpServletRequest request, @PathVariable Long buildingId, @RequestBody Building building) {
         //TODO: TEST
         try {
-            buildingService.checkBuildingToUpdate(buildingId, building);
+            buildingService.checksForUpdateBuilding(buildingId, building);
         } catch (FrontendException e) {
             return buildingService.getUtilityService().handleResponseWithException(e);
         }

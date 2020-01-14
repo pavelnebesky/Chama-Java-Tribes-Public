@@ -16,5 +16,5 @@ public class BuildingConstants {
                 put(BuildingType.barracks, 10000L);
             }
         };
-    public static final int GOLD_TO_LEVEL_UP_BUILDING = 250;
+    public static final int GOLD_TO_LEVEL_UP_BUILDING = 100;
 }
