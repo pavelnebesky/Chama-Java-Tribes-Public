@@ -112,6 +112,9 @@ public class TroopService {
         }
         int kingdomsFood = resourceRepository.findByType(food).getAmount();
         Kingdom kingdomToUdate = getKingdomService().getKingdomByUserId(id);
+        if (foodConsumedByAllTroops <= kingdomsFood){
+            Resource resourceToUpdate = getKingdomService().getKingdomByUserId(id).getResources().stream().filter(r -> r.getType().equals(food)).findAny().get();
+            resourceToUpdate.setAmount(resourceToUpdate.getAmount() - foodConsumedByAllTroops);
         }
     }
 }

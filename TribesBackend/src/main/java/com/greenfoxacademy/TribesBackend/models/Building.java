@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 
 @Getter
 @Setter
@@ -23,6 +22,8 @@ public class Building {
     private int hp;
     private Long started_at;
     private Long finished_at;
+    @JsonIgnore
+    private Long updated_at;
     @JsonIgnore
     @ManyToOne(cascade=CascadeType.ALL)
     private Kingdom kingdom;
