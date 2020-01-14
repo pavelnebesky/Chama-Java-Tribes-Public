@@ -20,6 +20,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.greenfoxacademy.TribesBackend.constants.BuildingConstants.*;
+import static com.greenfoxacademy.TribesBackend.constants.ResourceConstants.BUILDING_PRICE;
 import static com.greenfoxacademy.TribesBackend.enums.BuildingType.townhall;
 import static com.greenfoxacademy.TribesBackend.enums.ResourceType.gold;
 
@@ -79,12 +80,15 @@ public class BuildingService {
         }
     }
 
-    public void checkBuildingType(String type) throws InvalidBuildingTypeException, MissingParamsException {
+    public void checksForNewBuilding(String type, int kingdomGold) throws InvalidBuildingTypeException, MissingParamsException, NotEnoughGoldException {
         if (type == null) {
             throw new MissingParamsException(List.of("type"));
         }
         if (BuildingType.valueOf(type) == null) {
             throw new InvalidBuildingTypeException();
+        }
+        if (kingdomGold < BUILDING_PRICE) {
+            throw new NotEnoughGoldException();
         }
     }
 
@@ -115,6 +119,8 @@ public class BuildingService {
         List<Building> kingdomsBuildings = kingdomToUpdate.getBuildings();
         kingdomsBuildings.add(newBuilding);
         kingdomToUpdate.setBuildings(kingdomsBuildings);
+        int updatedGoldAmount = kingdomToUpdate.getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get().getAmount() - BUILDING_PRICE;
+        kingdomToUpdate.getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get().setAmount(updatedGoldAmount);
         kingdomRepository.save(kingdomToUpdate);
         return newBuilding;
     }
