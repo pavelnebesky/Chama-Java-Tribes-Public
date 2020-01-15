@@ -85,7 +85,7 @@ public class BuildingService {
         if (BuildingType.valueOf(type) == null) {
             throw new InvalidBuildingTypeException();
         }
-        boolean townhallExists = StreamSupport.stream(getAllBuildingsByUserId(userId).spliterator(), false).filter(b -> b.getType().equals(townhall)).findAny().isPresent();
+        boolean townhallExists = ((List<Building>)(getAllBuildingsByUserId(userId))).stream().filter(b -> b.getType().equals(townhall)).findAny().isPresent();
         if (townhallExists && type.matches("townhall")) {
             throw new TownhallAlreadyExistsException();
         }
