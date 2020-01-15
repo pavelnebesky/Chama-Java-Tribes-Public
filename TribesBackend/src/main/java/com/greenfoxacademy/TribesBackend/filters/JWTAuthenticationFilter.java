@@ -3,6 +3,8 @@ package com.greenfoxacademy.TribesBackend.filters;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.greenfoxacademy.TribesBackend.repositories.BlacklistedTokenRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -20,6 +22,9 @@ import static com.greenfoxacademy.TribesBackend.constants.SecurityConstants.*;
 @Component
 public class JWTAuthenticationFilter extends GenericFilterBean {
 
+    @Autowired
+    private BlacklistedTokenRepository blacklistedTokenRepository;
+
     private boolean isAuthorized(HttpServletRequest request, HttpServletResponse response) {
         String token = request.getHeader(HEADER_STRING);
         if (token != null) {
@@ -29,7 +34,7 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
                         .verify(token.replace(TOKEN_PREFIX, ""));
                 String expectedIp = decodedjwt.getHeaderClaim(IP_CLAIM).asString();
                 String actualIp = request.getRemoteAddr();
-                return actualIp.equals(expectedIp);
+                return actualIp.equals(expectedIp)&&blacklistedTokenRepository.findByToken(decodedjwt.getToken())==null;
             } catch (RuntimeException e) {
                 response.setStatus(401);
             }
