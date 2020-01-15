@@ -98,7 +98,9 @@ public class TimeService {
         goldResource.setAmount(goldResource.getAmount() + generatedGold);
         foodResource.setAmount(foodResource.getAmount() + generatedFood);
         Building townhall = buildings.stream().filter(b -> b.getType() == BuildingType.townhall).findAny().get();
-        calculateTownHallGeneration(goldResource, foodResource, townhall);
+        if(townhall!=null){
+            calculateTownHallGeneration(goldResource, foodResource, townhall);
+        }
         resourceRepository.saveAll(List.of(goldResource, foodResource));
     }
 }
