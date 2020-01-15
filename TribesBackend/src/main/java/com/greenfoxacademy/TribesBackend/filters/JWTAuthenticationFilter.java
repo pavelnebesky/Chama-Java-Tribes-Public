@@ -33,9 +33,8 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
             if(blacklistedTokens.get(i).getToken().equals(token)){
                 return true;
             }
-            if(JWT.decode(blacklistedTokens.get(i).getToken()).getExpiresAt().after(new Date())){
-                blacklistedTokens.remove(i);
-                i--;
+            if(JWT.decode(blacklistedTokens.get(i).getToken()).getExpiresAt().before(new Date())){
+                blacklistedTokenRepository.deleteById(blacklistedTokens.get(i).getId());
             }
         }
         return false;
