@@ -40,7 +40,7 @@ public class TroopService {
     @Autowired
     private ResourceRepository resourceRepository;
 
-    public Troop getTroopById(long troopId){
+    public Troop getTroopById(Long troopId){
         return troopRepository.findTroopById(troopId);
     }
 
