@@ -18,9 +18,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static com.greenfoxacademy.TribesBackend.constants.BuildingConstants.*;
 import static com.greenfoxacademy.TribesBackend.constants.ResourceConstants.BUILDING_PRICE;
+import static com.greenfoxacademy.TribesBackend.enums.BuildingType.barracks;
 import static com.greenfoxacademy.TribesBackend.enums.BuildingType.townhall;
 import static com.greenfoxacademy.TribesBackend.enums.ResourceType.gold;
 
@@ -76,12 +78,16 @@ public class BuildingService {
         }
     }
 
-    public void checksForNewBuilding(String type, int kingdomGold) throws InvalidBuildingTypeException, MissingParamsException, NotEnoughGoldException {
+    public void checksForNewBuilding(String type, int kingdomGold, Long userId) throws InvalidBuildingTypeException, MissingParamsException, NotEnoughGoldException, TownhallAlreadyExistsException {
         if (type == null) {
             throw new MissingParamsException(List.of("type"));
         }
         if (BuildingType.valueOf(type) == null) {
             throw new InvalidBuildingTypeException();
+        }
+        boolean townhallExists = StreamSupport.stream(getAllBuildingsByUserId(userId).spliterator(), false).filter(b -> b.getType().equals(townhall)).findAny().isPresent();
+        if (townhallExists && type.matches("townhall")) {
+            throw new TownhallAlreadyExistsException();
         }
         if (kingdomGold < BUILDING_PRICE) {
             throw new NotEnoughGoldException();
