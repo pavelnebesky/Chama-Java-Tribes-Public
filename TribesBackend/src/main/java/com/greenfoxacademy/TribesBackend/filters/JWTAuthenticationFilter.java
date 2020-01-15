@@ -27,13 +27,13 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
     @Autowired
     private BlacklistedTokenRepository blacklistedTokenRepository;
 
-    private boolean isBlackListed(String token){
-        List<BlacklistedToken> blacklistedTokens=(List<BlacklistedToken>)blacklistedTokenRepository.findAll();
-        for (int i=0;i<blacklistedTokens.size();i++){
-            if(blacklistedTokens.get(i).getToken().equals(token)){
+    private boolean isBlackListed(String token) {
+        List<BlacklistedToken> blacklistedTokens = (List<BlacklistedToken>) blacklistedTokenRepository.findAll();
+        for (int i = 0; i < blacklistedTokens.size(); i++) {
+            if (blacklistedTokens.get(i).getToken().equals(token)) {
                 return true;
             }
-            if(JWT.decode(blacklistedTokens.get(i).getToken()).getExpiresAt().before(new Date())){
+            if (JWT.decode(blacklistedTokens.get(i).getToken()).getExpiresAt().before(new Date())) {
                 blacklistedTokenRepository.deleteById(blacklistedTokens.get(i).getId());
             }
         }
@@ -49,7 +49,7 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
                         .verify(token.replace(TOKEN_PREFIX, ""));
                 String expectedIp = decodedjwt.getHeaderClaim(IP_CLAIM).asString();
                 String actualIp = request.getRemoteAddr();
-                return actualIp.equals(expectedIp)&&!isBlackListed(decodedjwt.getToken());
+                return actualIp.equals(expectedIp) && !isBlackListed(decodedjwt.getToken());
             } catch (RuntimeException e) {
                 response.setStatus(401);
             }

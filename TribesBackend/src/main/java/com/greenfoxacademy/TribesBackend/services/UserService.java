@@ -79,8 +79,8 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void logout(HttpServletRequest request){
-        BlacklistedToken blacklistedToken=new BlacklistedToken();
+    public void logout(HttpServletRequest request) {
+        BlacklistedToken blacklistedToken = new BlacklistedToken();
         blacklistedToken.setToken(request.getHeader(HEADER_STRING).replace(TOKEN_PREFIX, ""));
         blacklistedTokenRepository.save(blacklistedToken);
     }
@@ -99,7 +99,7 @@ public class UserService {
             if (email == null) {
                 throw new ExternalAccountWithNoEmailException();
             }
-            if( userRepository.findByUsername(email) !=null ){
+            if (userRepository.findByUsername(email) != null) {
                 throw new EmailAlreadyTakenException(email);
             }
             User user = new User();
