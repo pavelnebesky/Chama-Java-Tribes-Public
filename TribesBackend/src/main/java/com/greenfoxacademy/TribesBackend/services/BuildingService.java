@@ -127,8 +127,7 @@ public class BuildingService {
         if ((type.matches("farm")) || (type.matches("townhall"))) {
             kingdomFoodResource.setGeneration(kingdomFoodResource.getGeneration() + addFood);
         }
-        resourceRepository.save(kingdomFoodResource);
-        resourceRepository.save(kingdomGoldResource);
+        resourceRepository.saveAll(List.of(kingdomFoodResource, kingdomGoldResource));
     }
 
     public Building createAndReturnBuilding(long userId, String type) {
