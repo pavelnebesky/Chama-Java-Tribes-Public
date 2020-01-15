@@ -21,7 +21,7 @@ public class Resource {
     private ResourceType type;
     private int amount;
     private int generation;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JsonIgnore
     private Kingdom kingdom;
 

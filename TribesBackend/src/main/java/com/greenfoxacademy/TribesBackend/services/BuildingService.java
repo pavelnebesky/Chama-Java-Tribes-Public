@@ -21,9 +21,10 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static com.greenfoxacademy.TribesBackend.constants.BuildingConstants.*;
-import static com.greenfoxacademy.TribesBackend.constants.ResourceConstants.BUILDING_PRICE;
+import static com.greenfoxacademy.TribesBackend.constants.ResourceConstants.*;
 import static com.greenfoxacademy.TribesBackend.enums.BuildingType.barracks;
 import static com.greenfoxacademy.TribesBackend.enums.BuildingType.townhall;
+import static com.greenfoxacademy.TribesBackend.enums.ResourceType.food;
 import static com.greenfoxacademy.TribesBackend.enums.ResourceType.gold;
 
 @Service
@@ -70,6 +71,7 @@ public class BuildingService {
         Resource resourceToUpdate = building.getKingdom().getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get();
         resourceToUpdate.setAmount(resourceToUpdate.getAmount() - goldToLevelUp);
         resourceRepository.save(resourceToUpdate);
+        updateGeneration(building.getType().toString(), building.getKingdom().getId(), EXTRA_GOLD_PER_LEVEL, EXTRA_FOOD_PER_LEVEL);
         return building;
     }
 
@@ -115,6 +117,20 @@ public class BuildingService {
         }
     }
 
+    public void updateGeneration(String type, long kingdomId, int addGold, int addFood) {
+        var kingdomResources = resourceRepository.getAllByKingdom(kingdomRepository.findById(kingdomId).get());
+        var kingdomGoldResource = kingdomResources.stream().filter(r -> r.getType().equals(gold)).findAny().get();
+        var kingdomFoodResource = kingdomResources.stream().filter(r -> r.getType().equals(food)).findAny().get();
+        if ((type.matches("mine")) || (type.matches("townhall"))) {
+            kingdomGoldResource.setGeneration(kingdomGoldResource.getGeneration() + addGold);
+        }
+        if ((type.matches("farm")) || (type.matches("townhall"))) {
+            kingdomFoodResource.setGeneration(kingdomFoodResource.getGeneration() + addFood);
+        }
+        resourceRepository.save(kingdomFoodResource);
+        resourceRepository.save(kingdomGoldResource);
+    }
+
     public Building createAndReturnBuilding(long userId, String type) {
         Building newBuilding = new Building();
         newBuilding.setType(BuildingType.valueOf(type));
@@ -131,6 +147,7 @@ public class BuildingService {
         int updatedGoldAmount = kingdomToUpdate.getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get().getAmount() - BUILDING_PRICE;
         kingdomToUpdate.getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get().setAmount(updatedGoldAmount);
         kingdomRepository.save(kingdomToUpdate);
+        updateGeneration(type, kingdomToUpdate.getId(), GOLD_PER_MINUTE, FOOD_PER_MINUTE);
         return newBuilding;
     }
 

@@ -213,6 +213,7 @@ public class UserService {
             kingdom.setName(kingdomName);
         }
         kingdom.setResources(resourceService.createInitialResources());
+        kingdom.getResources().forEach(r->r.setKingdom(kingdom));
         kingdom.setLocation(new Location());
         user.setKingdom(kingdom);
         user.setEmailVerified(false);
