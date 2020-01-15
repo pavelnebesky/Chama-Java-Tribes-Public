@@ -3,6 +3,7 @@ package com.greenfoxacademy.TribesBackend.filters;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.greenfoxacademy.TribesBackend.models.BlacklistedToken;
 import com.greenfoxacademy.TribesBackend.repositories.BlacklistedTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import static com.greenfoxacademy.TribesBackend.constants.SecurityConstants.*;
@@ -25,6 +27,20 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
     @Autowired
     private BlacklistedTokenRepository blacklistedTokenRepository;
 
+    private boolean isBlackListed(String token){
+        List<BlacklistedToken> blacklistedTokens=(List<BlacklistedToken>)blacklistedTokenRepository.findAll();
+        for (int i=0;i<blacklistedTokens.size();i++){
+            if(blacklistedTokens.get(i).getToken().equals(token)){
+                return true;
+            }
+            if(JWT.decode(blacklistedTokens.get(i).getToken()).getExpiresAt().after(new Date())){
+                blacklistedTokens.remove(i);
+                i--;
+            }
+        }
+        return false;
+    }
+
     private boolean isAuthorized(HttpServletRequest request, HttpServletResponse response) {
         String token = request.getHeader(HEADER_STRING);
         if (token != null) {
@@ -34,7 +50,7 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
                         .verify(token.replace(TOKEN_PREFIX, ""));
                 String expectedIp = decodedjwt.getHeaderClaim(IP_CLAIM).asString();
                 String actualIp = request.getRemoteAddr();
-                return actualIp.equals(expectedIp)&&blacklistedTokenRepository.findByToken(decodedjwt.getToken())==null;
+                return actualIp.equals(expectedIp)&&!isBlackListed(decodedjwt.getToken());
             } catch (RuntimeException e) {
                 response.setStatus(401);
             }

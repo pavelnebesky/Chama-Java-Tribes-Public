@@ -6,5 +6,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BlacklistedTokenRepository extends CrudRepository<BlacklistedToken, Long> {
-    BlacklistedToken findByToken(String token);
 }
