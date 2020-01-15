@@ -3,6 +3,7 @@ plugins {
 	id 'io.spring.dependency-management' version '1.0.8.RELEASE'
 	id 'java'
 	id 'idea'
+	id "org.flywaydb.flyway" version "6.1.4"
 }
 
 group = 'com.greenfoxacademy'
