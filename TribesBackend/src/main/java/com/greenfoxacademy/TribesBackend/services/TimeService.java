@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.greenfoxacademy.TribesBackend.constants.BuildingConstants.BUILDING_TIMES;
@@ -97,9 +98,9 @@ public class TimeService {
         Resource foodResource = resources.stream().filter(r -> r.getType() == ResourceType.food).findAny().get();
         goldResource.setAmount(goldResource.getAmount() + generatedGold);
         foodResource.setAmount(foodResource.getAmount() + generatedFood);
-        Building townhall = buildings.stream().filter(b -> b.getType() == BuildingType.townhall).findAny().get();
-        if(townhall!=null){
-            calculateTownHallGeneration(goldResource, foodResource, townhall);
+        Optional<Building> optTownhall = buildings.stream().filter(b -> b.getType() == BuildingType.townhall).findAny();
+        if(optTownhall.isPresent()){
+            calculateTownHallGeneration(goldResource, foodResource, optTownhall.get());
         }
         resourceRepository.saveAll(List.of(goldResource, foodResource));
     }

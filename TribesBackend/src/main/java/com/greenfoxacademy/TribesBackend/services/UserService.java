@@ -3,6 +3,7 @@ package com.greenfoxacademy.TribesBackend.services;
 import com.greenfoxacademy.TribesBackend.exceptions.*;
 import com.greenfoxacademy.TribesBackend.models.*;
 import com.greenfoxacademy.TribesBackend.repositories.AuthGrantAccessTokenRepository;
+import com.greenfoxacademy.TribesBackend.repositories.BlacklistedTokenRepository;
 import com.greenfoxacademy.TribesBackend.repositories.KingdomRepository;
 import com.greenfoxacademy.TribesBackend.repositories.UserRepository;
 import lombok.Getter;
@@ -31,6 +32,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static com.greenfoxacademy.TribesBackend.constants.EmailVerificationConstants.*;
 import static com.greenfoxacademy.TribesBackend.constants.ExternalLoginConstants.*;
+import static com.greenfoxacademy.TribesBackend.constants.SecurityConstants.HEADER_STRING;
+import static com.greenfoxacademy.TribesBackend.constants.SecurityConstants.TOKEN_PREFIX;
 
 @Getter
 @Setter
@@ -39,6 +42,8 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private BlacklistedTokenRepository blacklistedTokenRepository;
     @Autowired
     private AuthGrantAccessTokenRepository authGrantAccessTokenRepository;
     @Autowired
@@ -74,6 +79,12 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public void logout(HttpServletRequest request) {
+        BlacklistedToken blacklistedToken = new BlacklistedToken();
+        blacklistedToken.setToken(request.getHeader(HEADER_STRING).replace(TOKEN_PREFIX, ""));
+        blacklistedTokenRepository.save(blacklistedToken);
+    }
+
     public String createOAuthRedirection(String redirectUri, OAuth2ConnectionFactory connectionFactory) {
         OAuth2Operations oauthOperations = connectionFactory.getOAuthOperations();
         OAuth2Parameters params = new OAuth2Parameters();
@@ -88,7 +99,7 @@ public class UserService {
             if (email == null) {
                 throw new ExternalAccountWithNoEmailException();
             }
-            if( userRepository.findByUsername(email) !=null ){
+            if (userRepository.findByUsername(email) != null) {
                 throw new EmailAlreadyTakenException(email);
             }
             User user = new User();

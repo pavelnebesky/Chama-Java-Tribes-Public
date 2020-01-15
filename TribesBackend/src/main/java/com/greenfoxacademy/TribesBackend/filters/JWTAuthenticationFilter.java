@@ -5,6 +5,8 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.greenfoxacademy.TribesBackend.services.TimeService;
 import com.greenfoxacademy.TribesBackend.services.UtilityService;
+import com.greenfoxacademy.TribesBackend.models.BlacklistedToken;
+import com.greenfoxacademy.TribesBackend.repositories.BlacklistedTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
@@ -16,6 +18,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import static com.greenfoxacademy.TribesBackend.constants.SecurityConstants.*;
@@ -28,6 +31,21 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
     @Autowired
     private UtilityService utilityService;
 
+    private BlacklistedTokenRepository blacklistedTokenRepository;
+
+    private boolean isBlackListed(String token) {
+        List<BlacklistedToken> blacklistedTokens = (List<BlacklistedToken>) blacklistedTokenRepository.findAll();
+        for (BlacklistedToken blacklistedToken: blacklistedTokens) {
+            if (blacklistedToken.getToken().equals(token)) {
+                return true;
+            }
+            if (JWT.decode(blacklistedToken.getToken()).getExpiresAt().before(new Date())) {
+                blacklistedTokenRepository.deleteById(blacklistedToken.getId());
+            }
+        }
+        return false;
+    }
+
     private boolean isAuthorized(HttpServletRequest request, HttpServletResponse response) {
         String token = request.getHeader(HEADER_STRING);
         if (token != null) {
@@ -37,9 +55,8 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
                         .verify(token.replace(TOKEN_PREFIX, ""));
                 String expectedIp = decodedjwt.getHeaderClaim(IP_CLAIM).asString();
                 String actualIp = request.getRemoteAddr();
-                if(actualIp.equals(expectedIp)){
-                    Long userId=utilityService.getIdFromToken(request);
-                    timeService.updateAllUserData(userId);
+                if(actualIp.equals(expectedIp) && !isBlackListed(decodedjwt.getToken())){
+                    timeService.updateAllUserData(utilityService.getIdFromToken(request));
                     return true;
                 } else{
                     return false;
