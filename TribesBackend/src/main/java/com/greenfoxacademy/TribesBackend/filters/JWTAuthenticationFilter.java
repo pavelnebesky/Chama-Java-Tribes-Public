@@ -29,12 +29,12 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
 
     private boolean isBlackListed(String token) {
         List<BlacklistedToken> blacklistedTokens = (List<BlacklistedToken>) blacklistedTokenRepository.findAll();
-        for (int i = 0; i < blacklistedTokens.size(); i++) {
-            if (blacklistedTokens.get(i).getToken().equals(token)) {
+        for (BlacklistedToken blacklistedToken: blacklistedTokens) {
+            if (blacklistedToken.getToken().equals(token)) {
                 return true;
             }
-            if (JWT.decode(blacklistedTokens.get(i).getToken()).getExpiresAt().before(new Date())) {
-                blacklistedTokenRepository.deleteById(blacklistedTokens.get(i).getId());
+            if (JWT.decode(blacklistedToken.getToken()).getExpiresAt().before(new Date())) {
+                blacklistedTokenRepository.deleteById(blacklistedToken.getId());
             }
         }
         return false;
