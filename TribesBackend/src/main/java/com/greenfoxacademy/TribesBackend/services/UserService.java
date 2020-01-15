@@ -1,11 +1,9 @@
 package com.greenfoxacademy.TribesBackend.services;
 
 import com.greenfoxacademy.TribesBackend.exceptions.*;
-import com.greenfoxacademy.TribesBackend.models.AuthGrantAccessToken;
-import com.greenfoxacademy.TribesBackend.models.Kingdom;
-import com.greenfoxacademy.TribesBackend.models.Location;
-import com.greenfoxacademy.TribesBackend.models.User;
+import com.greenfoxacademy.TribesBackend.models.*;
 import com.greenfoxacademy.TribesBackend.repositories.AuthGrantAccessTokenRepository;
+import com.greenfoxacademy.TribesBackend.repositories.BlacklistedTokenRepository;
 import com.greenfoxacademy.TribesBackend.repositories.KingdomRepository;
 import com.greenfoxacademy.TribesBackend.repositories.UserRepository;
 import lombok.Getter;
@@ -34,6 +32,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static com.greenfoxacademy.TribesBackend.constants.EmailVerificationConstants.*;
 import static com.greenfoxacademy.TribesBackend.constants.ExternalLoginConstants.*;
+import static com.greenfoxacademy.TribesBackend.constants.SecurityConstants.HEADER_STRING;
+import static com.greenfoxacademy.TribesBackend.constants.SecurityConstants.TOKEN_PREFIX;
 
 @Getter
 @Setter
@@ -42,6 +42,8 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private BlacklistedTokenRepository blacklistedTokenRepository;
     @Autowired
     private AuthGrantAccessTokenRepository authGrantAccessTokenRepository;
     @Autowired
@@ -75,6 +77,12 @@ public class UserService {
 
     public void save(User user) {
         userRepository.save(user);
+    }
+
+    public void logout(HttpServletRequest request){
+        BlacklistedToken blacklistedToken=new BlacklistedToken();
+        blacklistedToken.setToken(request.getHeader(HEADER_STRING).replace(TOKEN_PREFIX, ""));
+        blacklistedTokenRepository.save(blacklistedToken);
     }
 
     public String createOAuthRedirection(String redirectUri, OAuth2ConnectionFactory connectionFactory) {

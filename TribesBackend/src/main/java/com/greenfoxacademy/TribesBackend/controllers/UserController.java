@@ -41,9 +41,10 @@ public class UserController {
         return ResponseEntity.ok(userService.registerUser(userService.getUserFromModelMap(modelMap), (String) modelMap.getAttribute("kingdom")));
 }
 
-    @GetMapping("/logout")
-    public void logout(HttpServletResponse response) {
-        response.setStatus(200);
+    @PostMapping("/logout")
+    public ResponseEntity logout(HttpServletRequest request) {
+        userService.logout(request);
+        return ResponseEntity.ok().body(null);
     }
 
     @GetMapping("/login/{externalSite}")
