@@ -65,6 +65,7 @@ public class BuildingService {
     public Building buildingLevelUp(Building building, int newLevel) {
         int goldToLevelUp = (building.getLevel() + 1) * GOLD_TO_LEVEL_UP_BUILDING;
         building.setLevel(building.getLevel() + 1);
+        building.setFinished_at(System.currentTimeMillis() + BUILDING_TIMES.get(building.getType()));
         saveBuilding(building);
         Resource resourceToUpdate = building.getKingdom().getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get();
         resourceToUpdate.setAmount(resourceToUpdate.getAmount() - goldToLevelUp);
@@ -78,14 +79,17 @@ public class BuildingService {
         }
     }
 
-    public void checksForNewBuilding(String type, int kingdomGold, Long userId) throws InvalidBuildingTypeException, MissingParamsException, NotEnoughGoldException, TownhallAlreadyExistsException {
+    public void checksForNewBuilding(String type, int kingdomGold, Long userId) throws InvalidBuildingTypeException, MissingParamsException, NotEnoughGoldException, TownhallAlreadyExistsException, TownhallFirstException {
         if (type == null) {
             throw new MissingParamsException(List.of("type"));
         }
         if (BuildingType.valueOf(type) == null) {
             throw new InvalidBuildingTypeException();
         }
-        boolean townhallExists = ((List<Building>)(getAllBuildingsByUserId(userId))).stream().filter(b -> b.getType().equals(townhall)).findAny().isPresent();
+        if (((List<Building>) getAllBuildingsByUserId(userId)).isEmpty() && !type.matches("townhall")) {
+            throw new TownhallFirstException();
+        }
+        boolean townhallExists = ((List<Building>) (getAllBuildingsByUserId(userId))).stream().filter(b -> b.getType().equals(townhall)).findAny().isPresent();
         if (townhallExists && type.matches("townhall")) {
             throw new TownhallAlreadyExistsException();
         }
@@ -101,11 +105,11 @@ public class BuildingService {
         if (building.getLevel() <= buildingRepository.findById(buildingId).get().getLevel()) {
             throw new InvalidLevelException("building");
         }
-        if ((((buildingRepository.findById(buildingId).get().getLevel())+1) > buildingRepository.findById(buildingId).get().getKingdom().getBuildings().stream().filter(b -> b.getType().equals(townhall)).findAny().get().getLevel()) && !(buildingRepository.findById(buildingId).get().getType()==BuildingType.valueOf("townhall"))) {
+        if ((((buildingRepository.findById(buildingId).get().getLevel()) + 1) > buildingRepository.findById(buildingId).get().getKingdom().getBuildings().stream().filter(b -> b.getType().equals(townhall)).findAny().get().getLevel()) && !(buildingRepository.findById(buildingId).get().getType() == BuildingType.valueOf("townhall"))) {
             throw new TownhallLevelTooLowException();
         }
         int kingdomsGold = buildingRepository.findById(buildingId).get().getKingdom().getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get().getAmount();
-        int goldToLevelUp = ((buildingRepository.findById(buildingId).get().getLevel())+1) * GOLD_TO_LEVEL_UP_BUILDING;
+        int goldToLevelUp = ((buildingRepository.findById(buildingId).get().getLevel()) + 1) * GOLD_TO_LEVEL_UP_BUILDING;
         if (kingdomsGold < goldToLevelUp) {
             throw new NotEnoughGoldException();
         }
