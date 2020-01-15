@@ -113,6 +113,7 @@ public class BuildingService {
         newBuilding.setLevel(1);
         newBuilding.setStarted_at(System.currentTimeMillis());
         newBuilding.setFinished_at(newBuilding.getStarted_at() + BUILDING_TIMES.get(BuildingType.valueOf(type)));
+        newBuilding.setUpdated_at(newBuilding.getFinished_at());
         saveBuilding(newBuilding);
         Kingdom kingdomToUpdate = kingdomRepository.findByUserId(userId);
         List<Building> kingdomsBuildings = kingdomToUpdate.getBuildings();

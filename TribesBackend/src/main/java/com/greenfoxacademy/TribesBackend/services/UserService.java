@@ -1,10 +1,7 @@
 package com.greenfoxacademy.TribesBackend.services;
 
 import com.greenfoxacademy.TribesBackend.exceptions.*;
-import com.greenfoxacademy.TribesBackend.models.AuthGrantAccessToken;
-import com.greenfoxacademy.TribesBackend.models.Kingdom;
-import com.greenfoxacademy.TribesBackend.models.Location;
-import com.greenfoxacademy.TribesBackend.models.User;
+import com.greenfoxacademy.TribesBackend.models.*;
 import com.greenfoxacademy.TribesBackend.repositories.AuthGrantAccessTokenRepository;
 import com.greenfoxacademy.TribesBackend.repositories.KingdomRepository;
 import com.greenfoxacademy.TribesBackend.repositories.UserRepository;
@@ -213,6 +210,7 @@ public class UserService {
             kingdom.setName(kingdomName);
         }
         kingdom.setResources(resourceService.createInitialResources());
+        kingdom.getResources().forEach(r->r.setKingdom(kingdom));
         kingdom.setLocation(new Location());
         kingdom.setBuildings(new ArrayList<Building>());
         user.setKingdom(kingdom);
