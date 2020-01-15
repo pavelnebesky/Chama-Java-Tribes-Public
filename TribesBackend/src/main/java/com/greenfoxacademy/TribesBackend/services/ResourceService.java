@@ -8,7 +8,6 @@ import com.greenfoxacademy.TribesBackend.models.Resource;
 import com.greenfoxacademy.TribesBackend.repositories.BuildingRepository;
 import com.greenfoxacademy.TribesBackend.repositories.ResourceRepository;
 import lombok.Getter;
-import org.aspectj.apache.bcel.classfile.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
@@ -20,6 +19,8 @@ import static com.greenfoxacademy.TribesBackend.constants.ResourceConstants.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static com.greenfoxacademy.TribesBackend.constants.ResourceConstants.*;
 
 @Getter
 @Service
