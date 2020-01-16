@@ -67,22 +67,6 @@ public class ResourceService {
         return listOfInitialResources;
     }
 
-    public int calculateAmountOfResourceGeneratedByBuilding(Building building) {
-        if (building.getType() == BuildingType.mine) {
-            int differenceInTime = (int) (System.currentTimeMillis() - building.getUpdated_at()) / MILLISECONDS_PER_MINUTE;
-            int AmountOfResourceToAdd = differenceInTime * (GOLD_PER_MINUTE + EXTRA_GOLD_PER_LEVEL * building.getLevel());
-            building.setUpdated_at(building.getUpdated_at() + differenceInTime * MILLISECONDS_PER_MINUTE);
-            buildingRepository.save(building);
-            return AmountOfResourceToAdd;
-        } else if (building.getType() == BuildingType.farm) {
-            int differenceInTime = (int) (System.currentTimeMillis() - building.getUpdated_at()) / MILLISECONDS_PER_MINUTE;
-            int AmountOfResourceToAdd = differenceInTime * (FOOD_PER_MINUTE + EXTRA_FOOD_PER_LEVEL * building.getLevel());
-            building.setUpdated_at(building.getUpdated_at() + differenceInTime * MILLISECONDS_PER_MINUTE);
-            buildingRepository.save(building);
-            return AmountOfResourceToAdd;
-        } else return 0;
-    }
-
     public ModelMap getResourcesModelByUserId(Long userId) {
         Kingdom kingdom = kingdomService.getKingdomByUserId(userId);
         return new ModelMap().addAttribute("resources", this.getResources(kingdom));

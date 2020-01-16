@@ -13,7 +13,8 @@ import javax.persistence.*;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class Resource {
+public class
+Resource {
     @Id
     @GeneratedValue
     @JsonIgnore
