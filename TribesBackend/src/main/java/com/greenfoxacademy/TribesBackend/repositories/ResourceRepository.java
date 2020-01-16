@@ -1,5 +1,6 @@
 package com.greenfoxacademy.TribesBackend.repositories;
 import com.greenfoxacademy.TribesBackend.enums.ResourceType;
+import com.greenfoxacademy.TribesBackend.models.Building;
 import com.greenfoxacademy.TribesBackend.models.Kingdom;
 import com.greenfoxacademy.TribesBackend.models.Resource;
 import org.springframework.data.repository.CrudRepository;
@@ -11,4 +12,5 @@ import java.util.List;
 public interface ResourceRepository extends CrudRepository<Resource, Long> {
     Resource findByType(ResourceType type);
     List<Resource> getAllByKingdom(Kingdom kingdom);
+    List<Resource> findAllByKingdomUserId(long userId);
 }
