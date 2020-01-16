@@ -17,4 +17,5 @@ public class BuildingConstants {
             }
         };
     public static final int GOLD_TO_LEVEL_UP_BUILDING = 100;
+    public static final int TOWNHALL_MAX_LEVEL = 20;
 }
