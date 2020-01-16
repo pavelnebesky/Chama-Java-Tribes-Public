@@ -1,5 +1,6 @@
 package com.greenfoxacademy.TribesBackend.controllers;
 
+import com.greenfoxacademy.TribesBackend.exceptions.FrontendException;
 import com.greenfoxacademy.TribesBackend.models.Kingdom;
 import com.greenfoxacademy.TribesBackend.services.KingdomService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,14 +26,13 @@ public class KingdomController {
     @GetMapping("kingdom/{userId}")
     public ResponseEntity getKingdomByUserId(@PathVariable long userId) {
         //TODO: TEST
-        Kingdom kingdom = kingdomService.getKingdomByUserId(userId);
-        if (kingdom != null) {
-            return ResponseEntity.ok(kingdom);
-        } else {
-            ModelMap modelMap = new ModelMap().addAttribute("status", "error")
-                    .addAttribute("message", "UserId not found");
-            return ResponseEntity.status(404).body(modelMap);
+        try {
+            kingdomService.checkUserId(userId);
         }
+        catch (FrontendException e) {
+            return kingdomService.getUtilityService().handleResponseWithException(e);
+        }
+            return ResponseEntity.ok(kingdomService.getKingdomByUserId(userId));
     }
 
     @PutMapping("/kingdom")
