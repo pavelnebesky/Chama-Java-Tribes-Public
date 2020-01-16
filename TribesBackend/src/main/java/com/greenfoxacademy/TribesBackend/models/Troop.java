@@ -5,18 +5,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+
 @Getter
 @Setter
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "troop")
 public class Troop {
+
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "troop_id")
     private long id;
     private int level = 1;
     private int hp;
@@ -26,5 +27,6 @@ public class Troop {
     private long finished_at;
     @JsonIgnore
     @ManyToOne
+    @JoinColumn(name = "kingdom_id")
     private Kingdom kingdom;
 }
