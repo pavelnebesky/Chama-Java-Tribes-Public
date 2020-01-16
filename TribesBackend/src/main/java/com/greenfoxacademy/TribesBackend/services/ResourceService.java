@@ -91,7 +91,7 @@ public class ResourceService {
     public ModelMap getResourceTypeModelByUserId(Long userId, String resourceType) {
         ResourceType type = returnEnum(resourceType);
         Kingdom kingdom = kingdomService.getKingdomByUserId(userId);
-        return new ModelMap().addAttribute("resources", this.findResourceByTypeAndUserId(type, userId));
+        return new ModelMap().addAttribute(this.findResourceByTypeAndUserId(type, userId));
     }
 
     public void checkResourceTypeIfItExists(String resourceType) throws IllegalArgumentException {
