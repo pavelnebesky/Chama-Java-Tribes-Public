@@ -223,6 +223,7 @@ public class UserService {
         kingdom.setResources(resourceService.createInitialResources());
         kingdom.getResources().forEach(r->r.setKingdom(kingdom));
         kingdom.setLocation(new Location());
+        kingdom.setBuildings(new ArrayList<Building>());
         user.setKingdom(kingdom);
         user.setEmailVerified(false);
         String verCode = generateEmailVerificationCode();
