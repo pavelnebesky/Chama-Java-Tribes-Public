@@ -247,8 +247,11 @@ public class UserService {
         }
     }
 
-    public void checkUserParamsForReg(User user) throws MissingParamsException, EmailAlreadyTakenException {
+    public void checkUserParamsForReg(User user) throws MissingParamsException, EmailAlreadyTakenException, NotValidEmailException {
         checkMissingParams(user);
+        if(!isEmailValid(user.getUsername())){
+            throw new NotValidEmailException();
+        }
         if (doesUserExistByEmail(user.getUsername())) {
             throw new EmailAlreadyTakenException(user.getUsername());
         }
