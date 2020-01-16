@@ -30,7 +30,7 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
     private TimeService timeService;
     @Autowired
     private UtilityService utilityService;
-
+    @Autowired
     private BlacklistedTokenRepository blacklistedTokenRepository;
 
     private boolean isBlackListed(String token) {
