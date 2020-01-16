@@ -13,17 +13,20 @@ import javax.persistence.*;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class
-Resource {
+@Table(name = "resource")
+public class Resource {
+
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
+    @Column(name = "resource_id")
     private Long id;
     private ResourceType type;
     private int amount;
     private int generation;
     @ManyToOne(cascade = CascadeType.ALL)
     @JsonIgnore
+    @JoinColumn(name = "kingdom_id")
     private Kingdom kingdom;
 
     public Resource(ResourceType type, int amount, int generation){
