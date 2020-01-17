@@ -29,16 +29,14 @@ public class ResourceController {
     }
 
     @GetMapping("/kingdom/resources/{resourceType}")
-    public ResponseEntity getResourceType(@PathVariable String ResourceType) {
-
-        ResourceType type = resourceService.returnEnum(ResourceType);
-        Optional<Resource> maybeResource = resourceService.findResourceByType(type);
-        if (maybeResource.isPresent()) {
-            return ResponseEntity.ok(maybeResource);
+    public ResponseEntity getResourceType(@PathVariable String resourceType, HttpServletRequest request) {
+        try {
+            resourceService.checkResourceTypeIfItExists(resourceType);
+        } catch (IllegalArgumentException e) {
+            return resourceService.getUtilityService().handleResponseWithException(new ParameterNotFoundException(resourceType));
         }
-        else {
-            return utilityService.handleResponseWithException(new ParameterNotFoundException(ResourceType));
-        }
+        Long id = resourceService.getUtilityService().getIdFromToken(request);
+        return ResponseEntity.ok(resourceService.findResourceByTypeAndUserId(ResourceType.valueOf(resourceType), id));
     }
 }
 

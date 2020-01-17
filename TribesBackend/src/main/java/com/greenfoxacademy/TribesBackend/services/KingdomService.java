@@ -1,5 +1,6 @@
 package com.greenfoxacademy.TribesBackend.services;
 
+import com.greenfoxacademy.TribesBackend.exceptions.IdNotFoundException;
 import com.greenfoxacademy.TribesBackend.models.Kingdom;
 import com.greenfoxacademy.TribesBackend.repositories.KingdomRepository;
 import lombok.Getter;
@@ -37,5 +38,11 @@ public class KingdomService {
             kingdomToUpdate.getLocation().setY((int) kingdomDataToUpdate.getAttribute("locationY"));
         }
         kingdomRepository.save(kingdomToUpdate);
+    }
+
+    public void checkUserId(long userId) throws IdNotFoundException{
+        if (kingdomRepository.findByUserId(userId) == null) {
+            throw new IdNotFoundException(userId);
+        }
     }
 }
