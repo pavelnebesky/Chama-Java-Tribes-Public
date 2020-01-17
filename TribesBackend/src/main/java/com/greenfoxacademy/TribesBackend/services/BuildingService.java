@@ -100,7 +100,7 @@ public class BuildingService {
         }
     }
 
-    public void checksForUpdateBuilding(Long buildingId, Building building) throws IdNotFoundException, NotEnoughGoldException, InvalidLevelException, TownhallLevelTooLowException {
+    public void checksForUpdateBuilding(Long buildingId, Building building) throws IdNotFoundException, NotEnoughGoldException, InvalidLevelException, TownhallLevelTooLowException, MaxTownhallLevelException {
         if (!buildingRepository.findById(buildingId).isPresent()) {
             throw new IdNotFoundException(buildingId);
         }
@@ -109,6 +109,9 @@ public class BuildingService {
         }
         if ((((buildingRepository.findById(buildingId).get().getLevel()) + 1) > buildingRepository.findById(buildingId).get().getKingdom().getBuildings().stream().filter(b -> b.getType().equals(townhall)).findAny().get().getLevel()) && !(buildingRepository.findById(buildingId).get().getType() == BuildingType.valueOf("townhall"))) {
             throw new TownhallLevelTooLowException();
+        }
+        if (building.getLevel() > TOWNHALL_MAX_LEVEL) {
+            throw new MaxTownhallLevelException(TOWNHALL_MAX_LEVEL);
         }
         int kingdomsGold = buildingRepository.findById(buildingId).get().getKingdom().getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get().getAmount();
         int goldToLevelUp = ((buildingRepository.findById(buildingId).get().getLevel()) + 1) * GOLD_TO_LEVEL_UP_BUILDING;
@@ -138,6 +141,7 @@ public class BuildingService {
         newBuilding.setLevel(1);
         newBuilding.setStarted_at(System.currentTimeMillis());
         newBuilding.setFinished_at(newBuilding.getStarted_at() + BUILDING_TIMES.get(BuildingType.valueOf(type)));
+        newBuilding.setUpdated_at(newBuilding.getFinished_at());
         saveBuilding(newBuilding);
         Kingdom kingdomToUpdate = kingdomRepository.findByUserId(userId);
         List<Building> kingdomsBuildings = kingdomToUpdate.getBuildings();
