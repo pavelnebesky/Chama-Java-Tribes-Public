@@ -23,7 +23,7 @@ public class TroopController {
     }
 
     @GetMapping("/kingdom/troops/{troopId}")
-    public ResponseEntity getTroopById(HttpServletRequest request,@PathVariable Long troopId){
+    public ResponseEntity getTroopById(HttpServletRequest request, @PathVariable Long troopId){
         return ResponseEntity.ok(troopService.getTroopById(troopId));
     }
 
@@ -45,7 +45,7 @@ public class TroopController {
         } catch (FrontendException e){
             return troopService.getUtilityService().handleResponseWithException(e);
         }
-        Troop upgradedTroop = troopService.troopLevelUp(troop,troopService.getUserIdFromToken(request));
+        Troop upgradedTroop = troopService.troopLevelUp(troop, troopService.getUserIdFromToken(request), troopId);
         return ResponseEntity.status(200).body(upgradedTroop);
     }
 }

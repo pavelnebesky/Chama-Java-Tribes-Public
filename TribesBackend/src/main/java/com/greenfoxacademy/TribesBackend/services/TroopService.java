@@ -14,6 +14,7 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -103,8 +104,8 @@ public class TroopService {
         }
     }
 
-    public Troop troopLevelUp(Troop troop, Long userId) {
-        Troop troopToUpgrade = StreamSupport.stream(troopRepository.findAllTroopsByKingdomUserId(userId).spliterator(), false).findAny().get();
+    public Troop troopLevelUp(Troop troop, Long userId, @PathVariable Long troopId) {
+        Troop troopToUpgrade = troopRepository.findTroopById(troopId);
         int goldToLevelUp = TroopConstants.TROOP_UPGRADE_PRICE;
         int newLevel = troop.getLevel();
         Kingdom kingdomToUpdate = kingdomRepository.findByUserId(userId);
