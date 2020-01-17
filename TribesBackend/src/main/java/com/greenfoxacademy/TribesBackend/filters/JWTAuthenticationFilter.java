@@ -39,11 +39,17 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
             if (blacklistedToken.getToken().equals(token)) {
                 return true;
             }
+        }
+        return false;
+    }
+
+    private void updateBlackList(){
+        List<BlacklistedToken> blacklistedTokens = (List<BlacklistedToken>) blacklistedTokenRepository.findAll();
+        for (BlacklistedToken blacklistedToken: blacklistedTokens) {
             if (JWT.decode(blacklistedToken.getToken()).getExpiresAt().before(new Date())) {
                 blacklistedTokenRepository.deleteById(blacklistedToken.getId());
             }
         }
-        return false;
     }
 
     private boolean isAuthorized(HttpServletRequest request, HttpServletResponse response) {
@@ -56,6 +62,7 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
                 String expectedIp = decodedjwt.getHeaderClaim(IP_CLAIM).asString();
                 String actualIp = request.getRemoteAddr();
                 if(actualIp.equals(expectedIp) && !isBlackListed(decodedjwt.getToken())){
+                    updateBlackList();
                     timeService.updateAllUserData(utilityService.getIdFromToken(request));
                     return true;
                 } else{
