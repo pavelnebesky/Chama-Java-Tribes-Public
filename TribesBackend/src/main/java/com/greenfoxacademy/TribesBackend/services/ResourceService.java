@@ -46,7 +46,7 @@ public class ResourceService {
         Kingdom kingdom = kingdomService.getKingdomByUserId(userId);
         List<Resource> resources = resourceRepository.getAllByKingdom(kingdom);
         for (Resource resource : resources) {
-            if(resource.getType()==type){
+            if (resource.getType() == type) {
                 return resource;
             }
         }
@@ -70,12 +70,6 @@ public class ResourceService {
     public ModelMap getResourcesModelByUserId(Long userId) {
         Kingdom kingdom = kingdomService.getKingdomByUserId(userId);
         return new ModelMap().addAttribute("resources", this.getResources(kingdom));
-    }
-
-    public ModelMap getResourceTypeModelByUserId(Long userId, String resourceType) {
-        ResourceType type = returnEnum(resourceType);
-        Kingdom kingdom = kingdomService.getKingdomByUserId(userId);
-        return new ModelMap().addAttribute(this.findResourceByTypeAndUserId(type, userId));
     }
 
     public void checkResourceTypeIfItExists(String resourceType) throws IllegalArgumentException {

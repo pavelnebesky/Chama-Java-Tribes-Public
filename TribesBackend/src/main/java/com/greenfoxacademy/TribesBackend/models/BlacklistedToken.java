@@ -2,6 +2,7 @@ package com.greenfoxacademy.TribesBackend.models;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.bytebuddy.dynamic.loading.InjectionClassLoader;
 
 import javax.persistence.*;
 

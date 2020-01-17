@@ -36,7 +36,7 @@ public class ResourceController {
             return resourceService.getUtilityService().handleResponseWithException(new ParameterNotFoundException(resourceType));
         }
         Long id = resourceService.getUtilityService().getIdFromToken(request);
-        return ResponseEntity.ok(resourceService.getResourceTypeModelByUserId(id, resourceType));
+        return ResponseEntity.ok(resourceService.findResourceByTypeAndUserId(ResourceType.valueOf(resourceType), id));
     }
 }
 
