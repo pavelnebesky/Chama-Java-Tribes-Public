@@ -93,11 +93,9 @@ public class TroopService {
     }
 
     public Troop troopLevelUp(Troop troop, Long userId) {
-
         Troop troopToUpgrade = StreamSupport.stream(troopRepository.findAllTroopsByKingdomUserId(userId).spliterator(), false).findAny().get();
-        int troopLevel = troopToUpgrade.getLevel();
         int goldToLevelUp = TroopConstants.TROOP_UPGRADE_PRICE;
-        int newLevel = troopLevel;
+        int newLevel = troop.getLevel();
         Kingdom kingdomToUpdate = kingdomRepository.findByUserId(userId);
         troopToUpgrade.setLevel(newLevel);
         troopToUpgrade.setAttack(troopToUpgrade.getAttack() + TroopConstants.AMOUNT_OF_STATS_TO_ADD);
