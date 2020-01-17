@@ -39,7 +39,11 @@ public class BuildingController {
     public ResponseEntity postBuildings(HttpServletRequest request, @RequestBody ModelMap type) {
         //TODO: TEST
         try {
-            buildingService.checksForNewBuilding((String) type.getAttribute("type"), (userService.findById(utilityService.getIdFromToken(request))).getKingdom().getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get().getAmount(), utilityService.getIdFromToken(request));
+            int goldAmount = (userService.findById(utilityService.getIdFromToken(request)))
+                    .getKingdom().getResources()
+                    .stream().filter(r -> r.getType().equals(gold))
+                    .findAny().get().getAmount();
+            buildingService.checksForNewBuilding((String) type.getAttribute("type"), goldAmount, utilityService.getIdFromToken(request));
         } catch (FrontendException e) {
             return buildingService.getUtilityService().handleResponseWithException(e);
         } catch (IllegalArgumentException e) {

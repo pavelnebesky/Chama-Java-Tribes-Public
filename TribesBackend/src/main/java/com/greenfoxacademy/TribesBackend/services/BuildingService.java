@@ -107,7 +107,10 @@ public class BuildingService {
         if (building.getLevel() <= buildingRepository.findById(buildingId).get().getLevel()) {
             throw new InvalidLevelException("building");
         }
-        if ((((buildingRepository.findById(buildingId).get().getLevel()) + 1) > buildingRepository.findById(buildingId).get().getKingdom().getBuildings().stream().filter(b -> b.getType().equals(townhall)).findAny().get().getLevel()) && !(buildingRepository.findById(buildingId).get().getType() == BuildingType.valueOf("townhall"))) {
+        if ((((buildingRepository.findById(buildingId).get().getLevel()) + 1) >
+                        buildingRepository.findById(buildingId).get().getKingdom().getBuildings()
+                        .stream().filter(b -> b.getType().equals(townhall)).findAny().get().getLevel())
+                && !(buildingRepository.findById(buildingId).get().getType() == BuildingType.valueOf("townhall"))) {
             throw new TownhallLevelTooLowException();
         }
         if (building.getLevel() > TOWNHALL_MAX_LEVEL) {
