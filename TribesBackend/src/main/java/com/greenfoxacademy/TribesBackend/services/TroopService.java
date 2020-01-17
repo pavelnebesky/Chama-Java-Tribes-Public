@@ -73,9 +73,7 @@ public class TroopService {
 
     public Troop createAndReturnNewTroop(Long userId) throws NotEnoughGoldException {
         int goldToTrain = TroopConstants.TROOP_PRICE;
-
         int barracksLevel = StreamSupport.stream(buildingService.getAllBuildingsByUserId(userId).spliterator(), false).filter(b -> b.getType().equals(barracks)).findAny().get().getLevel();
-
         Troop newTroop = new Troop();
         newTroop.setHp(barracksLevel * TroopConstants.TROOP_BASE_HP);
         newTroop.setAttack(1);
@@ -122,25 +120,20 @@ public class TroopService {
         }
         Long userId = getUserIdFromToken(request);
         Kingdom homeKingdom = getKingdomRepository().findByUserId(userId);
-        int kingdomsGold = homeKingdom.getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get().getAmount();
-
+        int kingdomsGold = homeKingdom.getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get().getAmount()
         List<String> missingParams = new ArrayList<String>();
         if (troopLvlFromBody == null){
             missingParams.add("level");
         }
-
         if (!missingParams.isEmpty()) {
             throw new MissingParamsException(missingParams);
         }
-
         if (kingdomsGold < TroopConstants.TROOP_UPGRADE_PRICE) {
             throw new NotEnoughGoldException();
         }
-
         if (troopLvlFromBody != troopLevel + TroopConstants.AMOUNT_OF_LEVELS_TO_ADD || troopLvlFromBody != (int) troopLvlFromBody){
             throw new InvalidLevelException("troop");
         }
-
         Long inMemeoryTroopId = troopRepository.findTroopById(troopId).getId();
         if (troopId != inMemeoryTroopId){
             throw new IdNotFoundException(troopId);
