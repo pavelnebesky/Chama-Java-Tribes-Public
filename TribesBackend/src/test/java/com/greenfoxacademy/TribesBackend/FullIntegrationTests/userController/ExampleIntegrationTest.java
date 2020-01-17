@@ -5,6 +5,7 @@ import static com.greenfoxacademy.TribesBackend.constants.SecurityConstants.*;
 import static org.hamcrest.core.Is.is;
 
 import com.auth0.jwt.JWT;
+import com.greenfoxacademy.TribesBackend.enums.BuildingType;
 import com.greenfoxacademy.TribesBackend.exceptions.EmailAlreadyTakenException;
 import com.greenfoxacademy.TribesBackend.models.User;
 import com.greenfoxacademy.TribesBackend.repositories.BuildingRepository;
@@ -29,6 +30,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -38,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @TestPropertySource(
         locations = "classpath:application-testing.properties")
-public class RegisterEndpointFullIntegrationTest {
+public class ExampleIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -52,14 +54,13 @@ public class RegisterEndpointFullIntegrationTest {
     private ResourceRepository resourceRepository;
     @Autowired
     private UtilityMethods utilityMethods;
-    private Map<String, User> mapOfUsers=new HashMap<String, User>();
     private String token;
-    private String ip="myip";
+    private String ip = "";
 
     @BeforeEach
     public void setup() {
-        User user=utilityMethods.createEverything("something@sth.com", "kingdomName", 10000, 10000);
-        token=utilityMethods.generateToken("something@sth.com", ip, user.getId());
+        User user = utilityMethods.createEverything("something@sth.com", "kingdomName", 10000, 10000, List.of(BuildingType.barracks, BuildingType.townhall));
+        token = utilityMethods.generateToken("something@sth.com", ip, user.getId());
     }
 
     @AfterEach
@@ -74,14 +75,15 @@ public class RegisterEndpointFullIntegrationTest {
     public void justTesting() throws Exception {
         mockMvc.perform(get("/kingdom")
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer "+token)
-                .header("Remote Address", ip)
+                .header("Authorization", "Bearer " + token)
+                .with(request -> {
+                    request.setRemoteAddr(ip);
+                    return request;
+                })
                 .content("{}"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").exists())
-                .andExpect(jsonPath("$.username", is("something@gmail.com")))
-                .andExpect(jsonPath("$.kingdom", is("something's kingdom")));
+                .andExpect(content().contentType(MediaType.APPLICATION_CBOR));
     }
 }
 

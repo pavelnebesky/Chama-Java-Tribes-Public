@@ -9,6 +9,7 @@ import com.greenfoxacademy.TribesBackend.repositories.KingdomRepository;
 import com.greenfoxacademy.TribesBackend.repositories.ResourceRepository;
 import com.greenfoxacademy.TribesBackend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.info.ProjectInfoProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -31,12 +32,8 @@ public class UtilityMethods {
     private UserRepository userRepository;
     @Autowired
     private KingdomRepository kingdomRepository;
-    @Autowired
-    private BuildingRepository buildingRepository;
-    @Autowired
-    private ResourceRepository resourceRepository;
 
-    public User createEverything(String username, String kingdomName, int goldAmount, int foodAmount) {
+    public User createEverything(String username, String kingdomName, int goldAmount, int foodAmount, List<BuildingType> types) {
         User user = new User();
         user.setUsername(username);
         user.setPassword("password");
@@ -44,20 +41,22 @@ public class UtilityMethods {
         userRepository.save(user);
         Long userId = userRepository.findByUsername(username).getId();
         Kingdom kingdom = new Kingdom();
-        kingdom.setUserId(userRepository.findByUsername(user.getUsername()).getId());
-        kingdom.setBuildings(new ArrayList<Building>());
+        kingdom.setUserId(userId);
         kingdom.setResources(new ArrayList<Resource>());
         kingdom.setTroops(new ArrayList<Troop>());
         kingdom.setLocation(new Location());
         kingdom.setName(kingdomName);
+        List<Building> buildings=new ArrayList<>();
+        for (int i=0;i<types.size();i++){
+            buildings.add(setupBuilding(types.get(i), kingdom));
+        }
+        kingdom.setBuildings(buildings);
         kingdomRepository.save(kingdom);
-        List<Building> buildings = new ArrayList<>();
-        Kingdom kingdomWithId = kingdomRepository.findByUserId(userRepository.findByUsername(username).getId());
-        setupResources(kingdomWithId, goldAmount, foodAmount);
+        setupResources(goldAmount, foodAmount, userId);
         return user;
     }
 
-    private void setupBuilding(BuildingType type, Kingdom kingdom, Long userId) {
+    private Building setupBuilding(BuildingType type, Kingdom kingdom) {
         Building building = new Building();
         building.setType(type);
         building.setHp(1);
@@ -65,10 +64,12 @@ public class UtilityMethods {
         building.setLevel(1);
         building.setStarted_at(System.currentTimeMillis());
         building.setFinished_at(building.getStarted_at() + BUILDING_TIMES.get(type));
-        buildingRepository.save(building);
+        building.setUpdated_at(building.getFinished_at());
+        return building;
     }
 
-    private void setupResources(Kingdom kingdom, int goldAmount, int foodAmount) {
+    private void setupResources(int goldAmount, int foodAmount, Long userId) {
+        Kingdom kingdom = kingdomRepository.findByUserId(userId);
         Resource goldResource = new Resource();
         goldResource.setAmount(goldAmount);
         goldResource.setKingdom(kingdom);
