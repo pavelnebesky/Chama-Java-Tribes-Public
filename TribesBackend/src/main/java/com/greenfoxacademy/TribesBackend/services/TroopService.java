@@ -95,7 +95,7 @@ public class TroopService {
         boolean barracksExists = ((List<Building>) (buildingService.getAllBuildingsByUserId(userId))).stream().filter(b -> b.getType().equals(barracks)).findAny().isPresent();
         Kingdom homeKingdom = getKingdomRepository().findByUserId(userId);
         int kingdomsGold = homeKingdom.getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get().getAmount();
-        if (barracksExists != true) {
+        if (!barracksExists) {
             throw new BarracksNotFoundExeption();
         }
         if (kingdomsGold < TroopConstants.TROOP_PRICE) {
