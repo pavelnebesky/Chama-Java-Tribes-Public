@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 
+import javax.servlet.http.HttpServletRequest;
+import static com.greenfoxacademy.TribesBackend.constants.ResourceConstants.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,8 +37,19 @@ public class ResourceService {
         return ResourceType.valueOf(type);
     }
 
-    public Optional<Resource> findResourceByType(ResourceType type) {
-        return Optional.ofNullable(resourceRepository.findByType(type));
+    public Resource findResourceByType(ResourceType type) {
+        return resourceRepository.findByType(type);
+    }
+
+    public Resource findResourceByTypeAndUserId(ResourceType type, Long userId) {
+        Kingdom kingdom = kingdomService.getKingdomByUserId(userId);
+        List<Resource> resources = resourceRepository.getAllByKingdom(kingdom);
+        for (Resource resource : resources) {
+            if (resource.getType() == type) {
+                return resource;
+            }
+        }
+        return null;
     }
 
     public List<Resource> getResources(Kingdom kingdom) {
@@ -55,5 +69,9 @@ public class ResourceService {
     public ModelMap getResourcesModelByUserId(Long userId) {
         Kingdom kingdom = kingdomService.getKingdomByUserId(userId);
         return new ModelMap().addAttribute("resources", this.getResources(kingdom));
+    }
+
+    public void checkResourceTypeIfItExists(String resourceType) throws IllegalArgumentException {
+        ResourceType.valueOf(resourceType);
     }
 }
