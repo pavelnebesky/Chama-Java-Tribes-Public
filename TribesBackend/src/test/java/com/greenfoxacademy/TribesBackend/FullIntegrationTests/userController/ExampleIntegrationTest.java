@@ -82,8 +82,7 @@ public class ExampleIntegrationTest {
                 })
                 .content("{}"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(content().contentType(MediaType.APPLICATION_CBOR));
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
 }
 
