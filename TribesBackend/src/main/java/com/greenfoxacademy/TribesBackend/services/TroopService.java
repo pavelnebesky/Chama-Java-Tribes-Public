@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.stream.StreamSupport;
 
 import static com.greenfoxacademy.TribesBackend.enums.BuildingType.barracks;
-import static com.greenfoxacademy.TribesBackend.enums.ResourceType.food;
 import static com.greenfoxacademy.TribesBackend.enums.ResourceType.gold;
 
 @Getter
@@ -135,21 +134,6 @@ public class TroopService {
         Long inMemeoryTroopId = troopRepository.findTroopById(troopId).getId();
         if (troopId != inMemeoryTroopId){
             throw new IdNotFoundException(troopId);
-        }
-    }
-
-    public void troopConsumption(Long id){
-        int foodConsumedByAllTroops = 0;
-        List<Troop> troops = getKingdomService().getKingdomByUserId(id).getTroops();
-        for (Troop troop: troops) {
-            foodConsumedByAllTroops += TroopConstants.FOOD_CONSUMED_BY_ONE;
-        }
-        int kingdomsFood = resourceRepository.findByType(food).getAmount();
-        Kingdom kingdomToUdate = getKingdomService().getKingdomByUserId(id);
-        if (foodConsumedByAllTroops <= kingdomsFood){
-            Resource resourceToUpdate = getKingdomService().getKingdomByUserId(id).getResources().stream().filter(r -> r.getType().equals(food)).findAny().get();
-            resourceToUpdate.setAmount(resourceToUpdate.getAmount() - foodConsumedByAllTroops);
-            resourceRepository.save(resourceToUpdate);
         }
     }
 }

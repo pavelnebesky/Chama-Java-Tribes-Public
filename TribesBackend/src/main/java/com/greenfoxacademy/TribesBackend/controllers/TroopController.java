@@ -24,7 +24,7 @@ public class TroopController {
     }
 
     @GetMapping("/kingdom/troops/{troopId}")
-    public ResponseEntity getTroopById(HttpServletRequest request,@PathVariable Long troopId){
+    public ResponseEntity getTroopById(HttpServletRequest request, @PathVariable Long troopId){
         return ResponseEntity.ok(troopService.getTroopById(troopId));
     }
 
