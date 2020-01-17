@@ -3,6 +3,8 @@ package com.greenfoxacademy.TribesBackend.filters;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.greenfoxacademy.TribesBackend.services.TimeService;
+import com.greenfoxacademy.TribesBackend.services.UtilityService;
 import com.greenfoxacademy.TribesBackend.models.BlacklistedToken;
 import com.greenfoxacademy.TribesBackend.repositories.BlacklistedTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,10 @@ import static com.greenfoxacademy.TribesBackend.constants.SecurityConstants.*;
 @Component
 public class JWTAuthenticationFilter extends GenericFilterBean {
 
+    @Autowired
+    private TimeService timeService;
+    @Autowired
+    private UtilityService utilityService;
     @Autowired
     private BlacklistedTokenRepository blacklistedTokenRepository;
 
@@ -49,7 +55,12 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
                         .verify(token.replace(TOKEN_PREFIX, ""));
                 String expectedIp = decodedjwt.getHeaderClaim(IP_CLAIM).asString();
                 String actualIp = request.getRemoteAddr();
-                return actualIp.equals(expectedIp) && !isBlackListed(decodedjwt.getToken());
+                if(actualIp.equals(expectedIp) && !isBlackListed(decodedjwt.getToken())){
+                    timeService.updateAllUserData(utilityService.getIdFromToken(request));
+                    return true;
+                } else{
+                    return false;
+                }
             } catch (RuntimeException e) {
                 response.setStatus(401);
             }
