@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 
 import javax.servlet.http.HttpServletRequest;
-
 import static com.greenfoxacademy.TribesBackend.constants.ResourceConstants.*;
 
 import java.util.ArrayList;
