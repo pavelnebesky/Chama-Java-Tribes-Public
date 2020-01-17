@@ -46,8 +46,8 @@ public class UtilityMethods {
         kingdom.setTroops(new ArrayList<Troop>());
         kingdom.setLocation(new Location());
         kingdom.setName(kingdomName);
-        List<Building> buildings=new ArrayList<>();
-        for (int i=0;i<types.size();i++){
+        List<Building> buildings = new ArrayList<>();
+        for (int i = 0; i < types.size(); i++) {
             buildings.add(setupBuilding(types.get(i), kingdom));
         }
         kingdom.setBuildings(buildings);
@@ -84,7 +84,7 @@ public class UtilityMethods {
         kingdomRepository.save(kingdom);
     }
 
-    public String generateToken(String username, String ip, Long userId){
+    public String generateToken(String username, String ip, Long userId) {
         Map<String, Object> headerMap = Map.of(IP_CLAIM, ip);
         return JWT.create()
                 .withHeader(headerMap)
