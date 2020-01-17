@@ -2,6 +2,7 @@ package com.greenfoxacademy.TribesBackend.filters;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.greenfoxacademy.TribesBackend.services.TimeService;
 import com.greenfoxacademy.TribesBackend.services.UtilityService;
@@ -35,7 +36,7 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
 
     private boolean isBlackListed(String token) {
         List<BlacklistedToken> blacklistedTokens = (List<BlacklistedToken>) blacklistedTokenRepository.findAll();
-        for (BlacklistedToken blacklistedToken: blacklistedTokens) {
+        for (BlacklistedToken blacklistedToken : blacklistedTokens) {
             if (blacklistedToken.getToken().equals(token)) {
                 return true;
             }
@@ -43,33 +44,27 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
         return false;
     }
 
-    private void updateBlackList(){
+    private void updateBlackList() {
         List<BlacklistedToken> blacklistedTokens = (List<BlacklistedToken>) blacklistedTokenRepository.findAll();
-        for (BlacklistedToken blacklistedToken: blacklistedTokens) {
+        for (BlacklistedToken blacklistedToken : blacklistedTokens) {
             if (JWT.decode(blacklistedToken.getToken()).getExpiresAt().before(new Date())) {
                 blacklistedTokenRepository.deleteById(blacklistedToken.getId());
             }
         }
     }
 
-    private boolean isAuthorized(HttpServletRequest request, HttpServletResponse response) {
+    private boolean isAuthorized(HttpServletRequest request, HttpServletResponse response) throws JWTVerificationException {
         String token = request.getHeader(HEADER_STRING);
         if (token != null) {
-            try {
-                DecodedJWT decodedjwt = JWT.require(Algorithm.HMAC512(SECRET.getBytes()))
-                        .build()
-                        .verify(token.replace(TOKEN_PREFIX, ""));
-                String expectedIp = decodedjwt.getHeaderClaim(IP_CLAIM).asString();
-                String actualIp = request.getRemoteAddr();
-                if(actualIp.equals(expectedIp) && !isBlackListed(decodedjwt.getToken())){
-                    updateBlackList();
-                    timeService.updateAllUserData(utilityService.getIdFromToken(request));
-                    return true;
-                } else{
-                    return false;
-                }
-            } catch (RuntimeException e) {
-                response.setStatus(401);
+            DecodedJWT decodedjwt = JWT.require(Algorithm.HMAC512(SECRET.getBytes()))
+                    .build()
+                    .verify(token.replace(TOKEN_PREFIX, ""));
+            String expectedIp = decodedjwt.getHeaderClaim(IP_CLAIM).asString();
+            String actualIp = request.getRemoteAddr();
+            if (actualIp.equals(expectedIp) && !isBlackListed(decodedjwt.getToken())) {
+                updateBlackList();
+                timeService.updateAllUserData(utilityService.getIdFromToken(request));
+                return true;
             }
         }
         return false;
@@ -80,11 +75,13 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
         String header = req.getHeader(HEADER_STRING);
-        if (List.of(PUBLIC_ENDPOINTS).stream().anyMatch(e -> req.getRequestURI().contains(e))
-                || (header != null && header.startsWith(TOKEN_PREFIX) && isAuthorized(req, res))) {
-            chain.doFilter(req, res);
-        } else {
-            res.setStatus(401);
+        try {
+            if (List.of(PUBLIC_ENDPOINTS).stream().anyMatch(e -> req.getRequestURI().contains(e))
+                    || (header != null && header.startsWith(TOKEN_PREFIX) && isAuthorized(req, res))) {
+                chain.doFilter(req, res);
+            }
+        } catch (JWTVerificationException e) {
+            res.sendError(401, "You are unauthorized!");
         }
     }
 }
