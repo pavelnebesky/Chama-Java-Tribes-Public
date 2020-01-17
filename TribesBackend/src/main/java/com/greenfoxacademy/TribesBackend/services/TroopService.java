@@ -120,7 +120,7 @@ public class TroopService {
         }
         Long userId = getUserIdFromToken(request);
         Kingdom homeKingdom = getKingdomRepository().findByUserId(userId);
-        int kingdomsGold = homeKingdom.getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get().getAmount()
+        int kingdomsGold = homeKingdom.getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get().getAmount();
         List<String> missingParams = new ArrayList<String>();
         if (troopLvlFromBody == null){
             missingParams.add("level");
