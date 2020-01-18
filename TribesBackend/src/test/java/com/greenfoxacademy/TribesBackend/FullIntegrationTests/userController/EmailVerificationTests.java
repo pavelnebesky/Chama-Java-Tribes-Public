@@ -42,10 +42,10 @@ public class EmailVerificationTests {
     }
 
     @Test
-    public void emailAlreadyVerifiedTest() throws Exception{
-        User user=utilityMethods.createUser("blah@blah.blah","",true);
+    public void emailAlreadyVerifiedTest() throws Exception {
+        User user = utilityMethods.createUser("blah@blah.blah", "", true);
         FrontendException e = new EmailAlreadyVerifiedException();
-        mockMvc.perform(get("/verify/"+user.getVerificationCode())
+        mockMvc.perform(get("/verify/" + user.getVerificationCode())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{ }"))
                 .andExpect(status().is(e.getSc()))
@@ -55,8 +55,8 @@ public class EmailVerificationTests {
     }
 
     @Test
-    public void incorrectVerificationCodeTest() throws Exception{
-        utilityMethods.createUser("blah@blah.blah","",true);
+    public void incorrectVerificationCodeTest() throws Exception {
+        utilityMethods.createUser("blah@blah.blah", "", true);
         FrontendException e = new IncorrectVerCodeException();
         mockMvc.perform(get("/verify/blah")
                 .contentType(MediaType.APPLICATION_JSON)

@@ -43,10 +43,10 @@ public class AllowedOriginsTests {
     }
 
     @Test
-    public void testAllowedOrigins() throws Exception{
+    public void testAllowedOrigins() throws Exception {
         user = utilityMethods.createEverything("some@email.com", "blah", 0, 0, List.of());
         token = utilityMethods.generateToken(user.getUsername(), ip, user.getId());
-        for (String allowedOrigin:ALLOWED_ORIGINS) {
+        for (String allowedOrigin : ALLOWED_ORIGINS) {
             mockMvc.perform(get("/kingdom")
                     .contentType(MediaType.APPLICATION_JSON)
                     .header("Origin", allowedOrigin)
@@ -62,7 +62,7 @@ public class AllowedOriginsTests {
     }
 
     @Test
-    public void testNotAllowedOrigins() throws Exception{
+    public void testNotAllowedOrigins() throws Exception {
         user = utilityMethods.createEverything("some@email.com", "blah", 0, 0, List.of());
         token = utilityMethods.generateToken(user.getUsername(), ip, user.getId());
         mockMvc.perform(get("/kingdom")
