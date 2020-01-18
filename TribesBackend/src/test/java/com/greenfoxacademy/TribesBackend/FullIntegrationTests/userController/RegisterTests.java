@@ -5,13 +5,7 @@ import com.greenfoxacademy.TribesBackend.exceptions.FrontendException;
 import com.greenfoxacademy.TribesBackend.exceptions.MissingParamsException;
 import com.greenfoxacademy.TribesBackend.exceptions.NotValidEmailException;
 import com.greenfoxacademy.TribesBackend.models.User;
-import com.greenfoxacademy.TribesBackend.repositories.BuildingRepository;
-import com.greenfoxacademy.TribesBackend.repositories.KingdomRepository;
-import com.greenfoxacademy.TribesBackend.repositories.ResourceRepository;
-import com.greenfoxacademy.TribesBackend.repositories.UserRepository;
 import com.greenfoxacademy.TribesBackend.utilityMethods.UtilityMethods;
-import org.hamcrest.Matcher;
-import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +19,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.core.Is.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;

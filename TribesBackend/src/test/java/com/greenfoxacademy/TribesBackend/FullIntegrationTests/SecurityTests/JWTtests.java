@@ -20,10 +20,8 @@ import java.util.Map;
 
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
 import static com.greenfoxacademy.TribesBackend.constants.SecurityConstants.*;
-import static org.hamcrest.core.Is.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @SpringBootTest
 @AutoConfigureMockMvc

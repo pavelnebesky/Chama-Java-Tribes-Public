@@ -6,13 +6,9 @@ import com.greenfoxacademy.TribesBackend.enums.ResourceType;
 import com.greenfoxacademy.TribesBackend.models.*;
 import com.greenfoxacademy.TribesBackend.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.info.ProjectInfoProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.beans.BeanProperty;
-import java.beans.JavaBean;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

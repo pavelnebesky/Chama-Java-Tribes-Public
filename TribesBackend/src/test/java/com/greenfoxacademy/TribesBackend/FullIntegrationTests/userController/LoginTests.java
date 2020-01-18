@@ -1,7 +1,6 @@
 package com.greenfoxacademy.TribesBackend.FullIntegrationTests.userController;
 
 import com.greenfoxacademy.TribesBackend.exceptions.*;
-import com.greenfoxacademy.TribesBackend.models.User;
 import com.greenfoxacademy.TribesBackend.utilityMethods.UtilityMethods;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;

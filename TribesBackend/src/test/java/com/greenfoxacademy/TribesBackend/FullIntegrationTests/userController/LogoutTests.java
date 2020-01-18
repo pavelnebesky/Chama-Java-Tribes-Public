@@ -1,7 +1,5 @@
 package com.greenfoxacademy.TribesBackend.FullIntegrationTests.userController;
 
-import com.greenfoxacademy.TribesBackend.exceptions.EmailAlreadyTakenException;
-import com.greenfoxacademy.TribesBackend.exceptions.FrontendException;
 import com.greenfoxacademy.TribesBackend.models.User;
 import com.greenfoxacademy.TribesBackend.utilityMethods.UtilityMethods;
 import org.junit.jupiter.api.AfterEach;
@@ -16,11 +14,9 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static org.hamcrest.core.Is.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @SpringBootTest
 @AutoConfigureMockMvc
