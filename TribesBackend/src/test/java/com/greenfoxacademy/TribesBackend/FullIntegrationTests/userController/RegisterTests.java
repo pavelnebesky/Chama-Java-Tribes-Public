@@ -1,0 +1,61 @@
+package com.greenfoxacademy.TribesBackend.FullIntegrationTests.userController;
+
+import com.greenfoxacademy.TribesBackend.repositories.BuildingRepository;
+import com.greenfoxacademy.TribesBackend.repositories.KingdomRepository;
+import com.greenfoxacademy.TribesBackend.repositories.ResourceRepository;
+import com.greenfoxacademy.TribesBackend.repositories.UserRepository;
+import com.greenfoxacademy.TribesBackend.utilityMethods.UtilityMethods;
+import org.hamcrest.Matcher;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.web.servlet.MockMvc;
+
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.core.Is.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+@TestPropertySource(
+        locations = "classpath:application-testing.properties")
+public class RegisterTests {
+
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private UtilityMethods utilityMethods;
+
+    @BeforeEach
+    public void before() {
+        utilityMethods.clearDB();
+    }
+
+    @AfterEach
+    public void after() {
+        utilityMethods.clearDB();
+    }
+
+    @Test
+    public void successfullRegisterTest() throws Exception {
+        String username = "some@email.com";
+        String kingdomName="some's kingdom";
+        mockMvc.perform(post("/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ \"username\": \"" + username + "\", \"password\": \"seven\" }"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id", Matchers.any(Integer.class)))
+                .andExpect(jsonPath("$.username", is(username)))
+                .andExpect(jsonPath("$.kingdom", is(kingdomName)));
+    }
+}

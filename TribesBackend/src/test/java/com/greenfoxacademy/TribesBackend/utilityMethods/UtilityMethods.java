@@ -32,6 +32,10 @@ public class UtilityMethods {
     private UserRepository userRepository;
     @Autowired
     private KingdomRepository kingdomRepository;
+    @Autowired
+    private BuildingRepository buildingRepository;
+    @Autowired
+    private ResourceRepository resourceRepository;
 
     public User createEverything(String username, String kingdomName, int goldAmount, int foodAmount, List<BuildingType> types) {
         User user = new User();
@@ -92,5 +96,12 @@ public class UtilityMethods {
                 .withClaim(USERNAME_CLAIM, username)
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .sign(HMAC512(SECRET.getBytes()));
+    }
+
+    public void clearDB(){
+        userRepository.deleteAll();
+        kingdomRepository.deleteAll();
+        buildingRepository.deleteAll();
+        resourceRepository.deleteAll();
     }
 }
