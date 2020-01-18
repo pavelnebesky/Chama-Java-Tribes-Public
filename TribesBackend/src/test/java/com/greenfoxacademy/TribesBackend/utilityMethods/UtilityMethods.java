@@ -44,7 +44,7 @@ public class UtilityMethods {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public User createEverything(String username, String kingdomName, int goldAmount, int foodAmount, List<BuildingType> types) {
-        User user = createUser(username, "blah");
+        User user = createUser(username, "blah", true);
         Long userId = userRepository.findByUsername(username).getId();
         Kingdom kingdom = new Kingdom();
         kingdom.setUserId(userId);
@@ -62,11 +62,11 @@ public class UtilityMethods {
         return user;
     }
 
-    public User createUser(String username, String password){
+    public User createUser(String username, String password, boolean isEmailVerified){
         User user = new User();
         user.setUsername(username);
         user.setPassword(bCryptPasswordEncoder.encode(password));
-        user.setEmailVerified(true);
+        user.setEmailVerified(isEmailVerified);
         userRepository.save(user);
         return userRepository.findByUsername(username);
     }

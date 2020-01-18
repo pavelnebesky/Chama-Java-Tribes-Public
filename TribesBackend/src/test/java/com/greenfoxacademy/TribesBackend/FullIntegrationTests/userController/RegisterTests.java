@@ -82,7 +82,7 @@ public class RegisterTests {
 
     @Test
     public void usernameAlreadyTakenTest() throws Exception {
-        User user=utilityMethods.createUser("some@email.com", "blah");
+        User user=utilityMethods.createUser("some@email.com", "blah", true);
         FrontendException e=new EmailAlreadyTakenException(user.getUsername());
         mockMvc.perform(post("/register")
                 .contentType(MediaType.APPLICATION_JSON)
