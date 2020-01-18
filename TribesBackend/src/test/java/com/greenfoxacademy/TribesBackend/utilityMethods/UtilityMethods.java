@@ -5,6 +5,7 @@ import com.greenfoxacademy.TribesBackend.enums.BuildingType;
 import com.greenfoxacademy.TribesBackend.enums.ResourceType;
 import com.greenfoxacademy.TribesBackend.models.*;
 import com.greenfoxacademy.TribesBackend.repositories.*;
+import com.greenfoxacademy.TribesBackend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -38,6 +39,8 @@ public class UtilityMethods {
     private AuthGrantAccessTokenRepository authGrantAccessToken;
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    private UserService userService;
 
     public User createEverything(String username, String kingdomName, int goldAmount, int foodAmount, List<BuildingType> types) {
         User user = createUser(username, "blah", true);
@@ -63,6 +66,7 @@ public class UtilityMethods {
         user.setUsername(username);
         user.setPassword(bCryptPasswordEncoder.encode(password));
         user.setEmailVerified(isEmailVerified);
+        user.setVerificationCode(userService.generateEmailVerificationCode());
         userRepository.save(user);
         return userRepository.findByUsername(username);
     }
