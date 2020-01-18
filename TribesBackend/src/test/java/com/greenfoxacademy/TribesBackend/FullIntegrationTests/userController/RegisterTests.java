@@ -1,5 +1,8 @@
 package com.greenfoxacademy.TribesBackend.FullIntegrationTests.userController;
 
+import com.greenfoxacademy.TribesBackend.exceptions.EmailAlreadyTakenException;
+import com.greenfoxacademy.TribesBackend.exceptions.FrontendException;
+import com.greenfoxacademy.TribesBackend.models.User;
 import com.greenfoxacademy.TribesBackend.repositories.BuildingRepository;
 import com.greenfoxacademy.TribesBackend.repositories.KingdomRepository;
 import com.greenfoxacademy.TribesBackend.repositories.ResourceRepository;
@@ -57,5 +60,18 @@ public class RegisterTests {
                 .andExpect(jsonPath("$.id", Matchers.any(Integer.class)))
                 .andExpect(jsonPath("$.username", is(username)))
                 .andExpect(jsonPath("$.kingdom", is(kingdomName)));
+    }
+
+    @Test
+    public void usernameAlreadyTakenTest() throws Exception {
+        User user=utilityMethods.createUser("some@email.com");
+        FrontendException e=new EmailAlreadyTakenException(user.getUsername());
+        mockMvc.perform(post("/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ \"username\": \"" + user.getUsername() + "\", \"password\": \"seven\" }"))
+                .andExpect(status().is(e.getSc()))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status", is("error")))
+                .andExpect(jsonPath("$.error", is(e.getMessage())));
     }
 }
