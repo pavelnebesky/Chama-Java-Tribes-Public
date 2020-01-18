@@ -49,6 +49,16 @@ public class LogoutTests {
     public void successfullLogoutTest() throws Exception {
         User user=utilityMethods.createEverything("some@email.com", "blah", 0,0, List.of());
         token = utilityMethods.generateToken(user.getUsername(), ip, user.getId());
+        mockMvc.perform(get("/kingdom")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token)
+                .with(request -> {
+                    request.setRemoteAddr(ip);
+                    return request;
+                })
+                .content("{ }"))
+                .andExpect(status().is(200))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
         mockMvc.perform(post("/logout")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
@@ -66,7 +76,6 @@ public class LogoutTests {
                     return request;
                 })
                 .content("{ }"))
-                .andExpect(status().is(401))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+                .andExpect(status().is(401));
     }
 }
