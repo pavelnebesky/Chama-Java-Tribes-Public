@@ -4,14 +4,12 @@ import com.auth0.jwt.JWT;
 import com.greenfoxacademy.TribesBackend.enums.BuildingType;
 import com.greenfoxacademy.TribesBackend.enums.ResourceType;
 import com.greenfoxacademy.TribesBackend.models.*;
-import com.greenfoxacademy.TribesBackend.repositories.BuildingRepository;
-import com.greenfoxacademy.TribesBackend.repositories.KingdomRepository;
-import com.greenfoxacademy.TribesBackend.repositories.ResourceRepository;
-import com.greenfoxacademy.TribesBackend.repositories.UserRepository;
+import com.greenfoxacademy.TribesBackend.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.info.ProjectInfoProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.beans.BeanProperty;
 import java.beans.JavaBean;
@@ -36,9 +34,17 @@ public class UtilityMethods {
     private BuildingRepository buildingRepository;
     @Autowired
     private ResourceRepository resourceRepository;
+    @Autowired
+    private TroopRepository troopRepository;
+    @Autowired
+    private BlacklistedTokenRepository blacklistedToken;
+    @Autowired
+    private AuthGrantAccessTokenRepository authGrantAccessToken;
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public User createEverything(String username, String kingdomName, int goldAmount, int foodAmount, List<BuildingType> types) {
-        User user = createUser(username);
+        User user = createUser(username, "blah");
         Long userId = userRepository.findByUsername(username).getId();
         Kingdom kingdom = new Kingdom();
         kingdom.setUserId(userId);
@@ -56,10 +62,10 @@ public class UtilityMethods {
         return user;
     }
 
-    public User createUser(String username){
+    public User createUser(String username, String password){
         User user = new User();
         user.setUsername(username);
-        user.setPassword("password");
+        user.setPassword(bCryptPasswordEncoder.encode(password));
         user.setEmailVerified(true);
         userRepository.save(user);
         return userRepository.findByUsername(username);
@@ -108,5 +114,8 @@ public class UtilityMethods {
         kingdomRepository.deleteAll();
         buildingRepository.deleteAll();
         resourceRepository.deleteAll();
+        troopRepository.deleteAll();
+        blacklistedToken.deleteAll();
+        authGrantAccessToken.deleteAll();
     }
 }
