@@ -38,11 +38,7 @@ public class UtilityMethods {
     private ResourceRepository resourceRepository;
 
     public User createEverything(String username, String kingdomName, int goldAmount, int foodAmount, List<BuildingType> types) {
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword("password");
-        user.setEmailVerified(true);
-        userRepository.save(user);
+        User user = createUser(username);
         Long userId = userRepository.findByUsername(username).getId();
         Kingdom kingdom = new Kingdom();
         kingdom.setUserId(userId);
@@ -58,6 +54,15 @@ public class UtilityMethods {
         kingdomRepository.save(kingdom);
         setupResources(goldAmount, foodAmount, userId);
         return user;
+    }
+
+    public User createUser(String username){
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword("password");
+        user.setEmailVerified(true);
+        userRepository.save(user);
+        return userRepository.findByUsername(username);
     }
 
     private Building setupBuilding(BuildingType type, Kingdom kingdom) {
