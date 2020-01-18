@@ -2,6 +2,8 @@ package com.greenfoxacademy.TribesBackend.FullIntegrationTests.userController;
 
 import com.greenfoxacademy.TribesBackend.exceptions.EmailAlreadyTakenException;
 import com.greenfoxacademy.TribesBackend.exceptions.FrontendException;
+import com.greenfoxacademy.TribesBackend.exceptions.MissingParamsException;
+import com.greenfoxacademy.TribesBackend.exceptions.NotValidEmailException;
 import com.greenfoxacademy.TribesBackend.models.User;
 import com.greenfoxacademy.TribesBackend.repositories.BuildingRepository;
 import com.greenfoxacademy.TribesBackend.repositories.KingdomRepository;
@@ -20,6 +22,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.List;
 
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.core.Is.is;
@@ -69,6 +73,52 @@ public class RegisterTests {
         mockMvc.perform(post("/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{ \"username\": \"" + user.getUsername() + "\", \"password\": \"seven\" }"))
+                .andExpect(status().is(e.getSc()))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status", is("error")))
+                .andExpect(jsonPath("$.error", is(e.getMessage())));
+    }
+
+    @Test
+    public void notValidEmailTest() throws Exception {
+        FrontendException e=new NotValidEmailException();
+        mockMvc.perform(post("/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ \"username\": \"blah\", \"password\": \"seven\" }"))
+                .andExpect(status().is(e.getSc()))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status", is("error")))
+                .andExpect(jsonPath("$.error", is(e.getMessage())));
+        mockMvc.perform(post("/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ \"username\": \"blah@blah\", \"password\": \"seven\" }"))
+                .andExpect(status().is(e.getSc()))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status", is("error")))
+                .andExpect(jsonPath("$.error", is(e.getMessage())));
+        mockMvc.perform(post("/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ \"username\": \"blah.blah\", \"password\": \"seven\" }"))
+                .andExpect(status().is(e.getSc()))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status", is("error")))
+                .andExpect(jsonPath("$.error", is(e.getMessage())));
+    }
+
+    @Test
+    public void missingParamsTest() throws Exception {
+        FrontendException e=new MissingParamsException(List.of("username", "password"));
+        mockMvc.perform(post("/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ }"))
+                .andExpect(status().is(e.getSc()))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status", is("error")))
+                .andExpect(jsonPath("$.error", is(e.getMessage())));
+        e=new MissingParamsException(List.of("password"));
+        mockMvc.perform(post("/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ \"username\": \"blah.blah\" }"))
                 .andExpect(status().is(e.getSc()))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status", is("error")))
