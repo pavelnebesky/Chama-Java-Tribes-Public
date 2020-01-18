@@ -47,7 +47,7 @@ public class LogoutTests {
 
     @Test
     public void successfullLogoutTest() throws Exception {
-        User user=utilityMethods.createEverything("some@email.com", "blah", 0,0, List.of());
+        User user = utilityMethods.createEverything("some@email.com", "blah", 0, 0, List.of());
         token = utilityMethods.generateToken(user.getUsername(), ip, user.getId());
         mockMvc.perform(get("/kingdom")
                 .contentType(MediaType.APPLICATION_JSON)

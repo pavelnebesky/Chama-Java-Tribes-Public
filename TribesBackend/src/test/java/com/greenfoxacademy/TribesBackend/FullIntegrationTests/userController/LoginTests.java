@@ -44,12 +44,12 @@ public class LoginTests {
 
     @Test
     public void successfullLoginTest() throws Exception {
-        String password="blah";
-        String username="some@email.com";
+        String password = "blah";
+        String username = "some@email.com";
         utilityMethods.createUser(username, password, true);
         mockMvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{ \"username\": \"" + username + "\", \"password\": \""+password+"\" }"))
+                .content("{ \"username\": \"" + username + "\", \"password\": \"" + password + "\" }"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status", is("ok")))
@@ -58,7 +58,7 @@ public class LoginTests {
 
     @Test
     public void missingParamsTest() throws Exception {
-        FrontendException e=new MissingParamsException(List.of("username", "password"));
+        FrontendException e = new MissingParamsException(List.of("username", "password"));
         mockMvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{ }"))
@@ -66,7 +66,7 @@ public class LoginTests {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status", is("error")))
                 .andExpect(jsonPath("$.error", is(e.getMessage())));
-        e=new MissingParamsException(List.of("password"));
+        e = new MissingParamsException(List.of("password"));
         mockMvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{ \"username\": \"blah.blah\" }"))
@@ -78,8 +78,8 @@ public class LoginTests {
 
     @Test
     public void noSuchEmailTest() throws Exception {
-        String username="blah";
-        FrontendException e=new NoSuchEmailException(username);
+        String username = "blah";
+        FrontendException e = new NoSuchEmailException(username);
         mockMvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{ \"username\": \"" + username + "\", \"password\": \"seven\" }"))
@@ -91,10 +91,10 @@ public class LoginTests {
 
     @Test
     public void incorrectPasswordTest() throws Exception {
-        String password="blah";
-        String username="some@email.com";
+        String password = "blah";
+        String username = "some@email.com";
         utilityMethods.createUser(username, password, true);
-        FrontendException e=new IncorrectPasswordException();
+        FrontendException e = new IncorrectPasswordException();
         mockMvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{ \"username\": \"" + username + "\", \"password\": \"seven\" }"))
@@ -106,10 +106,10 @@ public class LoginTests {
 
     @Test
     public void emailNotVerifiedTest() throws Exception {
-        String password="blah";
-        String username="some@email.com";
+        String password = "blah";
+        String username = "some@email.com";
         utilityMethods.createUser(username, password, false);
-        FrontendException e=new EmailNotVerifiedException();
+        FrontendException e = new EmailNotVerifiedException();
         mockMvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{ \"username\": \"" + username + "\", \"password\": \"seven\" }"))

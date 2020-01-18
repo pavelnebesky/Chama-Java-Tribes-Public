@@ -62,7 +62,7 @@ public class UtilityMethods {
         return user;
     }
 
-    public User createUser(String username, String password, boolean isEmailVerified){
+    public User createUser(String username, String password, boolean isEmailVerified) {
         User user = new User();
         user.setUsername(username);
         user.setPassword(bCryptPasswordEncoder.encode(password));
@@ -109,7 +109,7 @@ public class UtilityMethods {
                 .sign(HMAC512(SECRET.getBytes()));
     }
 
-    public void clearDB(){
+    public void clearDB() {
         userRepository.deleteAll();
         kingdomRepository.deleteAll();
         buildingRepository.deleteAll();

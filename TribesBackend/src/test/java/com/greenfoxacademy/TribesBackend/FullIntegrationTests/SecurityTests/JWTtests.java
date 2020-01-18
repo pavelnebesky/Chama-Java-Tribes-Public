@@ -51,7 +51,7 @@ public class JWTtests {
     }
 
     @Test
-    public void noTokenTest() throws Exception{
+    public void noTokenTest() throws Exception {
         mockMvc.perform(get("/kingdom")
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(request -> {
@@ -63,7 +63,7 @@ public class JWTtests {
     }
 
     @Test
-    public void incorrectTokenTest() throws Exception{
+    public void incorrectTokenTest() throws Exception {
         mockMvc.perform(get("/kingdom")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token + "1")
@@ -76,7 +76,7 @@ public class JWTtests {
     }
 
     @Test
-    public void noPrefixTest() throws Exception{
+    public void noPrefixTest() throws Exception {
         mockMvc.perform(get("/kingdom")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", token)
@@ -89,9 +89,9 @@ public class JWTtests {
     }
 
     @Test
-    public void expiredTokenTest() throws Exception{
+    public void expiredTokenTest() throws Exception {
         Map<String, Object> headerMap = Map.of(IP_CLAIM, ip);
-        token=JWT.create()
+        token = JWT.create()
                 .withHeader(headerMap)
                 .withClaim(ID_CLAIM, String.valueOf(user.getId()))
                 .withClaim(USERNAME_CLAIM, user.getUsername())
@@ -109,12 +109,12 @@ public class JWTtests {
     }
 
     @Test
-    public void incorrectIpTest() throws Exception{
+    public void incorrectIpTest() throws Exception {
         mockMvc.perform(get("/kingdom")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
                 .with(request -> {
-                    request.setRemoteAddr(ip+"1");
+                    request.setRemoteAddr(ip + "1");
                     return request;
                 })
                 .content("{}"))
@@ -122,7 +122,7 @@ public class JWTtests {
     }
 
     @Test
-    public void noIpTest() throws Exception{
+    public void noIpTest() throws Exception {
         mockMvc.perform(get("/kingdom")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
@@ -131,7 +131,7 @@ public class JWTtests {
     }
 
     @Test
-    public void everythingFineTest() throws Exception{
+    public void everythingFineTest() throws Exception {
         mockMvc.perform(get("/kingdom")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)

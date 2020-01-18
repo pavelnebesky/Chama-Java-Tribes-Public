@@ -55,7 +55,7 @@ public class RegisterTests {
     @Test
     public void successfullRegisterTest() throws Exception {
         String username = "some@email.com";
-        String kingdomName="some's kingdom";
+        String kingdomName = "some's kingdom";
         mockMvc.perform(post("/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{ \"username\": \"" + username + "\", \"password\": \"seven\" }"))
@@ -69,7 +69,7 @@ public class RegisterTests {
     @Test
     public void kingdomNameTest() throws Exception {
         String username = "some@email.com";
-        String kingdomName="random kingdom name";
+        String kingdomName = "random kingdom name";
         mockMvc.perform(post("/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{ \"username\": \"" + username + "\", \"password\": \"seven\", \"kingdom\": \"" + kingdomName + "\" }"))
@@ -82,8 +82,8 @@ public class RegisterTests {
 
     @Test
     public void usernameAlreadyTakenTest() throws Exception {
-        User user=utilityMethods.createUser("some@email.com", "blah", true);
-        FrontendException e=new EmailAlreadyTakenException(user.getUsername());
+        User user = utilityMethods.createUser("some@email.com", "blah", true);
+        FrontendException e = new EmailAlreadyTakenException(user.getUsername());
         mockMvc.perform(post("/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{ \"username\": \"" + user.getUsername() + "\", \"password\": \"seven\" }"))
@@ -95,7 +95,7 @@ public class RegisterTests {
 
     @Test
     public void notValidEmailTest() throws Exception {
-        FrontendException e=new NotValidEmailException();
+        FrontendException e = new NotValidEmailException();
         mockMvc.perform(post("/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{ \"username\": \"blah\", \"password\": \"seven\" }"))
@@ -121,7 +121,7 @@ public class RegisterTests {
 
     @Test
     public void missingParamsTest() throws Exception {
-        FrontendException e=new MissingParamsException(List.of("username", "password"));
+        FrontendException e = new MissingParamsException(List.of("username", "password"));
         mockMvc.perform(post("/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{ }"))
@@ -129,7 +129,7 @@ public class RegisterTests {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status", is("error")))
                 .andExpect(jsonPath("$.error", is(e.getMessage())));
-        e=new MissingParamsException(List.of("password"));
+        e = new MissingParamsException(List.of("password"));
         mockMvc.perform(post("/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{ \"username\": \"blah.blah\" }"))
