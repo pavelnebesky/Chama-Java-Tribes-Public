@@ -67,6 +67,20 @@ public class RegisterTests {
     }
 
     @Test
+    public void kingdomNameTest() throws Exception {
+        String username = "some@email.com";
+        String kingdomName="random kingdom name";
+        mockMvc.perform(post("/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ \"username\": \"" + username + "\", \"password\": \"seven\", \"kingdom\": \"" + kingdomName + "\" }"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id", Matchers.any(Integer.class)))
+                .andExpect(jsonPath("$.username", is(username)))
+                .andExpect(jsonPath("$.kingdom", is(kingdomName)));
+    }
+
+    @Test
     public void usernameAlreadyTakenTest() throws Exception {
         User user=utilityMethods.createUser("some@email.com");
         FrontendException e=new EmailAlreadyTakenException(user.getUsername());
