@@ -1,6 +1,7 @@
 package com.greenfoxacademy.TribesBackend.controllers;
 
 import com.greenfoxacademy.TribesBackend.exceptions.FrontendException;
+import com.greenfoxacademy.TribesBackend.exceptions.IdNotFoundException;
 import com.greenfoxacademy.TribesBackend.models.Troop;
 import com.greenfoxacademy.TribesBackend.services.TroopService;
 import lombok.Getter;
@@ -23,7 +24,12 @@ public class TroopController {
     }
 
     @GetMapping("/kingdom/troops/{troopId}")
-    public ResponseEntity getTroopById(HttpServletRequest request, @PathVariable Long troopId){
+    public ResponseEntity getTroopById(HttpServletRequest request, @PathVariable Long troopId) {
+        try {
+            troopService.checkForFindTroopById(troopId);
+        } catch (IdNotFoundException e) {
+            return troopService.getUtilityService().handleResponseWithException(e);
+        }
         return ResponseEntity.ok(troopService.getTroopById(troopId));
     }
 

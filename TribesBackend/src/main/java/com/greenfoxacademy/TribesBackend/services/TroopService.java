@@ -47,6 +47,13 @@ public class TroopService {
         return troopRepository.findTroopById(troopId);
     }
 
+    public void checkForFindTroopById(@PathVariable Long troopId) throws IdNotFoundException {
+        Troop inMemeoryTroopId = troopRepository.findTroopById(troopId);
+        if (inMemeoryTroopId == null){
+            throw new IdNotFoundException(troopId);
+        }
+    }
+
     public Iterable<Troop> getAllTroopsByUserId(Long userId) {
         return troopRepository.findAllTroopsByKingdomUserId(userId);
     }
