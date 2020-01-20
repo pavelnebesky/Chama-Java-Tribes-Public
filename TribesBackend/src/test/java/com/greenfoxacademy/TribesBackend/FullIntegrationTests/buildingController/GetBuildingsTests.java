@@ -112,4 +112,22 @@ public class GetBuildingsTests {
                 .andExpect(jsonPath("$.status", is("error")))
                 .andExpect(jsonPath("$.error", is(e.getMessage())));
     }
+
+    @Test
+    public void getLeaderboard() throws Exception {
+        mockMvc.perform(get("/leaderboard/buildings")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token)
+                .with(request -> {
+                    request.setRemoteAddr(ip);
+                    return request;
+                })
+                .content("{}"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.leaderboard", Matchers.any(List.class)))
+                .andExpect(jsonPath("$.leaderboard[0].kingdomname", is("Johns kingdom")))
+                .andExpect(jsonPath("$.leaderboard[0].buildings", is(2)));
+    }
+
 }

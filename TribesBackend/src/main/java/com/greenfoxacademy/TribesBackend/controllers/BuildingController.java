@@ -31,13 +31,11 @@ public class BuildingController {
 
     @GetMapping("/kingdom/buildings")
     public ResponseEntity getBuildings(HttpServletRequest request) {
-        //TODO: TEST
         return ResponseEntity.ok(buildingService.getMapOfAllBuildingsByToken(request));
     }
 
     @PostMapping("/kingdom/buildings")
     public ResponseEntity postBuildings(HttpServletRequest request, @RequestBody ModelMap type) {
-        //TODO: TEST
         try {
             int goldAmount = (userService.findById(utilityService.getIdFromToken(request)))
                     .getKingdom().getResources()
@@ -56,7 +54,6 @@ public class BuildingController {
 
     @GetMapping("/kingdom/buildings/{buildingId}")
     public ResponseEntity getBuilding(HttpServletRequest request, @PathVariable Long buildingId) {
-        //TODO: TEST
         try {
             buildingService.checkBuildingId(buildingId);
         } catch (IdNotFoundException e) {
