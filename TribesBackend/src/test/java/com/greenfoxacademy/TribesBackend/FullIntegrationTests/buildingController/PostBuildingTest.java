@@ -34,7 +34,7 @@ import java.util.List;
 @TestPropertySource(
         locations = "classpath:application-testing.properties")
 
-public class GetBuildingsTest {
+public class PostBuildingTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -56,19 +56,18 @@ public class GetBuildingsTest {
     }
 
     @Test
-    public void getBuildings() throws Exception {
-        mockMvc.perform(get("/kingdom/buildings")
+    public void postBarracks() throws Exception {
+        mockMvc.perform(post("/kingdom/buildings")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
                 .with(request -> {
                     request.setRemoteAddr(ip);
                     return request;
                 })
-                .content("{}"))
+                .content("{ \"type\" : \"barracks\" }"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.buildings", Matchers.any(List.class)))
-                .andExpect(jsonPath("$.buildings[0].type", is("townhall")))
-                .andExpect(jsonPath("$.buildings[1].type", is("mine")));
+                .andExpect(jsonPath("$.type", is("barracks")))
+                .andExpect(jsonPath("$.level", is(1)));
     }
 }
