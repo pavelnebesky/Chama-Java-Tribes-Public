@@ -80,6 +80,9 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
                     || (header != null && header.startsWith(TOKEN_PREFIX) && isAuthorized(req, res))) {
                 chain.doFilter(req, res);
             }
+            else{
+                res.sendError(401, "You are unauthorized!");
+            }
         } catch (JWTVerificationException e) {
             res.sendError(401, "You are unauthorized!");
         }
