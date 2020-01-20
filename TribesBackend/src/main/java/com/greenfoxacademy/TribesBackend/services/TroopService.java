@@ -1,10 +1,8 @@
 package com.greenfoxacademy.TribesBackend.services;
 
 import com.greenfoxacademy.TribesBackend.constants.TroopConstants;
-import com.greenfoxacademy.TribesBackend.exceptions.IdNotFoundException;
-import com.greenfoxacademy.TribesBackend.exceptions.InvalidLevelException;
-import com.greenfoxacademy.TribesBackend.exceptions.MissingParamsException;
-import com.greenfoxacademy.TribesBackend.exceptions.NotEnoughGoldException;
+import com.greenfoxacademy.TribesBackend.exceptions.*;
+import com.greenfoxacademy.TribesBackend.models.Building;
 import com.greenfoxacademy.TribesBackend.models.Kingdom;
 import com.greenfoxacademy.TribesBackend.models.Resource;
 import com.greenfoxacademy.TribesBackend.models.Troop;
@@ -16,6 +14,7 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -71,7 +70,7 @@ public class TroopService {
         return troop;
     }
 
-    public Troop createAndReturnNewTroop(Long userId) throws NotEnoughGoldException {
+    public Troop createAndReturnNewTroop(Long userId) {
         int goldToTrain = TroopConstants.TROOP_PRICE;
         int barracksLevel = StreamSupport.stream(buildingService.getAllBuildingsByUserId(userId).spliterator(), false).filter(b -> b.getType().equals(barracks)).findAny().get().getLevel();
         Troop newTroop = new Troop();
@@ -92,8 +91,21 @@ public class TroopService {
         return newTroop;
     }
 
-    public Troop troopLevelUp(Troop troop, Long userId) {
-        Troop troopToUpgrade = StreamSupport.stream(troopRepository.findAllTroopsByKingdomUserId(userId).spliterator(), false).findAny().get();
+    public void checksForCreateTroop(HttpServletRequest request) throws NotEnoughGoldException, BarracksNotFoundExeption {
+        Long userId = utilityService.getIdFromToken(request);
+        boolean barracksExists = ((List<Building>) (buildingService.getAllBuildingsByUserId(userId))).stream().filter(b -> b.getType().equals(barracks)).findAny().isPresent();
+        Kingdom homeKingdom = getKingdomRepository().findByUserId(userId);
+        int kingdomsGold = homeKingdom.getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get().getAmount();
+        if (!barracksExists) {
+            throw new BarracksNotFoundExeption();
+        }
+        if (kingdomsGold < TroopConstants.TROOP_PRICE) {
+            throw new NotEnoughGoldException();
+        }
+    }
+
+    public Troop troopLevelUp(Troop troop, Long userId, @PathVariable Long troopId) {
+        Troop troopToUpgrade = troopRepository.findTroopById(troopId);
         int goldToLevelUp = TroopConstants.TROOP_UPGRADE_PRICE;
         int newLevel = troop.getLevel();
         Kingdom kingdomToUpdate = kingdomRepository.findByUserId(userId);
