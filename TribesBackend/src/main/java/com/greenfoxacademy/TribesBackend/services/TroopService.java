@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.stream.StreamSupport;
 
 import static com.greenfoxacademy.TribesBackend.enums.BuildingType.barracks;
-import static com.greenfoxacademy.TribesBackend.enums.ResourceType.food;
 import static com.greenfoxacademy.TribesBackend.enums.ResourceType.gold;
 
 @Getter
@@ -42,6 +41,8 @@ public class TroopService {
     private KingdomRepository kingdomRepository;
     @Autowired
     private ResourceRepository resourceRepository;
+    @Autowired
+    private ResourceService resourceService;
 
     public Troop getTroopById(Long troopId) {
         return troopRepository.findTroopById(troopId);
@@ -136,8 +137,6 @@ public class TroopService {
             troopLvlFromBody = null;
         }
         Long userId = getUserIdFromToken(request);
-        Kingdom homeKingdom = getKingdomRepository().findByUserId(userId);
-        int kingdomsGold = homeKingdom.getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get().getAmount();
         List<String> missingParams = new ArrayList<String>();
         if (troopLvlFromBody == null){
             missingParams.add("level");
@@ -145,7 +144,7 @@ public class TroopService {
         if (!missingParams.isEmpty()) {
             throw new MissingParamsException(missingParams);
         }
-        if (kingdomsGold < TroopConstants.TROOP_UPGRADE_PRICE) {
+        if (resourceService.getKingdomsGoldByUserId(request) < TroopConstants.TROOP_UPGRADE_PRICE) {
             throw new NotEnoughGoldException();
         }
         if (troopLvlFromBody != troopLevel + TroopConstants.AMOUNT_OF_LEVELS_TO_ADD || troopLvlFromBody != (int) troopLvlFromBody){
@@ -154,21 +153,6 @@ public class TroopService {
         Long inMemeoryTroopId = troopRepository.findTroopById(troopId).getId();
         if (troopId != inMemeoryTroopId){
             throw new IdNotFoundException(troopId);
-        }
-    }
-
-    public void troopConsumption(Long id){
-        int foodConsumedByAllTroops = 0;
-        List<Troop> troops = getKingdomService().getKingdomByUserId(id).getTroops();
-        for (Troop troop: troops) {
-            foodConsumedByAllTroops += TroopConstants.FOOD_CONSUMED_BY_ONE;
-        }
-        int kingdomsFood = resourceRepository.findByType(food).getAmount();
-        Kingdom kingdomToUdate = getKingdomService().getKingdomByUserId(id);
-        if (foodConsumedByAllTroops <= kingdomsFood){
-            Resource resourceToUpdate = getKingdomService().getKingdomByUserId(id).getResources().stream().filter(r -> r.getType().equals(food)).findAny().get();
-            resourceToUpdate.setAmount(resourceToUpdate.getAmount() - foodConsumedByAllTroops);
-            resourceRepository.save(resourceToUpdate);
         }
     }
 }
