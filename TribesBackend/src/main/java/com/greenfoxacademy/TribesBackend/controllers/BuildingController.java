@@ -64,7 +64,6 @@ public class BuildingController {
 
     @PutMapping("/kingdom/buildings/{buildingId}")
     public ResponseEntity updateBuilding(HttpServletRequest request, @PathVariable Long buildingId, @RequestBody Building building) {
-        //TODO: TEST
         try {
             buildingService.checksForUpdateBuilding(buildingId, building);
         } catch (FrontendException e) {
@@ -76,7 +75,6 @@ public class BuildingController {
 
     @GetMapping("/leaderboard/buildings")
     public ResponseEntity getBuildingsLeaderboard() {
-        //TODO: TEST
         return ResponseEntity.ok(buildingService.getLeaderboard());
     }
 }
