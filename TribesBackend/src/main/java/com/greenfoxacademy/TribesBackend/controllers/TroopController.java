@@ -1,7 +1,6 @@
 package com.greenfoxacademy.TribesBackend.controllers;
 
 import com.greenfoxacademy.TribesBackend.exceptions.FrontendException;
-import com.greenfoxacademy.TribesBackend.exceptions.NotEnoughGoldException;
 import com.greenfoxacademy.TribesBackend.models.Troop;
 import com.greenfoxacademy.TribesBackend.services.TroopService;
 import lombok.Getter;
@@ -32,17 +31,18 @@ public class TroopController {
     public ResponseEntity createNewTroop(HttpServletRequest request){
         Long userId = troopService.getUtilityService().getIdFromToken(request);
         try {
-          return ResponseEntity.ok(troopService.createAndReturnNewTroop(userId)) ;
-        }catch (NotEnoughGoldException e){
+          troopService.checksForCreateTroop(request);
+        }catch (FrontendException e){
             return troopService.getUtilityService().handleResponseWithException(e);
         }
+        return ResponseEntity.ok(troopService.createAndReturnNewTroop(userId));
     }
 
     @PutMapping("/kingdom/troops/{troopId}")
     public ResponseEntity trainTroop(HttpServletRequest request, @PathVariable Long troopId, @RequestBody Troop troop){
         try {
             troopService.checksForUpgradeTroop(request, troopId, troop);
-        } catch (FrontendException e) {
+        } catch (FrontendException e){
             return troopService.getUtilityService().handleResponseWithException(e);
         }
         Troop upgradedTroop = troopService.troopLevelUp( troop, troopId, troopService.getUserIdFromToken(request));
