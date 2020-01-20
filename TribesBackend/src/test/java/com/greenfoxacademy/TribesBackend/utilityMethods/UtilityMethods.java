@@ -58,6 +58,8 @@ public class UtilityMethods {
         kingdom.setBuildings(buildings);
         kingdomRepository.save(kingdom);
         setupResources(goldAmount, foodAmount, userId);
+        user.setKingdom(kingdom);
+        userRepository.save(user);
         return user;
     }
 
