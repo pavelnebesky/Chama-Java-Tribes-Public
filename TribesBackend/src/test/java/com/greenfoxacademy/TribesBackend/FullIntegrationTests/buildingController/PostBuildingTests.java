@@ -36,7 +36,7 @@ import java.util.List;
 @TestPropertySource(
         locations = "classpath:application-testing.properties")
 
-public class PostBuildingTest {
+public class PostBuildingTests {
 
     @Autowired
     private MockMvc mockMvc;
@@ -78,7 +78,7 @@ public class PostBuildingTest {
     }
 
     @Test
-    public void missingBuildingType() throws Exception {
+    public void postMissingBuildingType() throws Exception {
         FrontendException e = new MissingParamsException(List.of("type"));
         mockMvc.perform(post("/kingdom/buildings/")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -95,7 +95,7 @@ public class PostBuildingTest {
     }
 
     @Test
-    public void townhallAlreadyExists() throws Exception {
+    public void postTownhallAlreadyExists() throws Exception {
         FrontendException e = new TownhallAlreadyExistsException();
         mockMvc.perform(post("/kingdom/buildings/")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -112,7 +112,7 @@ public class PostBuildingTest {
     }
 
     @Test
-    public void notEnoughGold() throws Exception {
+    public void postNotEnoughGold() throws Exception {
         Resource gold = resourceRepository.findByType(ResourceType.gold);
         gold.setAmount(0);
         resourceRepository.save(gold);
@@ -132,7 +132,7 @@ public class PostBuildingTest {
     }
 
     @Test
-    public void townhallFirst() throws Exception {
+    public void postTownhallFirst() throws Exception {
         utilityMethods.clearDB();
         user = utilityMethods.createEverything("john@doe.com", "Johns kingdom", 250, 0, List.of());
         token = utilityMethods.generateToken("john@doe.com", ip, user.getId());
