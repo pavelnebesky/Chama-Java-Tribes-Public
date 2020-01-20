@@ -16,6 +16,7 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -42,6 +43,8 @@ public class TroopService {
     private KingdomRepository kingdomRepository;
     @Autowired
     private ResourceRepository resourceRepository;
+    @Autowired
+    private ResourceService resourceService;
 
     public Troop getTroopById(Long troopId) {
         return troopRepository.findTroopById(troopId);
@@ -91,8 +94,8 @@ public class TroopService {
         return newTroop;
     }
 
-    public Troop troopLevelUp(Troop troop, Long userId) {
-        Troop troopToUpgrade = StreamSupport.stream(troopRepository.findAllTroopsByKingdomUserId(userId).spliterator(), false).filter().findAny().get();
+    public Troop troopLevelUp(Troop troop, @PathVariable Long troopId, Long userId) {
+        Troop troopToUpgrade = troopRepository.findTroopById(troopId);
         int goldToLevelUp = TroopConstants.TROOP_UPGRADE_PRICE;
         int newLevel = troop.getLevel();
         Kingdom kingdomToUpdate = kingdomRepository.findByUserId(userId);
@@ -116,8 +119,6 @@ public class TroopService {
             troopLvlFromBody = null;
         }
         Long userId = getUserIdFromToken(request);
-        Kingdom homeKingdom = getKingdomRepository().findByUserId(userId);
-        int kingdomsGold = homeKingdom.getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get().getAmount();
         List<String> missingParams = new ArrayList<String>();
         if (troopLvlFromBody == null){
             missingParams.add("level");
@@ -125,7 +126,7 @@ public class TroopService {
         if (!missingParams.isEmpty()) {
             throw new MissingParamsException(missingParams);
         }
-        if (kingdomsGold < TroopConstants.TROOP_UPGRADE_PRICE) {
+        if (resourceService.getKingdomsGoldByUserId(request) < TroopConstants.TROOP_UPGRADE_PRICE) {
             throw new NotEnoughGoldException();
         }
         if (troopLvlFromBody != troopLevel + TroopConstants.AMOUNT_OF_LEVELS_TO_ADD || troopLvlFromBody != (int) troopLvlFromBody){
