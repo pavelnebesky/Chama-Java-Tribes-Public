@@ -1,6 +1,5 @@
 package com.greenfoxacademy.TribesBackend.FullIntegrationTests.buildingController;
 
-import com.greenfoxacademy.TribesBackend.enums.BuildingType;
 import com.greenfoxacademy.TribesBackend.enums.ResourceType;
 import com.greenfoxacademy.TribesBackend.exceptions.*;
 import com.greenfoxacademy.TribesBackend.models.Building;
@@ -8,10 +7,7 @@ import com.greenfoxacademy.TribesBackend.models.Resource;
 import com.greenfoxacademy.TribesBackend.models.User;
 import com.greenfoxacademy.TribesBackend.repositories.BuildingRepository;
 import com.greenfoxacademy.TribesBackend.repositories.ResourceRepository;
-import com.greenfoxacademy.TribesBackend.utilityMethods.UtilityMethods;
-import com.greenfoxacademy.TribesBackend.utilityMethods.UtilityMethods;
-import org.hamcrest.Matchers;
-import org.json.JSONArray;
+import com.greenfoxacademy.TribesBackend.testUtilities.UtilityMethods;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,8 +20,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static com.greenfoxacademy.TribesBackend.enums.BuildingType.*;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.Is.isA;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -33,9 +27,7 @@ import java.util.List;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@TestPropertySource(
-        locations = "classpath:application-testing.properties")
-
+@TestPropertySource(locations = "classpath:application-testing.properties")
 public class PutBuildingTests {
 
     @Autowired
@@ -65,14 +57,8 @@ public class PutBuildingTests {
     public void putUpdateTownhallLevel() throws Exception {
         Long townhallId = ((List<Building>) buildingRepository.findAll())
                 .stream().filter(b -> b.getType().equals(townhall)).findAny().get().getId();
-        mockMvc.perform(put("/kingdom/buildings/" + townhallId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
-                .with(request -> {
-                    request.setRemoteAddr(ip);
-                    return request;
-                })
-                .content("{ \"level\" : 2 }"))
+        String content = "{ \"level\" : 2 }";
+        mockMvc.perform(utilityMethods.buildAuthRequest("/kingdom/buildings/" + townhallId, "put", token, ip, content))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.type", is("townhall")))
@@ -84,36 +70,16 @@ public class PutBuildingTests {
         Long townhallId = ((List<Building>) buildingRepository.findAll())
                 .stream().filter(b -> b.getType().equals(townhall)).findAny().get().getId();
         FrontendException e = new InvalidLevelException("building");
-        mockMvc.perform(put("/kingdom/buildings/" + townhallId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
-                .with(request -> {
-                    request.setRemoteAddr(ip);
-                    return request;
-                })
-                .content("{ \"level\" : 1 }"))
-                .andExpect(status().is(e.getSc()))
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.status", is("error")))
-                .andExpect(jsonPath("$.error", is(e.getMessage())));
+        String content = "{ \"level\" : 1 }";
+        utilityMethods.exceptionExpectations(mockMvc.perform(utilityMethods.buildAuthRequest("/kingdom/buildings/" + townhallId, "put", token, ip, content)), e);
     }
 
     @Test
     public void putNotExistingBuilding() throws Exception {
         Long id = 99339933L;
         FrontendException e = new IdNotFoundException(id);
-        mockMvc.perform(get("/kingdom/buildings/" + id)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
-                .with(request -> {
-                    request.setRemoteAddr(ip);
-                    return request;
-                })
-                .content("{ \"level\" : 2 }"))
-                .andExpect(status().is(e.getSc()))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.status", is("error")))
-                .andExpect(jsonPath("$.error", is(e.getMessage())));
+        String content = "{ \"level\" : 2 }";
+        utilityMethods.exceptionExpectations(mockMvc.perform(utilityMethods.buildAuthRequest("/kingdom/buildings/" + id, "get", token, ip, content)), e);
     }
 
     @Test
@@ -121,18 +87,8 @@ public class PutBuildingTests {
         Long townhallId = ((List<Building>) buildingRepository.findAll())
                 .stream().filter(b -> b.getType().equals(mine)).findAny().get().getId();
         FrontendException e = new TownhallLevelTooLowException();
-        mockMvc.perform(put("/kingdom/buildings/" + townhallId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
-                .with(request -> {
-                    request.setRemoteAddr(ip);
-                    return request;
-                })
-                .content("{ \"level\" : 2 }"))
-                .andExpect(status().is(e.getSc()))
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.status", is("error")))
-                .andExpect(jsonPath("$.error", is(e.getMessage())));
+        String content = "{ \"level\" : 2 }";
+        utilityMethods.exceptionExpectations(mockMvc.perform(utilityMethods.buildAuthRequest("/kingdom/buildings/" + townhallId, "put", token, ip, content)), e);
     }
 
     @Test
@@ -143,17 +99,7 @@ public class PutBuildingTests {
         FrontendException e = new NotEnoughGoldException();
         Long townhallId = ((List<Building>) buildingRepository.findAll())
                 .stream().filter(b -> b.getType().equals(townhall)).findAny().get().getId();
-        mockMvc.perform(put("/kingdom/buildings/" + townhallId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
-                .with(request -> {
-                    request.setRemoteAddr(ip);
-                    return request;
-                })
-                .content("{ \"level\" : 2 }"))
-                .andExpect(status().is(e.getSc()))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.status", is("error")))
-                .andExpect(jsonPath("$.error", is(e.getMessage())));
+        String content = "{ \"level\" : 2 }";
+        utilityMethods.exceptionExpectations(mockMvc.perform(utilityMethods.buildAuthRequest("/kingdom/buildings/" + townhallId, "put", token, ip, content)), e);
     }
 }

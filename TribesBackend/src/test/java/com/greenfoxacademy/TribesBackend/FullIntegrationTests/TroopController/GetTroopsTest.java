@@ -5,7 +5,7 @@ import com.greenfoxacademy.TribesBackend.exceptions.IdNotFoundException;
 import com.greenfoxacademy.TribesBackend.models.User;
 import com.greenfoxacademy.TribesBackend.repositories.BuildingRepository;
 import com.greenfoxacademy.TribesBackend.repositories.TroopRepository;
-import com.greenfoxacademy.TribesBackend.utilityMethods.UtilityMethods;
+import com.greenfoxacademy.TribesBackend.testUtilities.UtilityMethods;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,15 +19,13 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static com.greenfoxacademy.TribesBackend.enums.BuildingType.*;
 import static org.hamcrest.core.Is.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@TestPropertySource(
-        locations = "classpath:application-testing.properties")
-
+@TestPropertySource(locations = "classpath:application-testing.properties")
 public class GetTroopsTest {
+
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -52,14 +50,7 @@ public class GetTroopsTest {
 
     @Test
     public void getTroops() throws Exception {
-         mockMvc.perform(get("/kingdom/troops")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
-                .with(request -> {
-                 request.setRemoteAddr(ip);
-                 return request;
-               })
-                .content("{}"))
+        mockMvc.perform(utilityMethods.buildAuthRequest("/kingdom/troops", "get", token, ip, "{}"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.troops", Matchers.any(net.minidev.json.JSONArray.class)));
@@ -68,14 +59,7 @@ public class GetTroopsTest {
     @Test
     public void getTroopById() throws Exception {
         Long troopId = troopRepository.getByIdIsNotNull().getId();
-        mockMvc.perform(get("/kingdom/troops/" + troopId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
-                .with(request -> {
-                    request.setRemoteAddr(ip);
-                    return request;
-                })
-                .content("{}"))
+        mockMvc.perform(utilityMethods.buildAuthRequest("/kingdom/troops/" + troopId, "get", token, ip, "{}"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is(1)));
@@ -85,17 +69,7 @@ public class GetTroopsTest {
     public void getNonexistingTroopById() throws Exception {
         Long id = 444L;
         FrontendException e = new IdNotFoundException(id);
-        mockMvc.perform(get("/kingdom/troops/" + id)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
-                .with(request -> {
-                    request.setRemoteAddr(ip);
-                    return request;
-                })
-                .content("{}"))
-                .andExpect(status().is(e.getSc()))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.status", is("error")))
-                .andExpect(jsonPath("$.error", is(e.getMessage())));)
+        utilityMethods.exceptionExpectations(mockMvc.perform(utilityMethods
+                .buildAuthRequest("/kingdom/troops/" + id, "get", token, ip, "{}")), e);
     }
 }

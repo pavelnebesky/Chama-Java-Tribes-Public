@@ -1,12 +1,15 @@
 package com.greenfoxacademy.TribesBackend.FullIntegrationTests;
 
+import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
+import static org.hamcrest.core.Is.is;
+
 import com.greenfoxacademy.TribesBackend.enums.BuildingType;
 import com.greenfoxacademy.TribesBackend.models.User;
 import com.greenfoxacademy.TribesBackend.repositories.BuildingRepository;
 import com.greenfoxacademy.TribesBackend.repositories.KingdomRepository;
 import com.greenfoxacademy.TribesBackend.repositories.ResourceRepository;
 import com.greenfoxacademy.TribesBackend.repositories.UserRepository;
-import com.greenfoxacademy.TribesBackend.utilityMethods.UtilityMethods;
+import com.greenfoxacademy.TribesBackend.testUtilities.UtilityMethods;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,8 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@TestPropertySource(
-        locations = "classpath:application-testing.properties")
+@TestPropertySource(locations = "classpath:application-testing.properties")
 public class ExampleIntegrationTest {
 
     @Autowired
