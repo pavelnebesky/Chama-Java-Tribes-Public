@@ -127,10 +127,9 @@ public class UtilityMethods {
         authGrantAccessToken.deleteAll();
     }
 
-    public void createTroop(Long userId) {
+    public Troop createTroop(Long userId) {
         Kingdom kingdom = kingdomRepository.findByUserId(userId);
         Troop troop = new Troop();
-        troop.setId(1);
         troop.setKingdom(kingdom);
         troop.setLevel(1);
         troop.setDefence(1);
@@ -138,7 +137,9 @@ public class UtilityMethods {
         troop.setHp(10);
         troop.setStarted_at(System.currentTimeMillis());
         troop.setFinished_at(troop.getStarted_at() + TROOP_TRAINING_TIME);
-        troopRepository.save(troop);
+        kingdom.setTroops(List.of(troop));
+        kingdomRepository.save(kingdom);
+        return ((List<Troop>)troopRepository.findAll()).stream().findAny().orElse(null);
     }
 
     public MockHttpServletRequestBuilder buildNonAuthRequest (String endpoint, String httpMethod, String content) throws
