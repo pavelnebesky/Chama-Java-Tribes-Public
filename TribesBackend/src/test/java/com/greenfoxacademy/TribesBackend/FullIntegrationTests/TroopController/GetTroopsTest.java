@@ -2,6 +2,7 @@ package com.greenfoxacademy.TribesBackend.FullIntegrationTests.TroopController;
 
 import com.greenfoxacademy.TribesBackend.exceptions.FrontendException;
 import com.greenfoxacademy.TribesBackend.exceptions.IdNotFoundException;
+import com.greenfoxacademy.TribesBackend.models.Troop;
 import com.greenfoxacademy.TribesBackend.models.User;
 import com.greenfoxacademy.TribesBackend.repositories.BuildingRepository;
 import com.greenfoxacademy.TribesBackend.repositories.TroopRepository;
@@ -37,12 +38,13 @@ public class GetTroopsTest {
     private String token;
     private String ip = "";
     private User user;
+    private Troop troop;
 
     @BeforeEach
     public void before() {
         user = utilityMethods.createEverything("john@doe.com", "Johns kingdom", 1000, 1000, java.util.List.of(townhall, mine, barracks));
         token = utilityMethods.generateToken("something@sth.com", ip, user.getId());
-        utilityMethods.createTroop(user.getId());
+        troop = utilityMethods.createTroop(user.getId());
     }
 
     @AfterEach
