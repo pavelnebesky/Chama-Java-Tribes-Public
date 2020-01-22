@@ -32,7 +32,7 @@ public class KingdomController {
         catch (FrontendException e) {
             return kingdomService.getUtilityService().handleResponseWithException(e);
         }
-            return ResponseEntity.ok(kingdomService.getKingdomByUserId(userId));
+        return ResponseEntity.ok(kingdomService.getKingdomByUserId(userId));
     }
 
     @PutMapping("/kingdom")
