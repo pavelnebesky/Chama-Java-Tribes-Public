@@ -18,9 +18,13 @@ import javax.servlet.http.HttpServletRequest;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static com.greenfoxacademy.TribesBackend.constants.BuildingConstants.*;
+import static com.greenfoxacademy.TribesBackend.constants.ResourceConstants.*;
+import static com.greenfoxacademy.TribesBackend.enums.BuildingType.barracks;
 import static com.greenfoxacademy.TribesBackend.enums.BuildingType.townhall;
+import static com.greenfoxacademy.TribesBackend.enums.ResourceType.food;
 import static com.greenfoxacademy.TribesBackend.enums.ResourceType.gold;
 
 @Service
@@ -60,16 +64,14 @@ public class BuildingService {
     }
 
     public Building buildingLevelUp(Building building, int newLevel) {
-        int kingdomsGold = building.getKingdom().getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get().getAmount();
-        int townhallLevel = building.getKingdom().getBuildings().stream().filter(b -> b.getType().equals(townhall)).findAny().get().getLevel();
-        int goldToLevelUp = (newLevel - building.getLevel()) * GOLD_TO_LEVEL_UP_BUILDING;
-        if (newLevel <= townhallLevel && goldToLevelUp <= kingdomsGold) {
-            building.setLevel(newLevel);
-            saveBuilding(building);
-            Resource resourceToUpdate = building.getKingdom().getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get();
-            resourceToUpdate.setAmount(resourceToUpdate.getAmount() - goldToLevelUp);
-            resourceRepository.save(resourceToUpdate);
-        }
+        int goldToLevelUp = (building.getLevel() + 1) * GOLD_TO_LEVEL_UP_BUILDING;
+        building.setLevel(building.getLevel() + 1);
+        building.setFinished_at(System.currentTimeMillis() + BUILDING_TIMES.get(building.getType()));
+        saveBuilding(building);
+        Resource resourceToUpdate = building.getKingdom().getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get();
+        resourceToUpdate.setAmount(resourceToUpdate.getAmount() - goldToLevelUp);
+        resourceRepository.save(resourceToUpdate);
+        updateGeneration(building.getType().toString(), building.getKingdom().getId(), EXTRA_GOLD_PER_LEVEL, EXTRA_FOOD_PER_LEVEL);
         return building;
     }
 
@@ -79,27 +81,59 @@ public class BuildingService {
         }
     }
 
-    public void checkBuildingType(String type) throws InvalidBuildingTypeException, MissingParamsException {
+    public void checkNewBuildingExceptions(String type, int kingdomGold, Long userId) throws InvalidBuildingTypeException, MissingParamsException, NotEnoughGoldException, TownhallAlreadyExistsException, TownhallFirstException {
         if (type == null) {
             throw new MissingParamsException(List.of("type"));
         }
         if (BuildingType.valueOf(type) == null) {
             throw new InvalidBuildingTypeException();
         }
+        if (((List<Building>) getAllBuildingsByUserId(userId)).isEmpty() && !type.matches("townhall")) {
+            throw new TownhallFirstException();
+        }
+        boolean townhallExists = ((List<Building>) (getAllBuildingsByUserId(userId))).stream().filter(b -> b.getType().equals(townhall)).findAny().isPresent();
+        if (townhallExists && type.matches("townhall")) {
+            throw new TownhallAlreadyExistsException();
+        }
+        if (kingdomGold < BUILDING_PRICE) {
+            throw new NotEnoughGoldException();
+        }
     }
 
-    public void checkBuildingToUpdate(Long buildingId, Building building) throws IdNotFoundException, NotEnoughGoldException, InvalidLevelException {
+    public void checksForUpdateBuilding(Long buildingId, Building building) throws IdNotFoundException, NotEnoughGoldException, InvalidLevelException, TownhallLevelTooLowException, MaxTownhallLevelException {
         if (!buildingRepository.findById(buildingId).isPresent()) {
             throw new IdNotFoundException(buildingId);
         }
         if (building.getLevel() <= buildingRepository.findById(buildingId).get().getLevel()) {
             throw new InvalidLevelException("building");
         }
+        if ((((buildingRepository.findById(buildingId).get().getLevel()) + 1) >
+                        buildingRepository.findById(buildingId).get().getKingdom().getBuildings()
+                        .stream().filter(b -> b.getType().equals(townhall)).findAny().get().getLevel())
+                && !(buildingRepository.findById(buildingId).get().getType() == BuildingType.valueOf("townhall"))) {
+            throw new TownhallLevelTooLowException();
+        }
+        if (building.getLevel() > TOWNHALL_MAX_LEVEL) {
+            throw new MaxTownhallLevelException(TOWNHALL_MAX_LEVEL);
+        }
         int kingdomsGold = buildingRepository.findById(buildingId).get().getKingdom().getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get().getAmount();
-        int goldToLevelUp = (building.getLevel() - buildingRepository.findById(buildingId).get().getLevel()) * GOLD_TO_LEVEL_UP_BUILDING;
+        int goldToLevelUp = ((buildingRepository.findById(buildingId).get().getLevel()) + 1) * GOLD_TO_LEVEL_UP_BUILDING;
         if (kingdomsGold < goldToLevelUp) {
             throw new NotEnoughGoldException();
         }
+    }
+
+    public void updateGeneration(String type, long kingdomId, int addGold, int addFood) {
+        var kingdomResources = resourceRepository.getAllByKingdom(kingdomRepository.findById(kingdomId).get());
+        var kingdomGoldResource = kingdomResources.stream().filter(r -> r.getType().equals(gold)).findAny().get();
+        var kingdomFoodResource = kingdomResources.stream().filter(r -> r.getType().equals(food)).findAny().get();
+        if ((type.matches("mine")) || (type.matches("townhall"))) {
+            kingdomGoldResource.setGeneration(kingdomGoldResource.getGeneration() + addGold);
+        }
+        if ((type.matches("farm")) || (type.matches("townhall"))) {
+            kingdomFoodResource.setGeneration(kingdomFoodResource.getGeneration() + addFood);
+        }
+        resourceRepository.saveAll(List.of(kingdomFoodResource, kingdomGoldResource));
     }
 
     public Building createAndReturnBuilding(long userId, String type) {
@@ -110,12 +144,16 @@ public class BuildingService {
         newBuilding.setLevel(1);
         newBuilding.setStarted_at(System.currentTimeMillis());
         newBuilding.setFinished_at(newBuilding.getStarted_at() + BUILDING_TIMES.get(BuildingType.valueOf(type)));
+        newBuilding.setUpdated_at(newBuilding.getFinished_at());
         saveBuilding(newBuilding);
         Kingdom kingdomToUpdate = kingdomRepository.findByUserId(userId);
         List<Building> kingdomsBuildings = kingdomToUpdate.getBuildings();
         kingdomsBuildings.add(newBuilding);
         kingdomToUpdate.setBuildings(kingdomsBuildings);
+        int updatedGoldAmount = kingdomToUpdate.getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get().getAmount() - BUILDING_PRICE;
+        kingdomToUpdate.getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get().setAmount(updatedGoldAmount);
         kingdomRepository.save(kingdomToUpdate);
+        updateGeneration(type, kingdomToUpdate.getId(), GOLD_PER_MINUTE, FOOD_PER_MINUTE);
         return newBuilding;
     }
 

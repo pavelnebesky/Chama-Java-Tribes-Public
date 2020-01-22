@@ -14,18 +14,22 @@ import java.util.List;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "kingdom")
 public class Kingdom {
+
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "kingdom_id")
     private Long id;
     private String name;
     private Long userId;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "kingdom", cascade = CascadeType.ALL)
     private List<Resource> resources;
     @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "location_id")
     private Location location;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "kingdom", cascade = CascadeType.ALL)
     private List<Building> buildings;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "kingdom", cascade = CascadeType.ALL)
     private List<Troop> troops;
 }

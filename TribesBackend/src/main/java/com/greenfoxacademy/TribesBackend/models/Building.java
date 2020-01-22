@@ -7,16 +7,18 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 
 @Getter
 @Setter
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "building")
 public class Building {
+
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "building_id")
     private Long id;
     private BuildingType type;
     private int level;
@@ -27,5 +29,6 @@ public class Building {
     private Long updated_at;
     @JsonIgnore
     @ManyToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name = "kingdom_id")
     private Kingdom kingdom;
 }

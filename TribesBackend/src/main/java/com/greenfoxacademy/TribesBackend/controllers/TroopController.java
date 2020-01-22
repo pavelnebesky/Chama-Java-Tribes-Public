@@ -1,15 +1,18 @@
 package com.greenfoxacademy.TribesBackend.controllers;
 
-import com.greenfoxacademy.TribesBackend.exceptions.NotEnoughGoldException;
+import com.greenfoxacademy.TribesBackend.exceptions.FrontendException;
+import com.greenfoxacademy.TribesBackend.exceptions.IdNotFoundException;
+import com.greenfoxacademy.TribesBackend.models.Troop;
 import com.greenfoxacademy.TribesBackend.services.TroopService;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-
+@Getter
+@Setter
 @RestController
 public class TroopController {
     @Autowired
@@ -20,8 +23,13 @@ public class TroopController {
         return ResponseEntity.ok(troopService.getModelMapOfAllTroopsByUserId(request));
     }
 
-    @GetMapping("/kingdom/troops/[troopId]")
-    public ResponseEntity getTroopById(HttpServletRequest request, Long troopId){
+    @GetMapping("/kingdom/troops/{troopId}")
+    public ResponseEntity getTroopById(HttpServletRequest request, @PathVariable Long troopId) {
+        try {
+            troopService.checkForFindTroopById(troopId);
+        } catch (IdNotFoundException e) {
+            return troopService.getUtilityService().handleResponseWithException(e);
+        }
         return ResponseEntity.ok(troopService.getTroopById(troopId));
     }
 
@@ -29,9 +37,23 @@ public class TroopController {
     public ResponseEntity createNewTroop(HttpServletRequest request){
         Long userId = troopService.getUtilityService().getIdFromToken(request);
         try {
-          return ResponseEntity.ok(troopService.createAndReturnNewTroop(userId)) ;
-        }catch (NotEnoughGoldException e){
+          troopService.checksForCreateTroop(request);
+        }catch (FrontendException e){
             return troopService.getUtilityService().handleResponseWithException(e);
         }
+        return ResponseEntity.ok(troopService.createAndReturnNewTroop(userId));
+    }
+
+    @PutMapping("/kingdom/troops/{troopId}")
+    public ResponseEntity trainTroop(HttpServletRequest request, @PathVariable Long troopId, @RequestBody Troop troop){
+        try {
+            troopService.checksForUpgradeTroop(request, troopId, troop);
+        } catch (FrontendException e){
+            return troopService.getUtilityService().handleResponseWithException(e);
+        }
+        Troop upgradedTroop = troopService.troopLevelUp( troop, troopId, troopService.getUserIdFromToken(request));
+        return ResponseEntity.status(200).body(upgradedTroop);
     }
 }
+
+

@@ -39,11 +39,12 @@ public class UserController {
             return userService.getUtilityService().handleResponseWithException(e);
         }
         return ResponseEntity.ok(userService.registerUser(userService.getUserFromModelMap(modelMap), (String) modelMap.getAttribute("kingdom")));
-}
+    }
 
-    @GetMapping("/logout")
-    public void logout(HttpServletResponse response) {
-        response.setStatus(200);
+    @PostMapping("/logout")
+    public ResponseEntity logout(HttpServletRequest request) {
+        userService.logout(request);
+        return ResponseEntity.ok().body(null);
     }
 
     @GetMapping("/login/{externalSite}")
@@ -62,7 +63,7 @@ public class UserController {
     @GetMapping("/authentication/{externalSite}")
     public ResponseEntity createFacebookAccessToken(@PathVariable String externalSite, @RequestParam("code") String code, HttpServletRequest request) {
         try {
-            if(code==null){
+            if (code == null) {
                 throw new OAuthCancelledException();
             }
             if (externalSite.matches("facebook")) {

@@ -1,11 +1,9 @@
 package com.greenfoxacademy.TribesBackend.services;
 
 import com.greenfoxacademy.TribesBackend.exceptions.*;
-import com.greenfoxacademy.TribesBackend.models.AuthGrantAccessToken;
-import com.greenfoxacademy.TribesBackend.models.Kingdom;
-import com.greenfoxacademy.TribesBackend.models.Location;
-import com.greenfoxacademy.TribesBackend.models.User;
+import com.greenfoxacademy.TribesBackend.models.*;
 import com.greenfoxacademy.TribesBackend.repositories.AuthGrantAccessTokenRepository;
+import com.greenfoxacademy.TribesBackend.repositories.BlacklistedTokenRepository;
 import com.greenfoxacademy.TribesBackend.repositories.KingdomRepository;
 import com.greenfoxacademy.TribesBackend.repositories.UserRepository;
 import lombok.Getter;
@@ -34,6 +32,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static com.greenfoxacademy.TribesBackend.constants.EmailVerificationConstants.*;
 import static com.greenfoxacademy.TribesBackend.constants.ExternalLoginConstants.*;
+import static com.greenfoxacademy.TribesBackend.constants.SecurityConstants.HEADER_STRING;
+import static com.greenfoxacademy.TribesBackend.constants.SecurityConstants.TOKEN_PREFIX;
 
 @Getter
 @Setter
@@ -42,6 +42,8 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private BlacklistedTokenRepository blacklistedTokenRepository;
     @Autowired
     private AuthGrantAccessTokenRepository authGrantAccessTokenRepository;
     @Autowired
@@ -77,6 +79,12 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public void logout(HttpServletRequest request) {
+        BlacklistedToken blacklistedToken = new BlacklistedToken();
+        blacklistedToken.setToken(request.getHeader(HEADER_STRING).replace(TOKEN_PREFIX, ""));
+        blacklistedTokenRepository.save(blacklistedToken);
+    }
+
     public String createOAuthRedirection(String redirectUri, OAuth2ConnectionFactory connectionFactory) {
         OAuth2Operations oauthOperations = connectionFactory.getOAuthOperations();
         OAuth2Parameters params = new OAuth2Parameters();
@@ -91,7 +99,7 @@ public class UserService {
             if (email == null) {
                 throw new ExternalAccountWithNoEmailException();
             }
-            if( userRepository.findByUsername(email) !=null ){
+            if (userRepository.findByUsername(email) != null) {
                 throw new EmailAlreadyTakenException(email);
             }
             User user = new User();
@@ -213,7 +221,9 @@ public class UserService {
             kingdom.setName(kingdomName);
         }
         kingdom.setResources(resourceService.createInitialResources());
+        kingdom.getResources().forEach(r->r.setKingdom(kingdom));
         kingdom.setLocation(new Location());
+        kingdom.setBuildings(new ArrayList<Building>());
         user.setKingdom(kingdom);
         user.setEmailVerified(false);
         String verCode = generateEmailVerificationCode();
@@ -238,8 +248,11 @@ public class UserService {
         }
     }
 
-    public void checkUserParamsForReg(User user) throws MissingParamsException, EmailAlreadyTakenException {
+    public void checkUserParamsForReg(User user) throws MissingParamsException, EmailAlreadyTakenException, NotValidEmailException {
         checkMissingParams(user);
+        if(!isEmailValid(user.getUsername())){
+            throw new NotValidEmailException();
+        }
         if (doesUserExistByEmail(user.getUsername())) {
             throw new EmailAlreadyTakenException(user.getUsername());
         }
