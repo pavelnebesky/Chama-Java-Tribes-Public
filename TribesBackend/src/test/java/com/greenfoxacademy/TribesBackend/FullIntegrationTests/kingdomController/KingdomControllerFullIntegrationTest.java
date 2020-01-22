@@ -1,13 +1,15 @@
 package com.greenfoxacademy.TribesBackend.FullIntegrationTests.kingdomController;
 
 import com.greenfoxacademy.TribesBackend.enums.BuildingType;
+import com.greenfoxacademy.TribesBackend.exceptions.FrontendException;
+import com.greenfoxacademy.TribesBackend.exceptions.IdNotFoundException;
 import com.greenfoxacademy.TribesBackend.models.Kingdom;
 import com.greenfoxacademy.TribesBackend.models.User;
 import com.greenfoxacademy.TribesBackend.repositories.BuildingRepository;
 import com.greenfoxacademy.TribesBackend.repositories.KingdomRepository;
 import com.greenfoxacademy.TribesBackend.repositories.ResourceRepository;
 import com.greenfoxacademy.TribesBackend.repositories.UserRepository;
-import com.greenfoxacademy.TribesBackend.utilityMethods.UtilityMethods;
+import com.greenfoxacademy.TribesBackend.testUtilities.UtilityMethods;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -63,14 +65,7 @@ public class KingdomControllerFullIntegrationTest {
 
     @Test
     public void whenGetKingdom_thenReturnUsersKingdom() throws Exception {
-        mockMvc.perform(get("/kingdom")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
-                .with(request -> {
-                    request.setRemoteAddr(ip);
-                    return request;
-                })
-                .content("{}"))
+        mockMvc.perform(utilityMethods.buildAuthRequest("/kingdom", "get", token, ip, "{}"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("id", is(kingdom.getId().intValue())))
@@ -80,43 +75,26 @@ public class KingdomControllerFullIntegrationTest {
 
     @Test
     public void whenGettingCorrectUserId_thenReturnUsersKingdom() throws Exception {
-        mockMvc.perform(get("/kingdom/{userId}", user.getId().intValue())
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
-                .with(request -> {
-                    request.setRemoteAddr(ip);
-                    return request;
-                }))
+        mockMvc.perform(utilityMethods.buildAuthRequest("/kingdom/" + user.getId().intValue(),
+                "get", token, ip, "{}"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("id", is(kingdom.getId().intValue())))
                 .andExpect(jsonPath("name", is("kingdomName")))
                 .andExpect(jsonPath("userId", is(user.getId().intValue())));
     }
+
     @Test
     public void whenGettingInorrectUserId_thenReturnIdNotFoundException() throws Exception {
-        mockMvc.perform(get("/kingdom/{userId}", 14762587164L)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
-                .with(request -> {
-                    request.setRemoteAddr(ip);
-                    return request;
-                }))
-                .andExpect(status().isNotFound())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("status", is("error")))
-                .andExpect(jsonPath("error", is("Id '14762587164' not found!")));
+        FrontendException e = new IdNotFoundException(14762587164L);
+        utilityMethods.exceptionExpectations(mockMvc.perform(utilityMethods.buildAuthRequest("/kingdom/" + 14762587164L,
+                "get", token, ip, "{}")), e);
     }
+
     @Test
     public void whenRecievedNewDataForKingdom_thenReturnStatusOkandNewUpdatedKingdom() throws Exception {
-        mockMvc.perform(put("/kingdom")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
-                .with(request -> {
-                    request.setRemoteAddr(ip);
-                    return request;
-                })
-                .content("{\"name\" : \"MI5\", \"locationX\" : 4, \"locationY\" : 12}"))
+        mockMvc.perform(utilityMethods.buildAuthRequest("/kingdom", "put", token, ip,
+                "{\"name\" : \"MI5\", \"locationX\" : 4, \"locationY\" : 12}"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("id", is(kingdom.getId().intValue())))
@@ -124,7 +102,6 @@ public class KingdomControllerFullIntegrationTest {
                 .andExpect(jsonPath("userId", is(user.getId().intValue())))
                 .andExpect(jsonPath("$.location.x", is(4)))
                 .andExpect(jsonPath("$.location.y", is(12)));
-
     }
 }
 
