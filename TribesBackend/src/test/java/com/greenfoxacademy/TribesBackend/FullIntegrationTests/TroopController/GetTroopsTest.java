@@ -1,5 +1,7 @@
 package com.greenfoxacademy.TribesBackend.FullIntegrationTests.TroopController;
 
+import com.greenfoxacademy.TribesBackend.exceptions.FrontendException;
+import com.greenfoxacademy.TribesBackend.exceptions.IdNotFoundException;
 import com.greenfoxacademy.TribesBackend.models.User;
 import com.greenfoxacademy.TribesBackend.repositories.BuildingRepository;
 import com.greenfoxacademy.TribesBackend.repositories.TroopRepository;
@@ -77,5 +79,23 @@ public class GetTroopsTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is(1)));
+    }
+
+    @Test
+    public void getNonexistingTroopById() throws Exception {
+        Long id = 444L;
+        FrontendException e = new IdNotFoundException(id);
+        mockMvc.perform(get("/kingdom/troops/" + id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token)
+                .with(request -> {
+                    request.setRemoteAddr(ip);
+                    return request;
+                })
+                .content("{}"))
+                .andExpect(status().is(e.getSc()))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status", is("error")))
+                .andExpect(jsonPath("$.error", is(e.getMessage())));
     }
 }
