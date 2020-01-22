@@ -58,11 +58,10 @@ public class GetTroopsTest {
 
     @Test
     public void getTroopById() throws Exception {
-        Long troopId = troopRepository.getByIdIsNotNull().getId();
-        mockMvc.perform(utilityMethods.buildAuthRequest("/kingdom/troops/" + troopId, "get", token, ip, "{}"))
+        mockMvc.perform(utilityMethods.buildAuthRequest("/kingdom/troops/" + troop.getId(), "get", token, ip, "{}"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", is(1)));
+                .andExpect(jsonPath("$.id", is((int)troop.getId())));
     }
 
     @Test
