@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
+import static com.greenfoxacademy.TribesBackend.constants.TroopConstants.TROOP_TRAINING_TIME;
 import static com.greenfoxacademy.TribesBackend.constants.BuildingConstants.BUILDING_TIMES;
 import static com.greenfoxacademy.TribesBackend.constants.ResourceConstants.GOLD_PER_MINUTE;
 import static com.greenfoxacademy.TribesBackend.constants.SecurityConstants.*;
@@ -119,5 +120,19 @@ public class UtilityMethods {
         troopRepository.deleteAll();
         blacklistedToken.deleteAll();
         authGrantAccessToken.deleteAll();
+    }
+
+    public void createTroop(Long userId){
+        Kingdom kingdom = kingdomRepository.findByUserId(userId);
+        Troop troop = new Troop();
+        troop.setId(1);
+        troop.setKingdom(kingdom);
+        troop.setLevel(1);
+        troop.setDefence(1);
+        troop.setAttack(1);
+        troop.setHp(10);
+        troop.setStarted_at(System.currentTimeMillis());
+        troop.setFinished_at(troop.getStarted_at() + TROOP_TRAINING_TIME);
+        troopRepository.save(troop);
     }
 }

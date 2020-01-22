@@ -1,12 +1,10 @@
-package com.greenfoxacademy.TribesBackend.FullIntegrationTests;
+package com.greenfoxacademy.TribesBackend.FullIntegrationTests.TroopController;
 
-import com.greenfoxacademy.TribesBackend.enums.BuildingType;
 import com.greenfoxacademy.TribesBackend.models.User;
 import com.greenfoxacademy.TribesBackend.repositories.BuildingRepository;
-import com.greenfoxacademy.TribesBackend.repositories.KingdomRepository;
-import com.greenfoxacademy.TribesBackend.repositories.ResourceRepository;
-import com.greenfoxacademy.TribesBackend.repositories.UserRepository;
+import com.greenfoxacademy.TribesBackend.repositories.TroopRepository;
 import com.greenfoxacademy.TribesBackend.utilityMethods.UtilityMethods;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,9 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.List;
-
-import static org.hamcrest.core.Is.is;
+import static com.greenfoxacademy.TribesBackend.enums.BuildingType.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -27,52 +23,42 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @TestPropertySource(
         locations = "classpath:application-testing.properties")
-public class ExampleIntegrationTest {
 
+public class GetTroopsTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private KingdomRepository kingdomRepository;
+    private UtilityMethods utilityMethods;
     @Autowired
     private BuildingRepository buildingRepository;
     @Autowired
-    private ResourceRepository resourceRepository;
-    @Autowired
-    private UtilityMethods utilityMethods;
+    private TroopRepository troopRepository;
     private String token;
     private String ip = "";
     private User user;
 
     @BeforeEach
-    public void setup() {
-        user = utilityMethods.createEverything("something@sth.com", "kingdomName", 10000, 10000, List.of(BuildingType.barracks, BuildingType.townhall));
+    public void before() {
+        user = utilityMethods.createEverything("john@doe.com", "Johns kingdom", 1000, 1000, java.util.List.of(townhall, mine, barracks));
         token = utilityMethods.generateToken("something@sth.com", ip, user.getId());
+        utilityMethods.createTroop(user.getId());
     }
 
     @AfterEach
-    public void deSetup() {
-        userRepository.deleteAll();
-        kingdomRepository.deleteAll();
-        buildingRepository.deleteAll();
-        resourceRepository.deleteAll();
-    }
+    public void after() { utilityMethods.clearDB(); }
 
     @Test
-    public void justTesting() throws Exception {
-        mockMvc.perform(get("/kingdom")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
+    public void getTroops() throws Exception {
+        mockMvc.perform(get("/kingdom/troops")
+               .contentType(MediaType.APPLICATION_JSON)
+               .header("Authorization", "Bearer " + token)
                 .with(request -> {
-                    request.setRemoteAddr(ip);
-                    return request;
-                })
+                 request.setRemoteAddr(ip);
+                 return request;
+               })
                 .content("{}"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("name", is("kingdomName")))
-                .andExpect(jsonPath("userId", is(user.getId().intValue())));
+                .andExpect(jsonPath("$.troops", Matchers.any(net.minidev.json.JSONArray.class)));
     }
 }
-
