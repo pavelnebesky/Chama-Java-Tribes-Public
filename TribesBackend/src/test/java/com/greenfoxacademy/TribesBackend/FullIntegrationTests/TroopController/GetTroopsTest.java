@@ -96,6 +96,6 @@ public class GetTroopsTest {
                 .andExpect(status().is(e.getSc()))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status", is("error")))
-                .andExpect(jsonPath("$.error", is(e.getMessage())));
+                .andExpect(jsonPath("$.error", is(e.getMessage())));)
     }
 }
