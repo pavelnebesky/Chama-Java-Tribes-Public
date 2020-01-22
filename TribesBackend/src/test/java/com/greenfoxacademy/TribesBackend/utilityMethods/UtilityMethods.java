@@ -122,7 +122,7 @@ public class UtilityMethods {
         authGrantAccessToken.deleteAll();
     }
 
-    public void createTroop(Long userId){
+    public void createTroop(Long userId) {
         Kingdom kingdom = kingdomRepository.findByUserId(userId);
         Troop troop = new Troop();
         troop.setId(1);

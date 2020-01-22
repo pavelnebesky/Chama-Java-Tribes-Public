@@ -16,6 +16,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static com.greenfoxacademy.TribesBackend.enums.BuildingType.*;
+import static org.hamcrest.core.Is.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -49,9 +50,9 @@ public class GetTroopsTest {
 
     @Test
     public void getTroops() throws Exception {
-        mockMvc.perform(get("/kingdom/troops")
-               .contentType(MediaType.APPLICATION_JSON)
-               .header("Authorization", "Bearer " + token)
+         mockMvc.perform(get("/kingdom/troops")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token)
                 .with(request -> {
                  request.setRemoteAddr(ip);
                  return request;
@@ -60,5 +61,21 @@ public class GetTroopsTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.troops", Matchers.any(net.minidev.json.JSONArray.class)));
+    }
+
+    @Test
+    public void getTroopById() throws Exception {
+        Long troopId = troopRepository.getByIdIsNotNull().getId();
+        mockMvc.perform(get("/kingdom/troops/" + troopId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token)
+                .with(request -> {
+                    request.setRemoteAddr(ip);
+                    return request;
+                })
+                .content("{}"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id", is(1)));
     }
 }
