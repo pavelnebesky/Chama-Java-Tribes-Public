@@ -1,10 +1,8 @@
 package com.greenfoxacademy.TribesBackend.services;
 
 import com.greenfoxacademy.TribesBackend.constants.TroopConstants;
-import com.greenfoxacademy.TribesBackend.exceptions.IdNotFoundException;
-import com.greenfoxacademy.TribesBackend.exceptions.InvalidLevelException;
-import com.greenfoxacademy.TribesBackend.exceptions.MissingParamsException;
-import com.greenfoxacademy.TribesBackend.exceptions.NotEnoughGoldException;
+import com.greenfoxacademy.TribesBackend.exceptions.*;
+import com.greenfoxacademy.TribesBackend.models.Building;
 import com.greenfoxacademy.TribesBackend.models.Kingdom;
 import com.greenfoxacademy.TribesBackend.models.Resource;
 import com.greenfoxacademy.TribesBackend.models.Troop;
@@ -16,6 +14,7 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -23,7 +22,6 @@ import java.util.List;
 import java.util.stream.StreamSupport;
 
 import static com.greenfoxacademy.TribesBackend.enums.BuildingType.barracks;
-import static com.greenfoxacademy.TribesBackend.enums.ResourceType.food;
 import static com.greenfoxacademy.TribesBackend.enums.ResourceType.gold;
 
 @Getter
@@ -43,9 +41,18 @@ public class TroopService {
     private KingdomRepository kingdomRepository;
     @Autowired
     private ResourceRepository resourceRepository;
+    @Autowired
+    private ResourceService resourceService;
 
     public Troop getTroopById(Long troopId) {
         return troopRepository.findTroopById(troopId);
+    }
+
+    public void checkForFindTroopById(@PathVariable Long troopId) throws IdNotFoundException {
+        Troop inMemeoryTroopId = troopRepository.findTroopById(troopId);
+        if (inMemeoryTroopId == null){
+            throw new IdNotFoundException(troopId);
+        }
     }
 
     public Iterable<Troop> getAllTroopsByUserId(Long userId) {
@@ -71,7 +78,7 @@ public class TroopService {
         return troop;
     }
 
-    public Troop createAndReturnNewTroop(Long userId) throws NotEnoughGoldException {
+    public Troop createAndReturnNewTroop(Long userId) {
         int goldToTrain = TroopConstants.TROOP_PRICE;
         int barracksLevel = StreamSupport.stream(buildingService.getAllBuildingsByUserId(userId).spliterator(), false).filter(b -> b.getType().equals(barracks)).findAny().get().getLevel();
         Troop newTroop = new Troop();
@@ -92,8 +99,21 @@ public class TroopService {
         return newTroop;
     }
 
-    public Troop troopLevelUp(Troop troop, Long userId) {
-        Troop troopToUpgrade = StreamSupport.stream(troopRepository.findAllTroopsByKingdomUserId(userId).spliterator(), false).findAny().get();
+    public void checksForCreateTroop(HttpServletRequest request) throws NotEnoughGoldException, BarracksNotFoundExeption {
+        Long userId = utilityService.getIdFromToken(request);
+        boolean barracksExists = ((List<Building>) (buildingService.getAllBuildingsByUserId(userId))).stream().filter(b -> b.getType().equals(barracks)).findAny().isPresent();
+        Kingdom homeKingdom = getKingdomRepository().findByUserId(userId);
+        int kingdomsGold = homeKingdom.getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get().getAmount();
+        if (!barracksExists) {
+            throw new BarracksNotFoundExeption();
+        }
+        if (kingdomsGold < TroopConstants.TROOP_PRICE) {
+            throw new NotEnoughGoldException();
+        }
+    }
+
+    public Troop troopLevelUp(Troop troop, Long userId, @PathVariable Long troopId) {
+        Troop troopToUpgrade = troopRepository.findTroopById(troopId);
         int goldToLevelUp = TroopConstants.TROOP_UPGRADE_PRICE;
         int newLevel = troop.getLevel();
         Kingdom kingdomToUpdate = kingdomRepository.findByUserId(userId);
@@ -117,8 +137,6 @@ public class TroopService {
             troopLvlFromBody = null;
         }
         Long userId = getUserIdFromToken(request);
-        Kingdom homeKingdom = getKingdomRepository().findByUserId(userId);
-        int kingdomsGold = homeKingdom.getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get().getAmount();
         List<String> missingParams = new ArrayList<String>();
         if (troopLvlFromBody == null){
             missingParams.add("level");
@@ -126,7 +144,7 @@ public class TroopService {
         if (!missingParams.isEmpty()) {
             throw new MissingParamsException(missingParams);
         }
-        if (kingdomsGold < TroopConstants.TROOP_UPGRADE_PRICE) {
+        if (resourceService.getKingdomsGoldByUserId(request) < TroopConstants.TROOP_UPGRADE_PRICE) {
             throw new NotEnoughGoldException();
         }
         if (troopLvlFromBody != troopLevel + TroopConstants.AMOUNT_OF_LEVELS_TO_ADD || troopLvlFromBody != (int) troopLvlFromBody){
@@ -135,21 +153,6 @@ public class TroopService {
         Long inMemeoryTroopId = troopRepository.findTroopById(troopId).getId();
         if (troopId != inMemeoryTroopId){
             throw new IdNotFoundException(troopId);
-        }
-    }
-
-    public void troopConsumption(Long id){
-        int foodConsumedByAllTroops = 0;
-        List<Troop> troops = getKingdomService().getKingdomByUserId(id).getTroops();
-        for (Troop troop: troops) {
-            foodConsumedByAllTroops += TroopConstants.FOOD_CONSUMED_BY_ONE;
-        }
-        int kingdomsFood = resourceRepository.findByType(food).getAmount();
-        Kingdom kingdomToUdate = getKingdomService().getKingdomByUserId(id);
-        if (foodConsumedByAllTroops <= kingdomsFood){
-            Resource resourceToUpdate = getKingdomService().getKingdomByUserId(id).getResources().stream().filter(r -> r.getType().equals(food)).findAny().get();
-            resourceToUpdate.setAmount(resourceToUpdate.getAmount() - foodConsumedByAllTroops);
-            resourceRepository.save(resourceToUpdate);
         }
     }
 }

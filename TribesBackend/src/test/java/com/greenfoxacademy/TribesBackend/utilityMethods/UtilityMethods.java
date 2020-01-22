@@ -4,17 +4,12 @@ import com.auth0.jwt.JWT;
 import com.greenfoxacademy.TribesBackend.enums.BuildingType;
 import com.greenfoxacademy.TribesBackend.enums.ResourceType;
 import com.greenfoxacademy.TribesBackend.models.*;
-import com.greenfoxacademy.TribesBackend.repositories.BuildingRepository;
-import com.greenfoxacademy.TribesBackend.repositories.KingdomRepository;
-import com.greenfoxacademy.TribesBackend.repositories.ResourceRepository;
-import com.greenfoxacademy.TribesBackend.repositories.UserRepository;
+import com.greenfoxacademy.TribesBackend.repositories.*;
+import com.greenfoxacademy.TribesBackend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.info.ProjectInfoProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.beans.BeanProperty;
-import java.beans.JavaBean;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,13 +27,23 @@ public class UtilityMethods {
     private UserRepository userRepository;
     @Autowired
     private KingdomRepository kingdomRepository;
+    @Autowired
+    private BuildingRepository buildingRepository;
+    @Autowired
+    private ResourceRepository resourceRepository;
+    @Autowired
+    private TroopRepository troopRepository;
+    @Autowired
+    private BlacklistedTokenRepository blacklistedToken;
+    @Autowired
+    private AuthGrantAccessTokenRepository authGrantAccessToken;
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    private UserService userService;
 
     public User createEverything(String username, String kingdomName, int goldAmount, int foodAmount, List<BuildingType> types) {
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword("password");
-        user.setEmailVerified(true);
-        userRepository.save(user);
+        User user = createUser(username, "blah", true);
         Long userId = userRepository.findByUsername(username).getId();
         Kingdom kingdom = new Kingdom();
         kingdom.setUserId(userId);
@@ -46,14 +51,26 @@ public class UtilityMethods {
         kingdom.setTroops(new ArrayList<Troop>());
         kingdom.setLocation(new Location());
         kingdom.setName(kingdomName);
-        List<Building> buildings=new ArrayList<>();
-        for (int i=0;i<types.size();i++){
+        List<Building> buildings = new ArrayList<>();
+        for (int i = 0; i < types.size(); i++) {
             buildings.add(setupBuilding(types.get(i), kingdom));
         }
         kingdom.setBuildings(buildings);
         kingdomRepository.save(kingdom);
         setupResources(goldAmount, foodAmount, userId);
+        user.setKingdom(kingdom);
+        userRepository.save(user);
         return user;
+    }
+
+    public User createUser(String username, String password, boolean isEmailVerified) {
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(bCryptPasswordEncoder.encode(password));
+        user.setEmailVerified(isEmailVerified);
+        user.setVerificationCode(userService.generateEmailVerificationCode());
+        userRepository.save(user);
+        return userRepository.findByUsername(username);
     }
 
     private Building setupBuilding(BuildingType type, Kingdom kingdom) {
@@ -84,7 +101,7 @@ public class UtilityMethods {
         kingdomRepository.save(kingdom);
     }
 
-    public String generateToken(String username, String ip, Long userId){
+    public String generateToken(String username, String ip, Long userId) {
         Map<String, Object> headerMap = Map.of(IP_CLAIM, ip);
         return JWT.create()
                 .withHeader(headerMap)
@@ -92,5 +109,15 @@ public class UtilityMethods {
                 .withClaim(USERNAME_CLAIM, username)
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .sign(HMAC512(SECRET.getBytes()));
+    }
+
+    public void clearDB() {
+        userRepository.deleteAll();
+        kingdomRepository.deleteAll();
+        buildingRepository.deleteAll();
+        resourceRepository.deleteAll();
+        troopRepository.deleteAll();
+        blacklistedToken.deleteAll();
+        authGrantAccessToken.deleteAll();
     }
 }
