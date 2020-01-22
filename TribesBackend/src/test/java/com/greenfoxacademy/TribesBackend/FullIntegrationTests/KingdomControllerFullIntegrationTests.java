@@ -34,7 +34,7 @@ public class KingdomControllerFullIntegrationTests {
 
     @Test
     public void givenBadUserId_whenGetKingdomByUserId_thenReturnUserNotFoundException() throws Exception {
-        RequestBuilder request = get("/kingdom").pa
+       // RequestBuilder request = get("/kingdom").pa
         mockMvc.perform(get("/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{ \"username\": \"something@gmail.com\", \"password\": \"seven\" }"))
