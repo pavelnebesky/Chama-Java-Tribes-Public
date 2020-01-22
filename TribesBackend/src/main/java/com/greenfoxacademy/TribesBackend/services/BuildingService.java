@@ -81,7 +81,7 @@ public class BuildingService {
         }
     }
 
-    public void checksForNewBuilding(String type, int kingdomGold, Long userId) throws InvalidBuildingTypeException, MissingParamsException, NotEnoughGoldException, TownhallAlreadyExistsException, TownhallFirstException {
+    public void checkNewBuildingExceptions(String type, int kingdomGold, Long userId) throws InvalidBuildingTypeException, MissingParamsException, NotEnoughGoldException, TownhallAlreadyExistsException, TownhallFirstException {
         if (type == null) {
             throw new MissingParamsException(List.of("type"));
         }

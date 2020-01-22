@@ -41,7 +41,7 @@ public class BuildingController {
                     .getKingdom().getResources()
                     .stream().filter(r -> r.getType().equals(gold))
                     .findAny().get().getAmount();
-            buildingService.checksForNewBuilding((String) type.getAttribute("type"), goldAmount, utilityService.getIdFromToken(request));
+            buildingService.checkNewBuildingExceptions((String) type.getAttribute("type"), goldAmount, utilityService.getIdFromToken(request));
         } catch (FrontendException e) {
             return buildingService.getUtilityService().handleResponseWithException(e);
         } catch (IllegalArgumentException e) {
