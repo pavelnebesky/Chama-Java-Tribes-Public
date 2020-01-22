@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.*;
 
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
+import static com.greenfoxacademy.TribesBackend.constants.TroopConstants.TROOP_TRAINING_TIME;
 import static com.greenfoxacademy.TribesBackend.constants.BuildingConstants.BUILDING_TIMES;
 import static com.greenfoxacademy.TribesBackend.constants.ResourceConstants.GOLD_PER_MINUTE;
 import static com.greenfoxacademy.TribesBackend.constants.SecurityConstants.*;
@@ -126,35 +127,51 @@ public class UtilityMethods {
         authGrantAccessToken.deleteAll();
     }
 
-    public MockHttpServletRequestBuilder buildNonAuthRequest(String endpoint, String httpMethod, String content) throws Exception {
+    public void createTroop(Long userId) {
+        Kingdom kingdom = kingdomRepository.findByUserId(userId);
+        Troop troop = new Troop();
+        troop.setId(1);
+        troop.setKingdom(kingdom);
+        troop.setLevel(1);
+        troop.setDefence(1);
+        troop.setAttack(1);
+        troop.setHp(10);
+        troop.setStarted_at(System.currentTimeMillis());
+        troop.setFinished_at(troop.getStarted_at() + TROOP_TRAINING_TIME);
+        troopRepository.save(troop);
+    }
+
+    public MockHttpServletRequestBuilder buildNonAuthRequest (String endpoint, String httpMethod, String content) throws
+        Exception {
         return httpMethodDecider(endpoint, httpMethod)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content);
     }
 
-    public MockHttpServletRequestBuilder buildAuthRequest(String endpoint, String httpMethod, String token, String ip, String content) throws Exception {
-        return httpMethodDecider(endpoint, httpMethod)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
-                .with(request -> {
-                    request.setRemoteAddr(ip);
-                    return request;
-                })
-                .content(content);
+        public MockHttpServletRequestBuilder buildAuthRequest (String endpoint, String httpMethod, String token, String
+        ip, String content) throws Exception {
+            return httpMethodDecider(endpoint, httpMethod)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + token)
+                    .with(request -> {
+                        request.setRemoteAddr(ip);
+                        return request;
+                    })
+                    .content(content);
     }
 
-    public MockHttpServletRequestBuilder httpMethodDecider(String endpoint, String httpMethod) {
-        Map<String, MockHttpServletRequestBuilder> httpMethods = new HashMap<>() {
-            {
-                put("get", MockMvcRequestBuilders.get(endpoint));
-                put("put", MockMvcRequestBuilders.put(endpoint));
-                put("post", MockMvcRequestBuilders.post(endpoint));
-            }
-        };
-        return httpMethods.get(httpMethod);
+    public MockHttpServletRequestBuilder httpMethodDecider (String endpoint, String httpMethod){
+            Map<String, MockHttpServletRequestBuilder> httpMethods = new HashMap<>() {
+                {
+                    put("get", MockMvcRequestBuilders.get(endpoint));
+                    put("put", MockMvcRequestBuilders.put(endpoint));
+                    put("post", MockMvcRequestBuilders.post(endpoint));
+                }
+            };
+            return httpMethods.get(httpMethod);
     }
 
-    public ResultActions exceptionExpectations(ResultActions resultActions, FrontendException e) throws Exception {
+    public ResultActions exceptionExpectations (ResultActions resultActions, FrontendException e) throws Exception {
         return resultActions.andExpect(status().is(e.getSc()))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status", is("error")))

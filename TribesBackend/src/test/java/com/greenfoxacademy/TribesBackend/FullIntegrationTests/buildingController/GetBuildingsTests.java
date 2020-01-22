@@ -17,13 +17,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
+
 import static com.greenfoxacademy.TribesBackend.enums.BuildingType.mine;
 import static com.greenfoxacademy.TribesBackend.enums.BuildingType.townhall;
 import static org.hamcrest.core.Is.is;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-
-import java.util.List;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -47,8 +46,7 @@ public class GetBuildingsTests {
     }
 
     @AfterEach
-    public void after() {
-        utilityMethods.clearDB();
+    public void after() { utilityMethods.clearDB();
     }
 
     @Test
