@@ -12,6 +12,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+import static com.greenfoxacademy.TribesBackend.constants.SecurityConstants.ALLOWED_ORIGINS;
+
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
@@ -23,7 +25,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         final CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("retros-tribes.netlify.com", "tribes-java-backend.herokuapp.com", "http://localhost:8080", "http://localhost:3001"));
+        configuration.setAllowedOrigins(List.of(ALLOWED_ORIGINS));
         configuration.setAllowedMethods(List.of("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));

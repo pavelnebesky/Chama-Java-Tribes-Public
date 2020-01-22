@@ -1,8 +1,6 @@
 package com.greenfoxacademy.TribesBackend.services;
 
-import com.greenfoxacademy.TribesBackend.enums.BuildingType;
 import com.greenfoxacademy.TribesBackend.enums.ResourceType;
-import com.greenfoxacademy.TribesBackend.models.Building;
 import com.greenfoxacademy.TribesBackend.models.Kingdom;
 import com.greenfoxacademy.TribesBackend.models.Resource;
 import com.greenfoxacademy.TribesBackend.repositories.BuildingRepository;
@@ -13,13 +11,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 
 import javax.servlet.http.HttpServletRequest;
-import static com.greenfoxacademy.TribesBackend.constants.ResourceConstants.*;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-import static com.greenfoxacademy.TribesBackend.constants.ResourceConstants.*;
+import static com.greenfoxacademy.TribesBackend.constants.ResourceConstants.BUILDING_PRICE;
+import static com.greenfoxacademy.TribesBackend.enums.ResourceType.gold;
 
 @Getter
 @Service
@@ -73,5 +69,12 @@ public class ResourceService {
 
     public void checkResourceTypeIfItExists(String resourceType) throws IllegalArgumentException {
         ResourceType.valueOf(resourceType);
+    }
+
+    public int getKingdomsGoldByUserId(HttpServletRequest request){
+        Long userId = utilityService.getIdFromToken(request);
+        Kingdom kingdom = getKingdomService().getKingdomByUserId(userId);
+        int kingdomsGold = kingdom.getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get().getAmount();
+        return kingdomsGold;
     }
 }

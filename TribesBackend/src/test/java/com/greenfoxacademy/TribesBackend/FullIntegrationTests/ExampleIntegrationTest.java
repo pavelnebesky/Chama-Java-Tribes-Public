@@ -1,4 +1,4 @@
-package com.greenfoxacademy.TribesBackend.FullIntegrationTests.userController;
+package com.greenfoxacademy.TribesBackend.FullIntegrationTests;
 
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
 import static com.greenfoxacademy.TribesBackend.constants.SecurityConstants.*;
@@ -56,10 +56,11 @@ public class ExampleIntegrationTest {
     private UtilityMethods utilityMethods;
     private String token;
     private String ip = "";
+    private User user;
 
     @BeforeEach
     public void setup() {
-        User user = utilityMethods.createEverything("something@sth.com", "kingdomName", 10000, 10000, List.of(BuildingType.barracks, BuildingType.townhall));
+        user = utilityMethods.createEverything("something@sth.com", "kingdomName", 10000, 10000, List.of(BuildingType.barracks, BuildingType.townhall));
         token = utilityMethods.generateToken("something@sth.com", ip, user.getId());
     }
 
@@ -82,7 +83,9 @@ public class ExampleIntegrationTest {
                 })
                 .content("{}"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("name", is("kingdomName")))
+                .andExpect(jsonPath("userId", is(user.getId().intValue())));
     }
 
     @Test

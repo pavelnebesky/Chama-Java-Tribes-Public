@@ -31,15 +31,17 @@ public class BuildingController {
 
     @GetMapping("/kingdom/buildings")
     public ResponseEntity getBuildings(HttpServletRequest request) {
-        //TODO: TEST
         return ResponseEntity.ok(buildingService.getMapOfAllBuildingsByToken(request));
     }
 
     @PostMapping("/kingdom/buildings")
     public ResponseEntity postBuildings(HttpServletRequest request, @RequestBody ModelMap type) {
-        //TODO: TEST
         try {
-            buildingService.checksForNewBuilding((String) type.getAttribute("type"), (userService.findById(utilityService.getIdFromToken(request))).getKingdom().getResources().stream().filter(r -> r.getType().equals(gold)).findAny().get().getAmount(), utilityService.getIdFromToken(request));
+            int goldAmount = (userService.findById(utilityService.getIdFromToken(request)))
+                    .getKingdom().getResources()
+                    .stream().filter(r -> r.getType().equals(gold))
+                    .findAny().get().getAmount();
+            buildingService.checkNewBuildingExceptions((String) type.getAttribute("type"), goldAmount, utilityService.getIdFromToken(request));
         } catch (FrontendException e) {
             return buildingService.getUtilityService().handleResponseWithException(e);
         } catch (IllegalArgumentException e) {
@@ -52,7 +54,6 @@ public class BuildingController {
 
     @GetMapping("/kingdom/buildings/{buildingId}")
     public ResponseEntity getBuilding(HttpServletRequest request, @PathVariable Long buildingId) {
-        //TODO: TEST
         try {
             buildingService.checkBuildingId(buildingId);
         } catch (IdNotFoundException e) {
@@ -63,7 +64,6 @@ public class BuildingController {
 
     @PutMapping("/kingdom/buildings/{buildingId}")
     public ResponseEntity updateBuilding(HttpServletRequest request, @PathVariable Long buildingId, @RequestBody Building building) {
-        //TODO: TEST
         try {
             buildingService.checksForUpdateBuilding(buildingId, building);
         } catch (FrontendException e) {
@@ -75,7 +75,6 @@ public class BuildingController {
 
     @GetMapping("/leaderboard/buildings")
     public ResponseEntity getBuildingsLeaderboard() {
-        //TODO: TEST
         return ResponseEntity.ok(buildingService.getLeaderboard());
     }
 }
