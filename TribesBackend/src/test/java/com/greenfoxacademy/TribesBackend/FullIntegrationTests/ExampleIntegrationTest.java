@@ -87,19 +87,5 @@ public class ExampleIntegrationTest {
                 .andExpect(jsonPath("name", is("kingdomName")))
                 .andExpect(jsonPath("userId", is(user.getId().intValue())));
     }
-
-    @Test
-    public void testResourceEndpoint() throws Exception {
-        mockMvc.perform(get("/kingdom/resource")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
-                .with(request -> {
-                    request.setRemoteAddr(ip);
-                    return request;
-                })
-                .content("{}"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
-    }
 }
 
