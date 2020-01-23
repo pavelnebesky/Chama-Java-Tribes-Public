@@ -79,7 +79,7 @@ public class UtilityMethods {
         return userRepository.findByUsername(username);
     }
 
-    private Building setupBuilding(BuildingType type, Kingdom kingdom) {
+    public Building setupBuilding(BuildingType type, Kingdom kingdom) {
         Building building = new Building();
         building.setType(type);
         building.setHp(1);
