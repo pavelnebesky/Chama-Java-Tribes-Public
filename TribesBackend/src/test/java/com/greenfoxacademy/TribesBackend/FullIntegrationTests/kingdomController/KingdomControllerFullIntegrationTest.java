@@ -1,9 +1,9 @@
-package com.greenfoxacademy.TribesBackend.FullIntegrationTests;
-
-import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
-import static org.hamcrest.core.Is.is;
+package com.greenfoxacademy.TribesBackend.FullIntegrationTests.kingdomController;
 
 import com.greenfoxacademy.TribesBackend.enums.BuildingType;
+import com.greenfoxacademy.TribesBackend.exceptions.FrontendException;
+import com.greenfoxacademy.TribesBackend.exceptions.IdNotFoundException;
+import com.greenfoxacademy.TribesBackend.models.Kingdom;
 import com.greenfoxacademy.TribesBackend.models.User;
 import com.greenfoxacademy.TribesBackend.repositories.BuildingRepository;
 import com.greenfoxacademy.TribesBackend.repositories.KingdomRepository;
@@ -23,13 +23,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:application-testing.properties")
-public class ExampleIntegrationTest {
+public class KingdomControllerFullIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -46,10 +46,12 @@ public class ExampleIntegrationTest {
     private String token;
     private String ip = "";
     private User user;
+    private Kingdom kingdom;
 
     @BeforeEach
     public void setup() {
         user = utilityMethods.createEverything("something@sth.com", "kingdomName", 10000, 10000, List.of(BuildingType.barracks, BuildingType.townhall));
+        kingdom = user.getKingdom();
         token = utilityMethods.generateToken("something@sth.com", ip, user.getId());
     }
 
@@ -62,19 +64,44 @@ public class ExampleIntegrationTest {
     }
 
     @Test
-    public void justTesting() throws Exception {
-        mockMvc.perform(get("/kingdom")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
-                .with(request -> {
-                    request.setRemoteAddr(ip);
-                    return request;
-                })
-                .content("{}"))
+    public void whenGetKingdom_thenReturnUsersKingdom() throws Exception {
+        mockMvc.perform(utilityMethods.buildAuthRequest("/kingdom", "get", token, ip, "{}"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("id", is(kingdom.getId().intValue())))
                 .andExpect(jsonPath("name", is("kingdomName")))
                 .andExpect(jsonPath("userId", is(user.getId().intValue())));
+    }
+
+    @Test
+    public void whenGettingCorrectUserId_thenReturnUsersKingdom() throws Exception {
+        mockMvc.perform(utilityMethods.buildAuthRequest("/kingdom/" + user.getId().intValue(),
+                "get", token, ip, "{}"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("id", is(kingdom.getId().intValue())))
+                .andExpect(jsonPath("name", is("kingdomName")))
+                .andExpect(jsonPath("userId", is(user.getId().intValue())));
+    }
+
+    @Test
+    public void whenGettingInorrectUserId_thenReturnIdNotFoundException() throws Exception {
+        FrontendException e = new IdNotFoundException(14762587164L);
+        utilityMethods.exceptionExpectations(mockMvc.perform(utilityMethods.buildAuthRequest("/kingdom/" + 14762587164L,
+                "get", token, ip, "{}")), e);
+    }
+
+    @Test
+    public void whenRecievedNewDataForKingdom_thenReturnStatusOkandNewUpdatedKingdom() throws Exception {
+        mockMvc.perform(utilityMethods.buildAuthRequest("/kingdom", "put", token, ip,
+                "{\"name\" : \"MI5\", \"locationX\" : 4, \"locationY\" : 12}"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("id", is(kingdom.getId().intValue())))
+                .andExpect(jsonPath("name", is("MI5")))
+                .andExpect(jsonPath("userId", is(user.getId().intValue())))
+                .andExpect(jsonPath("$.location.x", is(4)))
+                .andExpect(jsonPath("$.location.y", is(12)));
     }
 }
 

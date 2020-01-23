@@ -26,7 +26,7 @@ public class Troop {
     private long started_at;
     private long finished_at;
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "kingdom_id")
     private Kingdom kingdom;
 }

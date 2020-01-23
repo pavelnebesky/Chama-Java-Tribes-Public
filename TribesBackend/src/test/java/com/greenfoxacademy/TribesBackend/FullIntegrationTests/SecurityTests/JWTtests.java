@@ -3,7 +3,7 @@ package com.greenfoxacademy.TribesBackend.FullIntegrationTests.SecurityTests;
 import com.auth0.jwt.JWT;
 import com.greenfoxacademy.TribesBackend.enums.BuildingType;
 import com.greenfoxacademy.TribesBackend.models.User;
-import com.greenfoxacademy.TribesBackend.utilityMethods.UtilityMethods;
+import com.greenfoxacademy.TribesBackend.testUtilities.UtilityMethods;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,8 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@TestPropertySource(
-        locations = "classpath:application-testing.properties")
+@TestPropertySource(locations = "classpath:application-testing.properties")
 public class JWTtests {
 
     @Autowired
@@ -50,26 +49,13 @@ public class JWTtests {
 
     @Test
     public void noTokenTest() throws Exception {
-        mockMvc.perform(get("/kingdom")
-                .contentType(MediaType.APPLICATION_JSON)
-                .with(request -> {
-                    request.setRemoteAddr(ip);
-                    return request;
-                })
-                .content("{}"))
+        mockMvc.perform(utilityMethods.buildAuthRequest("/kingdom", "get", null, ip, "{}"))
                 .andExpect(status().is(401));
     }
 
     @Test
     public void incorrectTokenTest() throws Exception {
-        mockMvc.perform(get("/kingdom")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token + "1")
-                .with(request -> {
-                    request.setRemoteAddr(ip);
-                    return request;
-                })
-                .content("{}"))
+        mockMvc.perform(utilityMethods.buildAuthRequest("/kingdom", "get", token + "blah", ip, "{}"))
                 .andExpect(status().is(401));
     }
 
@@ -95,27 +81,13 @@ public class JWTtests {
                 .withClaim(USERNAME_CLAIM, user.getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() - 1000))
                 .sign(HMAC512(SECRET.getBytes()));
-        mockMvc.perform(get("/kingdom")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
-                .with(request -> {
-                    request.setRemoteAddr(ip);
-                    return request;
-                })
-                .content("{}"))
+        mockMvc.perform(utilityMethods.buildAuthRequest("/kingdom", "get", token, ip, "{}"))
                 .andExpect(status().is(401));
     }
 
     @Test
     public void incorrectIpTest() throws Exception {
-        mockMvc.perform(get("/kingdom")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
-                .with(request -> {
-                    request.setRemoteAddr(ip + "1");
-                    return request;
-                })
-                .content("{}"))
+        mockMvc.perform(utilityMethods.buildAuthRequest("/kingdom", "get", token, ip + 1, "{}"))
                 .andExpect(status().is(401));
     }
 
@@ -130,14 +102,7 @@ public class JWTtests {
 
     @Test
     public void everythingFineTest() throws Exception {
-        mockMvc.perform(get("/kingdom")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
-                .with(request -> {
-                    request.setRemoteAddr(ip);
-                    return request;
-                })
-                .content("{}"))
+        mockMvc.perform(utilityMethods.buildAuthRequest("/kingdom", "get", token, ip, "{}"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }

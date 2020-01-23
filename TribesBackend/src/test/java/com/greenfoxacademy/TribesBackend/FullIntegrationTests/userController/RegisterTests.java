@@ -5,10 +5,9 @@ import com.greenfoxacademy.TribesBackend.exceptions.FrontendException;
 import com.greenfoxacademy.TribesBackend.exceptions.MissingParamsException;
 import com.greenfoxacademy.TribesBackend.exceptions.NotValidEmailException;
 import com.greenfoxacademy.TribesBackend.models.User;
-import com.greenfoxacademy.TribesBackend.utilityMethods.UtilityMethods;
+import com.greenfoxacademy.TribesBackend.testUtilities.UtilityMethods;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -20,25 +19,18 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@TestPropertySource(
-        locations = "classpath:application-testing.properties")
+@TestPropertySource(locations = "classpath:application-testing.properties")
 public class RegisterTests {
 
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private UtilityMethods utilityMethods;
-
-    @BeforeEach
-    public void before() {
-        utilityMethods.clearDB();
-    }
 
     @AfterEach
     public void after() {
@@ -49,9 +41,8 @@ public class RegisterTests {
     public void successfullRegisterTest() throws Exception {
         String username = "some@email.com";
         String kingdomName = "some's kingdom";
-        mockMvc.perform(post("/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{ \"username\": \"" + username + "\", \"password\": \"seven\" }"))
+        String content = "{ \"username\" : \"" + username + "\", \"password\" : \"blah\" }";
+        mockMvc.perform(utilityMethods.buildNonAuthRequest("/register", "post", content))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", Matchers.any(Integer.class)))
@@ -63,9 +54,8 @@ public class RegisterTests {
     public void kingdomNameTest() throws Exception {
         String username = "some@email.com";
         String kingdomName = "random kingdom name";
-        mockMvc.perform(post("/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{ \"username\": \"" + username + "\", \"password\": \"seven\", \"kingdom\": \"" + kingdomName + "\" }"))
+        String content = "{ \"username\" : \"" + username + "\", \"password\" : \"blah\", \"kingdom\" : \"" + kingdomName + "\" }";
+        mockMvc.perform(utilityMethods.buildNonAuthRequest("/register", "post", content))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", Matchers.any(Integer.class)))
@@ -75,60 +65,30 @@ public class RegisterTests {
 
     @Test
     public void usernameAlreadyTakenTest() throws Exception {
-        User user = utilityMethods.createUser("some@email.com", "blah", true);
+        String username = "some@email.com";
+        String content = "{ \"username\" : \"" + username + "\", \"password\" : \"blah\" }";
+        User user = utilityMethods.createUser(username, "blah", true);
         FrontendException e = new EmailAlreadyTakenException(user.getUsername());
-        mockMvc.perform(post("/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{ \"username\": \"" + user.getUsername() + "\", \"password\": \"seven\" }"))
-                .andExpect(status().is(e.getSc()))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.status", is("error")))
-                .andExpect(jsonPath("$.error", is(e.getMessage())));
+        utilityMethods.exceptionExpectations(mockMvc.perform(utilityMethods.buildNonAuthRequest("/register", "post", content)), e);
     }
 
     @Test
     public void notValidEmailTest() throws Exception {
+        String content = "{ \"username\" : \"blah\", \"password\" : \"blah\" }";
         FrontendException e = new NotValidEmailException();
-        mockMvc.perform(post("/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{ \"username\": \"blah\", \"password\": \"seven\" }"))
-                .andExpect(status().is(e.getSc()))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.status", is("error")))
-                .andExpect(jsonPath("$.error", is(e.getMessage())));
-        mockMvc.perform(post("/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{ \"username\": \"blah@blah\", \"password\": \"seven\" }"))
-                .andExpect(status().is(e.getSc()))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.status", is("error")))
-                .andExpect(jsonPath("$.error", is(e.getMessage())));
-        mockMvc.perform(post("/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{ \"username\": \"blah.blah\", \"password\": \"seven\" }"))
-                .andExpect(status().is(e.getSc()))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.status", is("error")))
-                .andExpect(jsonPath("$.error", is(e.getMessage())));
+        utilityMethods.exceptionExpectations(mockMvc.perform(utilityMethods.buildNonAuthRequest("/register", "post", content)), e);
+        content = "{ \"username\" : \"blah@blah\", \"password\" : \"blah\" }";
+        utilityMethods.exceptionExpectations(mockMvc.perform(utilityMethods.buildNonAuthRequest("/register", "post", content)), e);
+        content = "{ \"username\" : \"blah.blah\", \"password\" : \"blah\" }";
+        utilityMethods.exceptionExpectations(mockMvc.perform(utilityMethods.buildNonAuthRequest("/register", "post", content)), e);
     }
 
     @Test
     public void missingParamsTest() throws Exception {
         FrontendException e = new MissingParamsException(List.of("username", "password"));
-        mockMvc.perform(post("/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{ }"))
-                .andExpect(status().is(e.getSc()))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.status", is("error")))
-                .andExpect(jsonPath("$.error", is(e.getMessage())));
+        utilityMethods.exceptionExpectations(mockMvc.perform(utilityMethods.buildNonAuthRequest("/register", "post", "{}")), e);
         e = new MissingParamsException(List.of("password"));
-        mockMvc.perform(post("/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{ \"username\": \"blah.blah\" }"))
-                .andExpect(status().is(e.getSc()))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.status", is("error")))
-                .andExpect(jsonPath("$.error", is(e.getMessage())));
+        String content = "{ \"username\": \"blah.blah\" }";
+        utilityMethods.exceptionExpectations(mockMvc.perform(utilityMethods.buildNonAuthRequest("/register", "post", content)), e);
     }
 }

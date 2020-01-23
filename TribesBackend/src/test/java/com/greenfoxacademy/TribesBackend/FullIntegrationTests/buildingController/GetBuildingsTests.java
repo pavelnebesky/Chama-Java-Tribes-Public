@@ -1,17 +1,12 @@
 package com.greenfoxacademy.TribesBackend.FullIntegrationTests.buildingController;
 
-import com.greenfoxacademy.TribesBackend.enums.BuildingType;
 import com.greenfoxacademy.TribesBackend.exceptions.FrontendException;
 import com.greenfoxacademy.TribesBackend.exceptions.IdNotFoundException;
-import com.greenfoxacademy.TribesBackend.exceptions.MissingParamsException;
-import com.greenfoxacademy.TribesBackend.exceptions.NoSuchEmailException;
 import com.greenfoxacademy.TribesBackend.models.Building;
 import com.greenfoxacademy.TribesBackend.models.User;
 import com.greenfoxacademy.TribesBackend.repositories.BuildingRepository;
-import com.greenfoxacademy.TribesBackend.utilityMethods.UtilityMethods;
-import com.greenfoxacademy.TribesBackend.utilityMethods.UtilityMethods;
+import com.greenfoxacademy.TribesBackend.testUtilities.UtilityMethods;
 import org.hamcrest.Matchers;
-import org.json.JSONArray;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,21 +17,16 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
+
 import static com.greenfoxacademy.TribesBackend.enums.BuildingType.mine;
 import static com.greenfoxacademy.TribesBackend.enums.BuildingType.townhall;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.Is.isA;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-
-import java.util.List;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@TestPropertySource(
-        locations = "classpath:application-testing.properties")
-
+@TestPropertySource(locations = "classpath:application-testing.properties")
 public class GetBuildingsTests {
 
     @Autowired
@@ -56,20 +46,12 @@ public class GetBuildingsTests {
     }
 
     @AfterEach
-    public void after() {
-        utilityMethods.clearDB();
+    public void after() { utilityMethods.clearDB();
     }
 
     @Test
     public void getBuildings() throws Exception {
-        mockMvc.perform(get("/kingdom/buildings")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
-                .with(request -> {
-                    request.setRemoteAddr(ip);
-                    return request;
-                })
-                .content("{}"))
+        mockMvc.perform(utilityMethods.buildAuthRequest("/kingdom/buildings", "get", token, ip, "{}"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.buildings", Matchers.any(List.class)))
@@ -81,14 +63,7 @@ public class GetBuildingsTests {
     public void getSpecifiedBuilding() throws Exception {
         Long townhallId = ((List<Building>) buildingRepository.findAll())
                 .stream().filter(b -> b.getType().equals(townhall)).findAny().get().getId();
-        mockMvc.perform(get("/kingdom/buildings/" + townhallId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
-                .with(request -> {
-                    request.setRemoteAddr(ip);
-                    return request;
-                })
-                .content("{}"))
+        mockMvc.perform(utilityMethods.buildAuthRequest("/kingdom/buildings/" + townhallId, "get", token, ip, "{}"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.type", is("townhall")))
@@ -99,30 +74,12 @@ public class GetBuildingsTests {
     public void getNotExistingBuilding() throws Exception {
         Long id = 99339933L;
         FrontendException e = new IdNotFoundException(id);
-        mockMvc.perform(get("/kingdom/buildings/" + id)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
-                .with(request -> {
-                    request.setRemoteAddr(ip);
-                    return request;
-                })
-                .content("{}"))
-                .andExpect(status().is(e.getSc()))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.status", is("error")))
-                .andExpect(jsonPath("$.error", is(e.getMessage())));
+        utilityMethods.exceptionExpectations(mockMvc.perform(utilityMethods.buildAuthRequest("/kingdom/buildings/" + id, "get", token, ip, "{}")), e);
     }
 
     @Test
     public void getLeaderboard() throws Exception {
-        mockMvc.perform(get("/leaderboard/buildings")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
-                .with(request -> {
-                    request.setRemoteAddr(ip);
-                    return request;
-                })
-                .content("{}"))
+        mockMvc.perform(utilityMethods.buildAuthRequest("/leaderboard/buildings", "get", token, ip, "{}"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.leaderboard", Matchers.any(List.class)))
