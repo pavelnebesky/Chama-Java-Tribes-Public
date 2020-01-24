@@ -51,6 +51,8 @@ public class UserService {
     @Autowired
     private KingdomService kingdomService;
     @Autowired
+    private BuildingService buildingService;
+    @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Autowired
     private KingdomRepository kingdomRepository;
@@ -232,6 +234,7 @@ public class UserService {
         kingdom.setUserId(user.getId());
         kingdomRepository.save(kingdom);
         sendEmailVerification(user.getUsername(), verCode);
+        buildingService.createAndReturnBuilding(user.getId(), "townhall");
         return createRegisterResponse(findByEmail(user.getUsername()));
     }
 
