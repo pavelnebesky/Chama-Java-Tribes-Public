@@ -38,7 +38,7 @@ import static com.greenfoxacademy.TribesBackend.constants.SecurityConstants.TOKE
 @Getter
 @Setter
 @Service
-public class UserService {
+public class  UserService {
 
     @Autowired
     private UserRepository userRepository;

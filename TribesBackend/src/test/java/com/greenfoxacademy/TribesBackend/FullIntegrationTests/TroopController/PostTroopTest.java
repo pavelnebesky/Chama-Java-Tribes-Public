@@ -53,7 +53,6 @@ public class PostTroopTest {
 
     @Test
     public void postTroops() throws Exception {
-
         String content = "{}";
         mockMvc.perform(utilityMethods.buildAuthRequest("/kingdom/troops", "post", token, ip, content))
                 .andExpect(status().isOk())
