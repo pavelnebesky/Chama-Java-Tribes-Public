@@ -3,6 +3,7 @@ package com.greenfoxacademy.TribesBackend.FullIntegrationTests.resourceControlle
 import com.greenfoxacademy.TribesBackend.enums.BuildingType;
 import com.greenfoxacademy.TribesBackend.exceptions.FrontendException;
 import com.greenfoxacademy.TribesBackend.exceptions.IdNotFoundException;
+import com.greenfoxacademy.TribesBackend.exceptions.ParameterNotFoundException;
 import com.greenfoxacademy.TribesBackend.models.Building;
 import com.greenfoxacademy.TribesBackend.models.Kingdom;
 import com.greenfoxacademy.TribesBackend.models.User;
@@ -70,10 +71,18 @@ public class GetResourcesTests {
     }
 
     @Test
-    public void getResourcesType() throws Exception {
-        mockMvc.perform(utilityMethods.buildAuthRequest("/kingdom/resources/{resourceType}", "get", token, ip, "{}"))
+    public void getResourceType() throws Exception {
+        mockMvc.perform(utilityMethods.buildAuthRequest("/kingdom/resources/gold", "get", token, ip, "{}"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.resourceType", is(getResourcesType())));
+                .andExpect(jsonPath("$.type", is("gold")))
+                .andExpect(jsonPath("$.amount", is(10000)));
+    }
+
+    @Test
+    public void getWrongResourceType() throws Exception {
+        FrontendException e = new ParameterNotFoundException("mercury");
+        utilityMethods.exceptionExpectations(mockMvc.perform(utilityMethods
+                .buildAuthRequest("/kingdom/resources/mercury", "get", token, ip, "{}")), e);
     }
 }
