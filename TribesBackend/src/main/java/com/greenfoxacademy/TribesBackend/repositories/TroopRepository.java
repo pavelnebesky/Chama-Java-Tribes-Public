@@ -11,4 +11,5 @@ public interface TroopRepository extends CrudRepository<Troop, Long> {
     List<Troop> findAllTroopsByKingdomUserId(Long id);
     Troop findTroopById(Long id);
     Troop getByIdIsNotNull();
+    void deleteById(Long troopId);
 }
