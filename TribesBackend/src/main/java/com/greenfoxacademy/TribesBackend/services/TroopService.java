@@ -130,7 +130,10 @@ public class TroopService {
         return troopToUpgrade;
     }
 
-    public void checksForUpgradeTroop(HttpServletRequest request, Long troopId, Troop troop) throws NotEnoughGoldException, InvalidLevelException, MissingParamsException, IdNotFoundException {
+    public void checksForUpgradeTroop(HttpServletRequest request, @PathVariable Long troopId, Troop troop) throws NotEnoughGoldException, InvalidLevelException, MissingParamsException, IdNotFoundException {
+        if (troopRepository.findTroopById(troopId)==null){
+            throw new IdNotFoundException(troopId);
+        }
         Integer troopLevel = troopRepository.findTroopById(troopId).getLevel();
         Integer troopLvlFromBody = troop.getLevel();
         if (troopLvlFromBody == 0){
@@ -149,10 +152,6 @@ public class TroopService {
         }
         if (troopLvlFromBody != troopLevel + TroopConstants.AMOUNT_OF_LEVELS_TO_ADD || troopLvlFromBody != (int) troopLvlFromBody){
             throw new InvalidLevelException("troop");
-        }
-        Long inMemeoryTroopId = troopRepository.findTroopById(troopId).getId();
-        if (troopId != inMemeoryTroopId){
-            throw new IdNotFoundException(troopId);
         }
     }
 }

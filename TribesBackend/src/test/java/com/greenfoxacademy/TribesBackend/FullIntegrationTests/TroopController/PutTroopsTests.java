@@ -1,10 +1,7 @@
 package com.greenfoxacademy.TribesBackend.FullIntegrationTests.TroopController;
 
 import com.greenfoxacademy.TribesBackend.enums.ResourceType;
-import com.greenfoxacademy.TribesBackend.exceptions.FrontendException;
-import com.greenfoxacademy.TribesBackend.exceptions.InvalidLevelException;
-import com.greenfoxacademy.TribesBackend.exceptions.MissingParamsException;
-import com.greenfoxacademy.TribesBackend.exceptions.NotEnoughGoldException;
+import com.greenfoxacademy.TribesBackend.exceptions.*;
 import com.greenfoxacademy.TribesBackend.models.Resource;
 import com.greenfoxacademy.TribesBackend.models.Troop;
 import com.greenfoxacademy.TribesBackend.models.User;
@@ -74,7 +71,7 @@ public class PutTroopsTests {
         resourceRepository.save(gold);
         FrontendException e = new NotEnoughGoldException();
         String content = "{\"level\" : 2 }";
-        utilityMethods.exceptionExpectations(mockMvc.perform(utilityMethods.buildAuthRequest("/kingdom/troops" + troopId, "post", token, ip, content)), e);
+        utilityMethods.exceptionExpectations(mockMvc.perform(utilityMethods.buildAuthRequest("/kingdom/troops/" + troopId, "put", token, ip, content)), e);
     }
 
     @Test
@@ -93,5 +90,13 @@ public class PutTroopsTests {
         FrontendException e = new InvalidLevelException("troop");
         String content = "{}";
         utilityMethods.exceptionExpectations(mockMvc.perform(utilityMethods.buildAuthRequest("/kingdom/troops/" + troopId, "put", token, ip, content)), e);
+    }
+
+    @Test
+    public void putIdNotFound() throws Exception {
+        Long id = 444L;
+        String content = "{\"level\" : 2 }";
+        FrontendException e = new IdNotFoundException(id);
+        utilityMethods.exceptionExpectations(mockMvc.perform(utilityMethods.buildAuthRequest("/kingdom/troops/" + id, "put", token, ip, content)), e);
     }
 }
