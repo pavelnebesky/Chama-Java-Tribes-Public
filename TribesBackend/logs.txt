@@ -1,0 +1,33 @@
+
+request date: 2020-01-24 10:04:32+0100
+request http method: GET
+request headers:
+  content-type: application/json
+  authorization: Bearer eyJhbGciOiJIUzUxMiIsImlwIjoiMDowOjA6MDowOjA6MDoxIn0.eyJpZCI6IjEiLCJleHAiOjE1Nzk4NTk3MDIsInVzZXJuYW1lIjoibWFyZWtwb2xpYWswQGdtYWlsLmNvbSJ9.I6Dt_bEpOXuXystQn4cQ-taT3QD4hdQ0OphdI8ZybqNr8xohAw8z8_i1w-AclYUmdgB6IyxXNRUcna2pVUdzzg
+  user-agent: PostmanRuntime/7.22.0
+  accept: */*
+  cache-control: no-cache
+  postman-token: 7aca5937-d0bf-455d-ac89-cfaedac623b5
+  host: localhost:8080
+  accept-encoding: gzip, deflate, br
+  content-length: 64
+  connection: keep-alive
+request body: 
+{
+	"username":"marekpoliak0@gmail.com",
+	"password":"password"
+}
+response date: 2020-01-24 10:04:33+0100
+status code: 200
+response headers:
+  Vary: Origin
+  Vary: Origin
+  Vary: Origin
+  Vary: Origin
+  Vary: Origin
+  Vary: Origin
+response body: 
+{"id":1,"name":"marekpoliak0's kingdom","userId":1,"resources":[{"type":"gold","amount":500,"generation":0},{"type":"food","amount":0,"generation":0}],"location":{"x":0,"y":0},"buildings":[],"troops":[]}
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
