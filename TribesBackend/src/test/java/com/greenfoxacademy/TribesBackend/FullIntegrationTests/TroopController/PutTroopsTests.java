@@ -46,7 +46,7 @@ public class PutTroopsTests {
     @BeforeEach
     public void before() {
         utilityMethods.clearDB();
-        user = utilityMethods.createEverything("john@doe.com", "Johns kingdom", 1000, 1000, java.util.List.of(townhall, mine, barracks));
+        user = utilityMethods.createEverything("john@doe.com", "Johns kingdom", 10000, 10000, java.util.List.of(townhall, mine, barracks));
         token = utilityMethods.generateToken("something@sth.com", ip, user.getId());
         troop = utilityMethods.createTroop(user.getId());
     }
@@ -61,7 +61,7 @@ public class PutTroopsTests {
         mockMvc.perform(utilityMethods.buildAuthRequest("/kingdom/troops/" + troopId, "put", token, ip, content))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.level", is(troopRepository.getByIdIsNotNull().getLevel())));
+                .andExpect(jsonPath("$.level", is(troopRepository.findById(troopId).get().getLevel())));
     }
 
     @Test

@@ -51,7 +51,7 @@ public class TroopController {
         } catch (FrontendException e){
             return troopService.getUtilityService().handleResponseWithException(e);
         }
-        Troop upgradedTroop = troopService.troopLevelUp( troop, troopId, troopService.getUserIdFromToken(request));
+        Troop upgradedTroop = troopService.troopLevelUp( troop,troopService.getUserIdFromToken(request), troopId);
         return ResponseEntity.status(200).body(upgradedTroop);
     }
 }
