@@ -139,7 +139,7 @@ public class UtilityMethods {
         troop.setFinished_at(troop.getStarted_at() + TROOP_TRAINING_TIME);
         kingdom.setTroops(List.of(troop));
         kingdomRepository.save(kingdom);
-        return ((List<Troop>)troopRepository.findAll()).stream().findAny().orElse(null);
+        return troopRepository.findAllTroopsByKingdomUserId(userId).get(0);
     }
 
     public MockHttpServletRequestBuilder buildNonAuthRequest (String endpoint, String httpMethod, String content) throws

@@ -45,6 +45,7 @@ public class PutTroopsTests {
 
     @BeforeEach
     public void before() {
+        utilityMethods.clearDB();
         user = utilityMethods.createEverything("john@doe.com", "Johns kingdom", 1000, 1000, java.util.List.of(townhall, mine, barracks));
         token = utilityMethods.generateToken("something@sth.com", ip, user.getId());
         troop = utilityMethods.createTroop(user.getId());
@@ -55,7 +56,7 @@ public class PutTroopsTests {
 
     @Test
     public void putTroops() throws Exception {
-        Long troopId = troopRepository.findTroopById(troop.getId()).getId();
+        Long troopId = troop.getId();
         String content = "{\"level\" : 2 }";
         mockMvc.perform(utilityMethods.buildAuthRequest("/kingdom/troops/" + troopId, "put", token, ip, content))
                 .andExpect(status().isOk())
